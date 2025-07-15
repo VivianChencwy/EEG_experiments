@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from scipy import stats
 
 from models import create_model, train_model, evaluate, normalize_data
-from config import BATCH_SIZE, TEST_SIZE, VAL_SIZE, MAX_EPOCHS, seeds
+from config import BATCH_SIZE, TRAIN_SIZE, VAL_SIZE, TEST_SIZE, MAX_EPOCHS, seeds
 from experiment_logger import log_error
 
 
@@ -37,17 +37,8 @@ def load_raw(file_path, dataset_type):
 
 
 def calculate_statistics(accuracies):
-    """Calculate mean and 95% confidence interval for accuracies.
-    
-    Parameters
-    ----------
-    accuracies : dict
-        Dictionary mapping subject IDs to accuracy values
-        
-    Returns
-    -------
-    dict
-        Dictionary containing statistical measures
+    """
+    Calculate mean and 95% confidence interval for accuracies.
     """
     values = np.array(list(accuracies.values()))
     mean = np.mean(values)
@@ -65,16 +56,8 @@ def calculate_statistics(accuracies):
 
 
 def print_statistics(stats, dataset_name, logger=None):
-    """Print and optionally log statistics in a formatted way.
-    
-    Parameters
-    ----------
-    stats : dict
-        Statistics dictionary from calculate_statistics
-    dataset_name : str
-        Name of the dataset for display
-    logger : logging.Logger, optional
-        Logger to write statistics to
+    """
+    Print and optionally log statistics in a formatted way.
     """
     out_lines = [
         f"\n{dataset_name} Statistics:",
@@ -127,47 +110,37 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
     
     model = create_model(n_channels, is_lda)
     if not is_lda:
-        model = model.to(device)
+        # Only neural network models need to be moved to device
+        if hasattr(model, 'to'):
+            model = model.to(device)
         # Print model summary only once per experiment (for the first seed)
         if print_model_summary and seed == seeds[0]:
             print("\n" + "="*60)
             print("ShallowFBCSPNet Model Architecture Summary")
             print("="*60)
-            print(f"Model: {model}")
+            print(f"Model type: {type(model).__name__}")
             print(f"Input channels: {n_channels}")
             print(f"Input shape: (batch_size, {n_channels}, 128)")
+            if hasattr(model, 'parameters'):
+                print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
             print("="*60 + "\n")
     
     accuracy = train_model(model, train_loader, val_loader, test_loader, device, is_lda, MAX_EPOCHS)
     return accuracy, model
 
 
-def create_data_loaders(data, labels, batch_size=BATCH_SIZE, test_size=TEST_SIZE, val_size=VAL_SIZE):
+def create_data_loaders(data, labels, batch_size=BATCH_SIZE, 
+                       train_size=TRAIN_SIZE, val_size=VAL_SIZE, test_size=TEST_SIZE):
     """Create train, validation, and test data loaders.
-    
-    Parameters
-    ----------
-    data : np.ndarray
-        Input data
-    labels : np.ndarray
-        Target labels
-    batch_size : int, default from config
-        Batch size for data loaders
-    test_size : float, default from config
-        Proportion of data to use for testing
-    val_size : float, default from config
-        Proportion of remaining data to use for validation
-        
-    Returns
-    -------
-    tuple
-        (train_loader, val_loader, test_loader) tuple
     """
+    temp_size = val_size + test_size
     X_train, X_temp, y_train, y_temp = train_test_split(
-        data, labels, test_size=test_size, stratify=labels
+        data, labels, test_size=temp_size, stratify=labels
     )
+    
+    test_ratio = test_size / temp_size  
     X_val, X_test, y_val, y_test = train_test_split(
-        X_temp, y_temp, test_size=val_size, stratify=y_temp
+        X_temp, y_temp, test_size=test_ratio, stratify=y_temp
     )
     
     train_loader = DataLoader(

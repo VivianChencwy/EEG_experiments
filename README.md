@@ -1,129 +1,136 @@
-# EEG Experiments - Refactored Code
+# EEG Oddball Classification Experiments
 
-这是一个重构后的EEG实验代码库，用于处理P3和Active Visual Oddball（AVO）数据集的分类任务。
+A modular Python framework for EEG classification experiments using P3 and Active Visual Oddball (AVO) datasets. This codebase supports both individual subject training and cross-dataset generalization experiments with multiple neural network architectures.
 
-## 文件结构
+## Installation
 
-```
-├── config.py           # 配置文件，包含所有实验参数
-├── constants.py        # 常量定义，包含通道名称等
-├── preprocessor.py     # 预处理器模块
-├── models.py          # 模型定义和训练相关函数
-├── utils.py           # 工具函数模块
-├── experiment.py      # 实验逻辑模块
-├── main.py            # 主程序入口
-├── experiment_logger.py # 实验日志记录器（原有文件）
-└── README.md          # 说明文档
-```
+1. **Clone the repository**:
+   
+   ```bash
+   git clone <repository-url>
+   cd EEG_experiments
+   ```
+   
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## 主要改进
+3. **Set up data paths** in `config.py`:
+   
+   ```python
+   P3_DATA_DIR = "path/to/your/P3/data"
+   AVO_DATA_DIR = "path/to/your/AVO/data"
+   ```
 
-1. **模块化设计**：将单一的大文件拆分为多个功能明确的模块
-2. **配置分离**：所有配置参数集中在`config.py`中，便于修改
-3. **类型修复**：修复了原代码中的类型错误和linter问题
-4. **文档完善**：每个函数都有详细的docstring说明
-5. **代码复用**：提取了公共功能到工具函数中
+## Quick Start
 
-## 使用方法
-
-### 1. 配置实验参数
-
-在`config.py`中修改实验配置：
-
-```python
-# 数据集选择
-data_dir = P3_DATA_DIR  # 或 AVO_DATA_DIR
-dataset = 'P3 Raw Data BIDS-Compatible'  # 或 'ds005863'
-use_combined_datasets = False  # 是否使用联合数据集
-
-# 实验参数
-electrode_list = 'common'  # 或 'all'
-classifier = 'ShallowFBCSPNet'  # 或 'lda'
-separate_subject_classification = False  # 是否分别训练每个subject
-```
-
-### 2. 运行实验
+### Basic Usage
 
 ```bash
 python main.py
 ```
 
-### 3. 实验配置选项
+The experiment configuration is controlled through `config.py`. Here are the key parameters:
 
-#### 数据集选项：
-- **Option 1**: 仅使用P3数据集
-- **Option 2**: 仅使用AVO数据集  
-- **Option 3**: 使用联合数据集（P3+AVO）
+### Configuration Options
 
-#### 电极配置：
-- `'common'`: 使用两个数据集的公共电极
-- `'all'`: 使用数据集特定的所有电极
+#### 1. Dataset Selection
+```python
+# Single dataset experiments
+data_dir = P3_DATA_DIR  
+dataset = 'P3 Raw Data BIDS-Compatible'
+use_combined_datasets = False
 
-#### 分类器选择：
-- `'ShallowFBCSPNet'`: 深度学习模型
-- `'lda'`: 线性判别分析
+# Combined dataset experiments  
+use_combined_datasets = True  # Uses both P3 and AVO
+```
 
-#### 训练策略：
-- `separate_subject_classification=True`: 为每个subject分别训练模型
-- `separate_subject_classification=False`: 使用pooled data训练单个模型
+#### 2. Training Strategy
+```python
+# Pooled training: All subjects' data combined into one model
+separate_subject_classification = False
 
-## 代码结构说明
+# Individual training: Each subject gets their own model  
+separate_subject_classification = True
+```
 
-### config.py
-- 所有实验配置参数
-- 超参数设置
-- 路径配置
+#### 3. Electrode Configuration
+```python
+# Use common electrodes across datasets (recommended for combined experiments)
+electrode_list = 'common'  
 
-### constants.py
-- 电极通道名称定义
-- 事件代码常量
-- 数据处理常量
+# Use all available electrodes for single dataset
+electrode_list = 'all'
+```
 
-### preprocessor.py
-- `OddballPreprocessor`类：用于EEG数据预处理
-- 包含滤波、重采样、事件提取等功能
+#### 4. Classifier Selection
+```python
+# Deep learning approach (recommended)
+classifier = 'ShallowFBCSPNet'
 
-### models.py
-- 模型创建函数
-- 数据标准化函数
-- 早停机制
-- 模型训练和评估函数
+# Traditional machine learning
+classifier = 'lda'  # Linear Discriminant Analysis
+```
 
-### utils.py
-- 数据加载工具函数
-- 统计计算函数
-- 数据分割和DataLoader创建
-- 通用实验运行函数
+#### 5. Custom Hyperparameters
 
-### experiment.py
-- 联合数据集实验逻辑
-- 单数据集实验逻辑
-- 分离subject实验逻辑
+```python
+# Training configuration
+BATCH_SIZE = 64
+MAX_EPOCHS = 100  
+LEARNING_RATE = 0.001
+TRAIN_SIZE = 0.6 
+VAL_SIZE = 0.2    
+TEST_SIZE = 0.2   
 
-### main.py
-- 主程序入口
-- 实验配置验证
-- 日志设置
-- 实验流程控制
+# Reproducibility
+seeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # Multiple seeds for robust results
+```
 
-## 输出结果
+### Log Files
 
-实验运行后会生成：
-- 控制台输出：实时进度和结果
-- 日志文件：详细的实验记录（在`log/`目录）
-- 统计结果：平均准确率、置信区间、最佳/最差subject
+Detailed logs are saved in the `./log/` directory with timestamps and configuration:
+```
+log/Combined_clf-ShallowFBCSPNet_sep-False_el-common_results_20241201_143022.log
+```
 
-## 注意事项
+### Adding New Datasets
 
-1. 确保所有依赖包已安装
-2. 检查数据路径配置是否正确
-3. 联合数据集实验会自动使用公共电极
-4. 实验结果与原始代码完全一致
+1. **Add preprocessing logic** in `preprocessor.py`
+2. **Update constants** in `constants.py` 
+3. **Modify experiment logic** in `experiment.py`
+4. **Update configuration** in `config.py`
 
-## 扩展性
+### Adding New Models
 
-新的重构结构使得代码更容易扩展：
-- 添加新的预处理器：在`preprocessor.py`中添加新类
-- 添加新的模型：在`models.py`中添加新的模型创建函数
-- 添加新的数据集：在相应模块中添加处理逻辑
-- 修改实验流程：在`experiment.py`中添加新的实验函数 
+1. **Add model creation** in `models.py`:
+
+   ```python
+   def create_model(n_channels, is_lda=False):
+       if is_lda:
+           return LinearDiscriminantAnalysis()
+       # Add your custom model here
+       return YourCustomModel(n_channels)
+   ```
+
+2. **Update config.py**:
+
+   ```python
+   classifier = 'YourCustomModel'
+   ```
+
+## Code Structure
+
+```
+├── config.py           # All experiment parameters and hyperparameters
+├── constants.py        # Channel names and event code definitions  
+├── preprocessor.py     # OddballPreprocessor class for EEG data processing
+├── models.py          # Model creation, training, and evaluation functions
+├── utils.py           # Data loading, statistics, and utility functions
+├── experiment.py      # Core experiment logic and training procedures
+├── main.py            # Main entry point and experiment orchestration
+├── experiment_logger.py # Logging and result tracking utilities
+└── requirements.txt   # Python package dependencies
+```
+

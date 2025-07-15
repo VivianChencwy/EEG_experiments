@@ -12,133 +12,192 @@ from eegdash.data_utils import EEGBIDSDataset
 from config import (
     P3_DATA_DIR, AVO_DATA_DIR, BATCH_SIZE, seeds, 
     use_combined_datasets, separate_subject_classification, 
-    electrode_list, classifier
+    electrode_list, classifier, VAL_SIZE, TEST_SIZE
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
 from models import create_model, train_model, evaluate, normalize_data
-from utils import (
-    get_channel_list, process_subject_data, create_data_loaders,
-    run_experiment_with_seed, calculate_statistics, print_statistics
-)
-from experiment_logger import log_individual_results, log_section_header
+from utils import run_experiment_with_seed, create_data_loaders, calculate_statistics, print_statistics, process_subject_data
+from experiment_logger import log_error, log_individual_results, log_section_header
 
 
-def train_combined_model(p3_dir, avo_dataset, channels, logger):
-    """Train a combined model using both P3 and AVO datasets.
+def get_dataset_subjects(dataset_type, dataset_obj):
+    if dataset_type == 'P3':
+        return sorted([d for d in os.listdir(dataset_obj) if d.startswith('sub-')])
+    elif dataset_type == 'AVO':
+        all_files = [str(f) for f in dataset_obj.get_files()]
+        return sorted(list(set([f.split('sub-')[1][:3] for f in all_files if 'sub-' in f])))
+    else:
+        raise ValueError(f"Unknown dataset_type: {dataset_type}")
+
+
+def process_dataset_subjects(dataset_info, dataset_type, prefix, channels, logger,
+                           all_data, all_labels, subject_ranges, subject_ids, start_idx):
+    """
+    Process subjects from a single dataset.
+    """
+    dataset_obj, subject_list = dataset_info
+    preprocessor = OddballPreprocessor(channels)
     
-    Parameters
-    ----------
-    p3_dir : str
-        Path to P3 dataset directory
-    avo_dataset : EEGBIDSDataset
-        AVO dataset object
-    channels : list
-        List of channel names to use
-    logger : logging.Logger
-        Logger for experiment tracking
+    for subject_id in subject_list:
+        print(f"Loading {dataset_type} subject {subject_id} ...", flush=True)
+        data, labels = process_subject_data(subject_id, dataset_obj, preprocessor, logger, dataset_type=dataset_type)
         
-    Returns
-    -------
-    dict
-        Dictionary of final accuracies per subject
+        if data is not None and labels is not None:
+            # Standardize label format
+            if labels.ndim > 1:
+                labels = np.argmax(labels, axis=1)
+            labels = labels.squeeze()
+            
+            # Add to combined dataset
+            all_data.append(data)
+            all_labels.append(labels)
+            end_idx = start_idx + len(data)
+            subject_ranges.append((start_idx, end_idx))
+            subject_ids.append(f"{prefix}_{subject_id}")
+            start_idx = end_idx
+    
+    return start_idx
+
+
+def run_experiment(datasets, training_mode, channels, logger, **kwargs):
+    """
+    Unified experiment training function with parameter-controlled experiment configurations
     """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    # Get configuration from kwargs
+    p3_dir = kwargs.get('p3_dir', P3_DATA_DIR)
+    avo_dir = kwargs.get('avo_dir', AVO_DATA_DIR) 
+    exp_classifier = kwargs.get('classifier', classifier)
+    exp_seeds = kwargs.get('seeds', seeds)
+    
+    if training_mode == 'separate':
+        # Individual training mode: each subject trains a separate model
+        return _run_separate_training(datasets, channels, logger, device, 
+                                    p3_dir, avo_dir, exp_classifier, exp_seeds)
+    else:
+        # Pooled training mode: all selected datasets' subjects train one combined model
+        return _run_pooled_training(datasets, channels, logger, device,
+                                  p3_dir, avo_dir, exp_classifier, exp_seeds)
+
+
+def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
+    """Individual training mode: each subject trains independently"""
+    all_accuracies = {}
+    
+    for dataset_type in datasets:
+        if dataset_type == 'P3':
+            dataset_dir = p3_dir
+            subject_list = get_dataset_subjects('P3', p3_dir)
+        elif dataset_type == 'AVO':
+            dataset_dir = avo_dir
+            avo_dataset = EEGBIDSDataset(data_dir=avo_dir, dataset='ds005863')
+            subject_list = get_dataset_subjects('AVO', avo_dataset)
+        
+        preprocessor = OddballPreprocessor(channels)
+        
+        for i, subject in enumerate(subject_list):
+            if dataset_type == 'P3':
+                data, labels = process_subject_data(subject, dataset_dir, preprocessor, logger, dataset_type='P3')
+                subject_key = subject
+            else:  # AVO
+                data, labels = process_subject_data(subject, avo_dataset, preprocessor, logger, dataset_type='AVO')
+                subject_key = f"sub-{subject}"
+            
+            if data is None:
+                continue
+            
+            # Create data loaders for the current subject
+            train_loader, val_loader, test_loader = create_data_loaders(data, labels)
+            
+            # Multi-seed training
+            subject_accuracies_seed = []
+            for seed in exp_seeds:
+                acc, _ = run_experiment_with_seed(
+                    train_loader, val_loader, test_loader, len(channels), device, seed, 
+                    exp_classifier, print_model_summary=(i == 0 and seed == exp_seeds[0])
+                )
+                subject_accuracies_seed.append(acc)
+            
+            # Store average accuracy
+            final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
+            all_accuracies[final_key] = np.mean(subject_accuracies_seed)
+            log_individual_results(logger, dataset_type, final_key, all_accuracies[final_key])
+    
+    return all_accuracies
+
+
+def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
+    """Pooled training mode: all subject data combined to train one model"""
     all_data = []
     all_labels = []
     subject_ranges = []
     subject_ids = []
     start_idx = 0
     
-    # Process P3 subjects
-    p3_preprocessor = OddballPreprocessor(channels)
-    for subject_dir in sorted(os.listdir(p3_dir)):
-        if not subject_dir.startswith('sub-'):
-            continue
-        print(f"Loading P3 subject {subject_dir} ...", flush=True)
-        data, labels = process_subject_data(subject_dir, p3_dir, p3_preprocessor, logger, dataset_type='P3')
-        if data is not None and labels is not None:
-            if labels.ndim > 1:
-                labels = np.argmax(labels, axis=1)
-            labels = labels.squeeze()
-            all_data.append(data)
-            all_labels.append(labels)
-            end_idx = start_idx + len(data)
-            subject_ranges.append((start_idx, end_idx))
-            subject_ids.append(f"P3_{subject_dir}")
-            start_idx = end_idx
-    
-    # Process AVO subjects
-    avo_preprocessor = OddballPreprocessor(channels)
-    all_files = [str(f) for f in avo_dataset.get_files()]
-    all_subjects = sorted(list(set([f.split('sub-')[1][:3] for f in all_files if 'sub-' in f])))
-    
-    for subject_id in all_subjects:
-        print(f"Loading AVO subject sub-{subject_id} ...", flush=True)
-        data, labels = process_subject_data(subject_id, avo_dataset, avo_preprocessor, logger, dataset_type='AVO')
-        if data is not None and labels is not None:
-            if labels.ndim > 1:
-                labels = np.argmax(labels, axis=1)
-            labels = labels.squeeze()
-            all_data.append(data)
-            all_labels.append(labels)
-            end_idx = start_idx + len(data)
-            subject_ranges.append((start_idx, end_idx))
-            subject_ids.append(f"AVO_sub-{subject_id}")
-            start_idx = end_idx
+    # Collect data from all specified datasets
+    for dataset_type in datasets:
+        if dataset_type == 'P3':
+            subjects = get_dataset_subjects('P3', p3_dir)
+            prefix = 'P3' if len(datasets) > 1 else ''
+            start_idx = process_dataset_subjects(
+                (p3_dir, subjects), dataset_type, prefix, 
+                channels, logger, all_data, all_labels, subject_ranges, subject_ids, start_idx
+            )
+        elif dataset_type == 'AVO':
+            avo_dataset = EEGBIDSDataset(data_dir=avo_dir, dataset='ds005863')
+            subjects = get_dataset_subjects('AVO', avo_dataset)
+            prefix = 'AVO' if len(datasets) > 1 else 'sub'
+            start_idx = process_dataset_subjects(
+                (avo_dataset, subjects), dataset_type, prefix,
+                channels, logger, all_data, all_labels, subject_ranges, subject_ids, start_idx
+            )
     
     if not all_data:
-        logger.error("No data available for combined model training")
+        logger.error("No data available for training")
         return {}
     
     # Combine all data
     all_data = np.concatenate(all_data)
     all_labels = np.concatenate(all_labels)
     
-    # Create splits
+    # Create data splits
+    temp_size = VAL_SIZE + TEST_SIZE
     train_indices, temp_indices = train_test_split(
-        range(len(all_data)), test_size=0.4, stratify=all_labels
+        range(len(all_data)), test_size=temp_size, stratify=all_labels
     )
+    test_ratio = TEST_SIZE / temp_size
     val_indices, test_indices = train_test_split(
-        temp_indices, test_size=0.5, stratify=all_labels[temp_indices]
+        temp_indices, test_size=test_ratio, stratify=all_labels[temp_indices]
     )
     
-    # Ensure indices are numpy arrays for vectorized comparisons
     train_indices = np.array(train_indices)
     val_indices = np.array(val_indices)
     test_indices = np.array(test_indices)
     
     # Create data loaders
     train_loader = DataLoader(
-        TensorDataset(
-            torch.FloatTensor(all_data[train_indices]),
-            torch.LongTensor(all_labels[train_indices])
-        ),
+        TensorDataset(torch.FloatTensor(all_data[train_indices]), torch.LongTensor(all_labels[train_indices])),
         batch_size=BATCH_SIZE, shuffle=True
     )
     val_loader = DataLoader(
-        TensorDataset(
-            torch.FloatTensor(all_data[val_indices]),
-            torch.LongTensor(all_labels[val_indices])
-        ),
+        TensorDataset(torch.FloatTensor(all_data[val_indices]), torch.LongTensor(all_labels[val_indices])),
         batch_size=BATCH_SIZE, shuffle=False
     )
     test_loader = DataLoader(
-        TensorDataset(
-            torch.FloatTensor(all_data[test_indices]),
-            torch.LongTensor(all_labels[test_indices])
-        ),
+        TensorDataset(torch.FloatTensor(all_data[test_indices]), torch.LongTensor(all_labels[test_indices])),
         batch_size=BATCH_SIZE, shuffle=False
     )
     
-    # Train models with different seeds
+    # Multi-seed training
     model_accuracies = {}
-    for seed in seeds:
-        print(f"Training combined model with seed {seed} ...", flush=True)
-        is_lda = classifier.lower() == 'lda'
-
+    for seed in exp_seeds:
+        print(f"Training pooled model (datasets: {datasets}) with seed {seed} ...", flush=True)
+        
+        is_lda = exp_classifier.lower() == 'lda'
         if is_lda:
-            # Train LDA with seed control
+            # LDA training
             np.random.seed(seed)
             X_train = []
             y_train = []
@@ -147,262 +206,89 @@ def train_combined_model(p3_dir, avo_dataset, channels, logger):
                 y_train.append(batch_y.numpy())
             X_train = np.concatenate(X_train)
             y_train = np.concatenate(y_train)
-            lda_model = create_model(len(channels), is_lda=True)
-            lda_model.fit(X_train, y_train)
-            model = lda_model
+            
+            model = create_model(len(channels), is_lda=True)
+            model.fit(X_train, y_train)
         else:
-            # Train neural network
+            # Neural network training
             torch.manual_seed(seed)
             np.random.seed(seed)
-            nn_model = create_model(len(channels), is_lda=False)
-            nn_model = nn_model.to(device)
+            model = create_model(len(channels), is_lda=False)
+            model = model.to(device)
             
-            # Print model summary only once (for the first seed)
-            if seed == seeds[0]:
-                print("\n" + "="*60)
-                print("ShallowFBCSPNet Model Architecture Summary (Combined Dataset)")
+            if seed == exp_seeds[0]:
+                print(f"\nModel Architecture Summary (Datasets: {datasets})")
                 print("="*60)
-                print(f"Model: {nn_model}")
+                print(f"Model type: {type(model).__name__}")
                 print(f"Input channels: {len(channels)}")
                 print(f"Input shape: (batch_size, {len(channels)}, 128)")
                 print("="*60 + "\n")
             
-            train_model(nn_model, train_loader, val_loader, test_loader, device, is_lda=False)
-            model = nn_model
-
-        # Evaluate per subject
+            train_model(model, train_loader, val_loader, test_loader, device, is_lda=False)
+        
+        # Evaluate each subject
         subject_accuracies = {}
-        if not is_lda:
-            with torch.no_grad():
-                for subject_idx, (start_idx, end_idx) in enumerate(subject_ranges):
-                    mask = (test_indices >= start_idx) & (test_indices < end_idx)
-                    subject_test_indices = test_indices[mask]
-                    if len(subject_test_indices) > 0:
-                        subject_data = torch.FloatTensor(all_data[subject_test_indices])
-                        subject_labels = torch.LongTensor(all_labels[subject_test_indices])
-                        subject_loader = DataLoader(
-                            TensorDataset(subject_data, subject_labels),
-                            batch_size=BATCH_SIZE, shuffle=False
-                        )
-                        subject_acc = evaluate(model, subject_loader, device)
-                        subject_accuracies[subject_ids[subject_idx]] = subject_acc
-        else:
-            for subject_idx, (start_idx, end_idx) in enumerate(subject_ranges):
-                mask = (test_indices >= start_idx) & (test_indices < end_idx)
-                subject_test_indices = test_indices[mask]
-                if len(subject_test_indices) > 0:
-                    subject_data = all_data[subject_test_indices]
-                    subject_labels = all_labels[subject_test_indices]
-                    X = subject_data.reshape(subject_data.shape[0], -1)
-                    y = subject_labels
-                    lda_predictions = model.predict(X)
-                    subject_acc = np.mean(lda_predictions == y)
-                    subject_accuracies[subject_ids[subject_idx]] = subject_acc
+        for subject_idx, (s_start, s_end) in enumerate(subject_ranges):
+            mask = (test_indices >= s_start) & (test_indices < s_end)
+            subject_test_indices = test_indices[mask]
+            if len(subject_test_indices) == 0:
+                continue
+            
+            if is_lda:
+                X_subj = all_data[subject_test_indices].reshape(len(subject_test_indices), -1)
+                y_subj = all_labels[subject_test_indices]
+                predictions = model.predict(X_subj)
+                acc = np.mean(predictions == y_subj)
+            else:
+                X_subj = torch.FloatTensor(all_data[subject_test_indices])
+                y_subj = torch.LongTensor(all_labels[subject_test_indices])
+                subj_loader = DataLoader(TensorDataset(X_subj, y_subj), batch_size=BATCH_SIZE, shuffle=False)
+                with torch.no_grad():
+                    acc = evaluate(model, subj_loader, device)
+            
+            subject_accuracies[subject_ids[subject_idx]] = acc
         
         model_accuracies[f"seed_{seed}"] = subject_accuracies
     
-    # Average across seeds
+    # Cross-seed averaging
     final_accuracies = {}
     for subject_id in subject_ids:
-        accuracies = [model_accuracies[f"seed_{seed}"][subject_id] for seed in seeds]
-        final_accuracies[subject_id] = np.mean(accuracies)
+        accs = [model_accuracies[f"seed_{seed}"].get(subject_id, 0) for seed in exp_seeds]
+        if accs:
+            final_accuracies[subject_id] = np.mean(accs)
     
     return final_accuracies
 
 
+# Backward compatibility wrapper functions
+def train_combined_model(p3_dir, avo_dataset, channels, logger):
+    return run_experiment(
+        datasets=['P3', 'AVO'], 
+        training_mode='pooled',
+        channels=channels,
+        logger=logger,
+        p3_dir=p3_dir,
+        avo_dir=avo_dataset
+    )
+
+
 def train_single_dataset_model(dataset_dir, preprocess_fn, channel_list, logger, dataset_type):
-    """Train a single dataset model with pooled subjects.
-    
-    Parameters
-    ----------
-    dataset_dir : str
-        Path to dataset directory
-    preprocess_fn : OddballPreprocessor
-        Preprocessor instance
-    channel_list : list
-        List of channel names
-    logger : logging.Logger
-        Logger for experiment tracking
-    dataset_type : str
-        Type of dataset ('P3' or 'AVO')
-        
-    Returns
-    -------
-    dict
-        Dictionary of final accuracies per subject
-    """
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    all_data, all_labels = [], []
-    subject_ranges, subject_ids = [], []
-    start_idx = 0
-
-    # Process subjects based on dataset type
-    if dataset_type == 'P3':
-        for subject_dir in sorted(os.listdir(dataset_dir)):
-            if not subject_dir.startswith('sub-'):
-                continue
-            data, labels = process_subject_data(subject_dir, dataset_dir, preprocess_fn, logger, dataset_type='P3')
-            if data is None or labels is None:
-                continue
-            if labels.ndim > 1:
-                labels = np.argmax(labels, axis=1)
-            labels = labels.squeeze()
-            all_data.append(data)
-            all_labels.append(labels)
-            end_idx = start_idx + len(data)
-            subject_ranges.append((start_idx, end_idx))
-            subject_ids.append(subject_dir)
-            start_idx = end_idx
-    elif dataset_type == 'AVO':
-        avo_dataset = EEGBIDSDataset(data_dir=dataset_dir, dataset='ds005863')
-        all_files = [str(f) for f in avo_dataset.get_files()]
-        all_subjects = sorted(list(set([f.split('sub-')[1][:3] for f in all_files if 'sub-' in f])))
-        for subject_id in all_subjects:
-            data, labels = process_subject_data(subject_id, avo_dataset, preprocess_fn, logger, dataset_type='AVO')
-            if data is None or labels is None:
-                continue
-            if labels.ndim > 1:
-                labels = np.argmax(labels, axis=1)
-            labels = labels.squeeze()
-            all_data.append(data)
-            all_labels.append(labels)
-            end_idx = start_idx + len(data)
-            subject_ranges.append((start_idx, end_idx))
-            subject_ids.append(f"sub-{subject_id}")
-            start_idx = end_idx
-
-    if not all_data:
-        logger.error(f"No data available for pooled model training in {dataset_type} dataset.")
-        return {}
-
-    # Combine data and create splits
-    all_data = np.concatenate(all_data)
-    all_labels = np.concatenate(all_labels)
-    
-    train_idx, temp_idx = train_test_split(
-        range(len(all_data)), test_size=0.4, stratify=all_labels
+    return run_experiment(
+        datasets=[dataset_type],
+        training_mode='pooled', 
+        channels=channel_list,
+        logger=logger,
+        p3_dir=dataset_dir if dataset_type == 'P3' else P3_DATA_DIR,
+        avo_dir=dataset_dir if dataset_type == 'AVO' else AVO_DATA_DIR
     )
-    val_idx, test_idx = train_test_split(
-        temp_idx, test_size=0.5, stratify=all_labels[temp_idx]
-    )
-    
-    train_idx, val_idx, test_idx = map(np.array, (train_idx, val_idx, test_idx))
-    
-    # Create data loaders
-    train_loader = DataLoader(TensorDataset(
-        torch.FloatTensor(all_data[train_idx]),
-        torch.LongTensor(all_labels[train_idx])
-    ), batch_size=BATCH_SIZE, shuffle=True)
-    
-    val_loader = DataLoader(TensorDataset(
-        torch.FloatTensor(all_data[val_idx]),
-        torch.LongTensor(all_labels[val_idx])
-    ), batch_size=BATCH_SIZE, shuffle=False)
-    
-    test_loader = DataLoader(TensorDataset(
-        torch.FloatTensor(all_data[test_idx]),
-        torch.LongTensor(all_labels[test_idx])
-    ), batch_size=BATCH_SIZE, shuffle=False)
-    
-    # Train models with different seeds
-    model_accuracies = {}
-    for seed in seeds:
-        print(f"Training pooled model with seed {seed} ...", flush=True)
-        acc_seed, model = run_experiment_with_seed(
-            train_loader, val_loader, test_loader, len(channel_list), device, seed, 
-            classifier, print_model_summary=(seed == seeds[0])
-        )
-        
-        # Evaluate per subject
-        subject_acc = {}
-        is_lda = classifier.lower() == 'lda'
-        for idx, (s_start, s_end) in enumerate(subject_ranges):
-            mask = (test_idx >= s_start) & (test_idx < s_end)
-            subj_indices = test_idx[mask]
-            if len(subj_indices) == 0:
-                continue
-            
-            if is_lda:
-                X_subj = all_data[subj_indices].reshape(len(subj_indices), -1)
-                y_subj = all_labels[subj_indices]
-                lda_predictions = model.predict(X_subj)
-                acc = np.mean(lda_predictions == y_subj)
-                subject_acc[subject_ids[idx]] = acc
-            else:
-                X_subj = torch.FloatTensor(all_data[subj_indices])
-                y_subj = torch.LongTensor(all_labels[subj_indices])
-                subj_loader = DataLoader(TensorDataset(X_subj, y_subj), batch_size=BATCH_SIZE, shuffle=False)
-                with torch.no_grad():
-                    acc = evaluate(model, subj_loader, device)
-                    subject_acc[subject_ids[idx]] = acc
-        
-        model_accuracies[f'seed_{seed}'] = subject_acc
-    
-    # Average across seeds
-    final_acc = {}
-    for sid in subject_ids:
-        accs = [model_accuracies[f'seed_{s}'].get(sid, 0) for s in seeds]
-        if accs:
-            final_acc[sid] = np.mean(accs)
-    
-    return final_acc
 
 
 def run_separate_subject_experiments(dataset_dir, channels, logger, dataset_type):
-    """Run separate experiments for each subject.
-    
-    Parameters
-    ----------
-    dataset_dir : str
-        Path to dataset directory
-    channels : list
-        List of channel names
-    logger : logging.Logger
-        Logger for experiment tracking
-    dataset_type : str
-        Type of dataset ('P3' or 'AVO')
-        
-    Returns
-    -------
-    dict
-        Dictionary of accuracies per subject
-    """
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    preprocessor = OddballPreprocessor(channels)
-    accuracies = {}
-    
-    if dataset_type == 'P3':
-        subject_list = sorted([d for d in os.listdir(dataset_dir) if d.startswith('sub-')])
-    else:  # AVO
-        avo_dataset = EEGBIDSDataset(data_dir=dataset_dir, dataset='ds005863')
-        all_files = [str(f) for f in avo_dataset.get_files()]
-        subject_list = sorted(list(set([f.split('sub-')[1][:3] for f in all_files if 'sub-' in f])))
-    
-    for i, subject in enumerate(subject_list):
-        if dataset_type == 'P3':
-            subject_dir = subject
-            data, labels = process_subject_data(subject_dir, dataset_dir, preprocessor, logger, dataset_type='P3')
-        else:  # AVO
-            subject_id = subject
-            avo_dataset = EEGBIDSDataset(data_dir=dataset_dir, dataset='ds005863')
-            data, labels = process_subject_data(subject_id, avo_dataset, preprocessor, logger, dataset_type='AVO')
-        
-        if data is None:
-            continue
-        
-        # Create data loaders
-        train_loader, val_loader, test_loader = create_data_loaders(data, labels)
-        
-        # Train with multiple seeds
-        subject_accuracies_seed = [
-            run_experiment_with_seed(
-                train_loader, val_loader, test_loader, len(channels), device, seed, 
-                classifier, print_model_summary=(i == 0)
-            )[0] for seed in seeds
-        ]
-        
-        key = subject_dir if dataset_type == 'P3' else f"sub-{subject_id}"
-        accuracies[key] = np.mean(subject_accuracies_seed)
-        log_individual_results(logger, dataset_type, key, accuracies[key])
-    
-    return accuracies 
+    return run_experiment(
+        datasets=[dataset_type],
+        training_mode='separate',
+        channels=channels, 
+        logger=logger,
+        p3_dir=dataset_dir if dataset_type == 'P3' else P3_DATA_DIR,
+        avo_dir=dataset_dir if dataset_type == 'AVO' else AVO_DATA_DIR
+    ) 

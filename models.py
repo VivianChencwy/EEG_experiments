@@ -26,7 +26,6 @@ def create_model(n_channels, is_lda=False, random_state=None):
     Returns
     -------
     model : sklearn.LinearDiscriminantAnalysis or braindecode.models.ShallowFBCSPNet
-        The created model
     """
     if is_lda:
         return LDA()
@@ -35,22 +34,13 @@ def create_model(n_channels, is_lda=False, random_state=None):
             in_chans=n_channels,
             n_classes=2,
             input_window_samples=INPUT_WINDOW_SAMPLES,
-            final_conv_length=30  # Fixed: use int instead of 'auto'
+            final_conv_length='auto'  # Let model auto-calculate based on input
         )
 
 
 def normalize_data(x):
-    """Normalize data by z-score normalization across time dimension.
-    
-    Parameters
-    ----------
-    x : torch.Tensor
-        Input tensor of shape (batch_size, channels, time_points)
-        
-    Returns
-    -------
-    torch.Tensor
-        Normalized tensor
+    """
+    Normalize data by z-score normalization across time dimension.
     """
     mean = x.mean(dim=2, keepdim=True)
     std = x.std(dim=2, keepdim=True) + 1e-7
@@ -58,24 +48,6 @@ def normalize_data(x):
 
 
 def early_stopping(val_acc, model, state, patience=5):
-    """Early stopping helper function.
-    
-    Parameters
-    ----------
-    val_acc : float
-        Current validation accuracy
-    model : torch.nn.Module
-        Current model
-    state : dict
-        State dictionary to track best performance
-    patience : int, default 5
-        Number of epochs to wait before stopping
-        
-    Returns
-    -------
-    bool
-        Whether to stop training
-    """
     if 'best_val_acc' not in state:
         state['best_val_acc'] = 0
         state['counter'] = 0
@@ -94,24 +66,6 @@ def early_stopping(val_acc, model, state, patience=5):
 
 
 def evaluate(model, loader, device, is_lda=False):
-    """Evaluate model performance on a dataset.
-    
-    Parameters
-    ----------
-    model : sklearn.LinearDiscriminantAnalysis or torch.nn.Module
-        Model to evaluate
-    loader : torch.utils.data.DataLoader
-        Data loader for evaluation
-    device : torch.device
-        Device to run evaluation on
-    is_lda : bool, default False
-        Whether the model is LDA
-        
-    Returns
-    -------
-    float
-        Accuracy score
-    """
     if is_lda:
         X = []
         y = []
@@ -149,30 +103,6 @@ def evaluate(model, loader, device, is_lda=False):
 
 
 def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=100):
-    """Train a model and return test accuracy.
-    
-    Parameters
-    ----------
-    model : sklearn.LinearDiscriminantAnalysis or torch.nn.Module
-        Model to train
-    train_loader : torch.utils.data.DataLoader
-        Training data loader
-    val_loader : torch.utils.data.DataLoader
-        Validation data loader
-    test_loader : torch.utils.data.DataLoader
-        Test data loader
-    device : torch.device
-        Device to train on
-    is_lda : bool, default False
-        Whether the model is LDA
-    max_epochs : int, default 100
-        Maximum number of training epochs
-        
-    Returns
-    -------
-    float
-        Test accuracy
-    """
     if is_lda:
         # Prepare data for LDA
         X_train = []

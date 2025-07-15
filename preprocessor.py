@@ -15,17 +15,7 @@ from config import (
 
 
 class OddballPreprocessor(Preprocessor):
-    """Generic preprocessor for oddball-paradigm EEG data.
-
-    Parameters
-    ----------
-    eeg_channels : list[str]
-        Channel names (case-insensitive) to select from the raw object.
-    trial_start_offset_samples : int, default from config
-        Offset (in samples) from event onset to start the analysis window.
-    trial_stop_offset_samples : int, default from config
-        Offset (in samples) from event onset to stop the analysis window.
-    """
+    """Generic preprocessor for oddball-paradigm EEG data."""
 
     def __init__(self, eeg_channels, 
                  trial_start_offset_samples=TRIAL_START_OFFSET_SAMPLES,
