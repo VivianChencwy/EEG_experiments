@@ -1,0 +1,168 @@
+2025-07-14 23:02:46 - 
+Experiment Configuration:
+2025-07-14 23:02:46 - --------------------------------------------------
+2025-07-14 23:02:46 - dataset: use_combined_datasets
+2025-07-14 23:02:46 - use_combined_datasets: True
+2025-07-14 23:02:46 - electrode_list: common
+2025-07-14 23:02:46 - classifier: lda
+2025-07-14 23:02:46 - separate_subject_classification: False
+2025-07-14 23:02:46 - seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+2025-07-14 23:02:46 - --------------------------------------------------
+2025-07-14 23:02:46 - 
+==================================================
+2025-07-14 23:02:46 - Processing Combined P3 and AVO Datasets
+2025-07-14 23:02:46 - ==================================================
+2025-07-14 23:05:22 - Subject: P3_sub-001, Accuracy: 92.308%
+2025-07-14 23:05:22 - Subject: P3_sub-002, Accuracy: 93.827%
+2025-07-14 23:05:22 - Subject: P3_sub-003, Accuracy: 87.324%
+2025-07-14 23:05:22 - Subject: P3_sub-004, Accuracy: 96.774%
+2025-07-14 23:05:22 - Subject: P3_sub-005, Accuracy: 96.203%
+2025-07-14 23:05:22 - Subject: P3_sub-006, Accuracy: 94.118%
+2025-07-14 23:05:22 - Subject: P3_sub-007, Accuracy: 97.590%
+2025-07-14 23:05:22 - Subject: P3_sub-008, Accuracy: 93.939%
+2025-07-14 23:05:22 - Subject: P3_sub-009, Accuracy: 97.403%
+2025-07-14 23:05:22 - Subject: P3_sub-010, Accuracy: 92.500%
+2025-07-14 23:05:22 - Subject: P3_sub-011, Accuracy: 94.444%
+2025-07-14 23:05:22 - Subject: P3_sub-012, Accuracy: 98.936%
+2025-07-14 23:05:22 - Subject: P3_sub-013, Accuracy: 95.455%
+2025-07-14 23:05:22 - Subject: P3_sub-014, Accuracy: 100.000%
+2025-07-14 23:05:22 - Subject: P3_sub-015, Accuracy: 95.714%
+2025-07-14 23:05:22 - Subject: P3_sub-016, Accuracy: 97.403%
+2025-07-14 23:05:22 - Subject: P3_sub-017, Accuracy: 92.632%
+2025-07-14 23:05:22 - Subject: P3_sub-018, Accuracy: 94.186%
+2025-07-14 23:05:22 - Subject: P3_sub-019, Accuracy: 92.237%
+2025-07-14 23:05:22 - Subject: P3_sub-020, Accuracy: 91.954%
+2025-07-14 23:05:22 - Subject: P3_sub-021, Accuracy: 97.647%
+2025-07-14 23:05:22 - Subject: P3_sub-022, Accuracy: 95.699%
+2025-07-14 23:05:22 - Subject: P3_sub-023, Accuracy: 96.296%
+2025-07-14 23:05:22 - Subject: P3_sub-024, Accuracy: 93.976%
+2025-07-14 23:05:22 - Subject: P3_sub-025, Accuracy: 91.860%
+2025-07-14 23:05:22 - Subject: P3_sub-026, Accuracy: 94.521%
+2025-07-14 23:05:22 - Subject: P3_sub-027, Accuracy: 100.000%
+2025-07-14 23:05:22 - Subject: P3_sub-028, Accuracy: 91.358%
+2025-07-14 23:05:22 - Subject: P3_sub-029, Accuracy: 96.296%
+2025-07-14 23:05:22 - Subject: P3_sub-030, Accuracy: 81.579%
+2025-07-14 23:05:22 - Subject: P3_sub-031, Accuracy: 94.872%
+2025-07-14 23:05:22 - Subject: P3_sub-032, Accuracy: 95.000%
+2025-07-14 23:05:22 - Subject: P3_sub-033, Accuracy: 97.561%
+2025-07-14 23:05:22 - Subject: P3_sub-034, Accuracy: 95.349%
+2025-07-14 23:05:22 - Subject: P3_sub-035, Accuracy: 91.045%
+2025-07-14 23:05:22 - Subject: P3_sub-036, Accuracy: 97.368%
+2025-07-14 23:05:22 - Subject: P3_sub-037, Accuracy: 94.872%
+2025-07-14 23:05:22 - Subject: P3_sub-038, Accuracy: 92.632%
+2025-07-14 23:05:22 - Subject: P3_sub-039, Accuracy: 95.455%
+2025-07-14 23:05:22 - Subject: P3_sub-040, Accuracy: 96.104%
+2025-07-14 23:05:22 - Subject: AVO_sub-001, Accuracy: 70.833%
+2025-07-14 23:05:22 - Subject: AVO_sub-002, Accuracy: 83.333%
+2025-07-14 23:05:22 - Subject: AVO_sub-003, Accuracy: 80.000%
+2025-07-14 23:05:22 - Subject: AVO_sub-004, Accuracy: 82.353%
+2025-07-14 23:05:22 - Subject: AVO_sub-005, Accuracy: 79.412%
+2025-07-14 23:05:22 - Subject: AVO_sub-006, Accuracy: 84.444%
+2025-07-14 23:05:22 - Subject: AVO_sub-007, Accuracy: 82.222%
+2025-07-14 23:05:22 - Subject: AVO_sub-008, Accuracy: 86.667%
+2025-07-14 23:05:22 - Subject: AVO_sub-009, Accuracy: 92.424%
+2025-07-14 23:05:22 - Subject: AVO_sub-010, Accuracy: 81.818%
+2025-07-14 23:05:22 - Subject: AVO_sub-011, Accuracy: 76.316%
+2025-07-14 23:05:22 - Subject: AVO_sub-012, Accuracy: 87.805%
+2025-07-14 23:05:22 - Subject: AVO_sub-013, Accuracy: 83.721%
+2025-07-14 23:05:22 - Subject: AVO_sub-014, Accuracy: 68.421%
+2025-07-14 23:05:22 - Subject: AVO_sub-015, Accuracy: 75.000%
+2025-07-14 23:05:22 - Subject: AVO_sub-016, Accuracy: 78.571%
+2025-07-14 23:05:22 - Subject: AVO_sub-017, Accuracy: 73.333%
+2025-07-14 23:05:22 - Subject: AVO_sub-018, Accuracy: 81.818%
+2025-07-14 23:05:22 - Subject: AVO_sub-019, Accuracy: 86.047%
+2025-07-14 23:05:22 - Subject: AVO_sub-020, Accuracy: 75.556%
+2025-07-14 23:05:22 - Subject: AVO_sub-021, Accuracy: 64.865%
+2025-07-14 23:05:22 - Subject: AVO_sub-022, Accuracy: 82.222%
+2025-07-14 23:05:22 - Subject: AVO_sub-023, Accuracy: 78.378%
+2025-07-14 23:05:22 - Subject: AVO_sub-024, Accuracy: 66.667%
+2025-07-14 23:05:22 - Subject: AVO_sub-025, Accuracy: 82.051%
+2025-07-14 23:05:22 - Subject: AVO_sub-026, Accuracy: 81.818%
+2025-07-14 23:05:22 - Subject: AVO_sub-027, Accuracy: 80.488%
+2025-07-14 23:05:22 - Subject: AVO_sub-028, Accuracy: 81.389%
+2025-07-14 23:05:22 - Subject: AVO_sub-029, Accuracy: 82.857%
+2025-07-14 23:05:22 - Subject: AVO_sub-030, Accuracy: 78.378%
+2025-07-14 23:05:22 - Subject: AVO_sub-031, Accuracy: 78.947%
+2025-07-14 23:05:22 - Subject: AVO_sub-032, Accuracy: 73.721%
+2025-07-14 23:05:22 - Subject: AVO_sub-033, Accuracy: 77.083%
+2025-07-14 23:05:22 - Subject: AVO_sub-034, Accuracy: 72.549%
+2025-07-14 23:05:22 - Subject: AVO_sub-035, Accuracy: 80.392%
+2025-07-14 23:05:22 - Subject: AVO_sub-036, Accuracy: 85.417%
+2025-07-14 23:05:22 - Subject: AVO_sub-037, Accuracy: 80.952%
+2025-07-14 23:05:22 - Subject: AVO_sub-038, Accuracy: 81.081%
+2025-07-14 23:05:22 - Subject: AVO_sub-039, Accuracy: 82.927%
+2025-07-14 23:05:22 - Subject: AVO_sub-040, Accuracy: 87.179%
+2025-07-14 23:05:22 - Subject: AVO_sub-041, Accuracy: 75.510%
+2025-07-14 23:05:22 - Subject: AVO_sub-042, Accuracy: 79.545%
+2025-07-14 23:05:22 - Subject: AVO_sub-043, Accuracy: 85.227%
+2025-07-14 23:05:22 - Subject: AVO_sub-044, Accuracy: 78.723%
+2025-07-14 23:05:22 - Subject: AVO_sub-045, Accuracy: 69.302%
+2025-07-14 23:05:22 - Subject: AVO_sub-046, Accuracy: 81.579%
+2025-07-14 23:05:22 - Subject: AVO_sub-047, Accuracy: 87.179%
+2025-07-14 23:05:22 - Subject: AVO_sub-048, Accuracy: 84.314%
+2025-07-14 23:05:22 - Subject: AVO_sub-049, Accuracy: 78.846%
+2025-07-14 23:05:22 - Subject: AVO_sub-050, Accuracy: 77.778%
+2025-07-14 23:05:22 - Subject: AVO_sub-051, Accuracy: 87.179%
+2025-07-14 23:05:22 - Subject: AVO_sub-052, Accuracy: 64.286%
+2025-07-14 23:05:22 - Subject: AVO_sub-053, Accuracy: 82.692%
+2025-07-14 23:05:22 - Subject: AVO_sub-054, Accuracy: 81.395%
+2025-07-14 23:05:22 - Subject: AVO_sub-056, Accuracy: 88.095%
+2025-07-14 23:05:22 - Subject: AVO_sub-057, Accuracy: 71.053%
+2025-07-14 23:05:22 - Subject: AVO_sub-058, Accuracy: 82.051%
+2025-07-14 23:05:22 - Subject: AVO_sub-059, Accuracy: 71.429%
+2025-07-14 23:05:22 - Subject: AVO_sub-060, Accuracy: 79.545%
+2025-07-14 23:05:22 - Subject: AVO_sub-061, Accuracy: 81.081%
+2025-07-14 23:05:22 - Subject: AVO_sub-062, Accuracy: 81.395%
+2025-07-14 23:05:22 - Subject: AVO_sub-063, Accuracy: 91.111%
+2025-07-14 23:05:22 - Subject: AVO_sub-064, Accuracy: 82.500%
+2025-07-14 23:05:22 - Subject: AVO_sub-065, Accuracy: 79.592%
+2025-07-14 23:05:22 - Subject: AVO_sub-066, Accuracy: 76.190%
+2025-07-14 23:05:22 - Subject: AVO_sub-067, Accuracy: 81.579%
+2025-07-14 23:05:22 - Subject: AVO_sub-068, Accuracy: 77.778%
+2025-07-14 23:05:22 - Subject: AVO_sub-069, Accuracy: 83.333%
+2025-07-14 23:05:22 - Subject: AVO_sub-070, Accuracy: 76.087%
+2025-07-14 23:05:22 - Subject: AVO_sub-071, Accuracy: 83.333%
+2025-07-14 23:05:22 - Subject: AVO_sub-073, Accuracy: 73.913%
+2025-07-14 23:05:22 - Subject: AVO_sub-074, Accuracy: 80.182%
+2025-07-14 23:05:22 - Subject: AVO_sub-075, Accuracy: 74.359%
+2025-07-14 23:05:22 - Subject: AVO_sub-076, Accuracy: 81.818%
+2025-07-14 23:05:22 - Subject: AVO_sub-077, Accuracy: 75.000%
+2025-07-14 23:05:22 - Subject: AVO_sub-078, Accuracy: 85.714%
+2025-07-14 23:05:22 - Subject: AVO_sub-079, Accuracy: 82.222%
+2025-07-14 23:05:22 - Subject: AVO_sub-080, Accuracy: 86.207%
+2025-07-14 23:05:22 - Subject: AVO_sub-081, Accuracy: 80.377%
+2025-07-14 23:05:22 - Subject: AVO_sub-082, Accuracy: 83.871%
+2025-07-14 23:05:22 - Subject: AVO_sub-083, Accuracy: 80.833%
+2025-07-14 23:05:22 - Subject: AVO_sub-111, Accuracy: 82.692%
+2025-07-14 23:05:22 - Subject: AVO_sub-112, Accuracy: 91.667%
+2025-07-14 23:05:22 - Subject: AVO_sub-113, Accuracy: 92.857%
+2025-07-14 23:05:22 - Subject: AVO_sub-114, Accuracy: 87.097%
+2025-07-14 23:05:22 - Subject: AVO_sub-115, Accuracy: 76.190%
+2025-07-14 23:05:22 - Subject: AVO_sub-116, Accuracy: 84.211%
+2025-07-14 23:05:22 - Subject: AVO_sub-117, Accuracy: 77.083%
+2025-07-14 23:05:22 - Subject: AVO_sub-118, Accuracy: 80.488%
+2025-07-14 23:05:22 - Subject: AVO_sub-119, Accuracy: 75.610%
+2025-07-14 23:05:22 - Subject: AVO_sub-120, Accuracy: 78.049%
+2025-07-14 23:05:22 - Subject: AVO_sub-121, Accuracy: 65.909%
+2025-07-14 23:05:22 - Subject: AVO_sub-122, Accuracy: 82.353%
+2025-07-14 23:05:22 - Subject: AVO_sub-123, Accuracy: 82.353%
+2025-07-14 23:05:22 - Subject: AVO_sub-124, Accuracy: 71.429%
+2025-07-14 23:05:22 - Subject: AVO_sub-125, Accuracy: 97.222%
+2025-07-14 23:05:22 - 
+Combined Model (All Subjects) Statistics:
+2025-07-14 23:05:22 - Mean Accuracy: 0.844
+2025-07-14 23:05:22 - 95% Confidence Interval: [0.830, 0.859]
+2025-07-14 23:05:22 - Best Subject: P3_sub-014 (1.000)
+2025-07-14 23:05:22 - Worst Subject: AVO_sub-052 (0.643)
+2025-07-14 23:05:22 - 
+Combined Model ¨C P3 Subjects Statistics:
+2025-07-14 23:05:22 - Mean Accuracy: 0.946
+2025-07-14 23:05:22 - 95% Confidence Interval: [0.935, 0.957]
+2025-07-14 23:05:22 - Best Subject: P3_sub-014 (1.000)
+2025-07-14 23:05:22 - Worst Subject: P3_sub-030 (0.816)
+2025-07-14 23:05:22 - 
+Combined Model ¨C AVO Subjects Statistics:
+2025-07-14 23:05:22 - Mean Accuracy: 0.802
+2025-07-14 23:05:22 - 95% Confidence Interval: [0.790, 0.814]
+2025-07-14 23:05:22 - Best Subject: AVO_sub-125 (0.972)
+2025-07-14 23:05:22 - Worst Subject: AVO_sub-052 (0.643)

@@ -1,0 +1,116 @@
+2025-07-14 21:52:46 - 
+Experiment Configuration:
+2025-07-14 21:52:46 - --------------------------------------------------
+2025-07-14 21:52:46 - dataset: ds005863
+2025-07-14 21:52:46 - use_combined_datasets: False
+2025-07-14 21:52:46 - electrode_list: common
+2025-07-14 21:52:46 - classifier: lda
+2025-07-14 21:52:46 - separate_subject_classification: True
+2025-07-14 21:52:46 - seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+2025-07-14 21:52:46 - --------------------------------------------------
+2025-07-14 21:52:46 - 
+==================================================
+2025-07-14 21:52:46 - Processing Active Visual Oddball Dataset
+2025-07-14 21:52:46 - ==================================================
+2025-07-14 21:52:56 - Subject: sub-001, Accuracy: 74.419%
+2025-07-14 21:52:57 - Subject: sub-002, Accuracy: 74.419%
+2025-07-14 21:52:58 - Subject: sub-003, Accuracy: 88.372%
+2025-07-14 21:52:58 - Subject: sub-004, Accuracy: 65.116%
+2025-07-14 21:52:59 - Subject: sub-005, Accuracy: 67.442%
+2025-07-14 21:53:00 - Subject: sub-006, Accuracy: 72.093%
+2025-07-14 21:53:01 - Subject: sub-007, Accuracy: 81.395%
+2025-07-14 21:53:02 - Subject: sub-008, Accuracy: 76.744%
+2025-07-14 21:53:03 - Subject: sub-009, Accuracy: 79.070%
+2025-07-14 21:53:04 - Subject: sub-010, Accuracy: 74.419%
+2025-07-14 21:53:05 - Subject: sub-011, Accuracy: 88.372%
+2025-07-14 21:53:06 - Subject: sub-012, Accuracy: 86.047%
+2025-07-14 21:53:07 - Subject: sub-013, Accuracy: 69.767%
+2025-07-14 21:53:08 - Subject: sub-014, Accuracy: 81.395%
+2025-07-14 21:53:09 - Subject: sub-015, Accuracy: 72.093%
+2025-07-14 21:53:10 - Subject: sub-016, Accuracy: 69.767%
+2025-07-14 21:53:11 - Subject: sub-017, Accuracy: 76.744%
+2025-07-14 21:53:12 - Subject: sub-018, Accuracy: 81.395%
+2025-07-14 21:53:13 - Subject: sub-019, Accuracy: 81.395%
+2025-07-14 21:53:13 - Subject: sub-020, Accuracy: 69.767%
+2025-07-14 21:53:14 - Subject: sub-021, Accuracy: 83.721%
+2025-07-14 21:53:15 - Subject: sub-022, Accuracy: 72.093%
+2025-07-14 21:53:16 - Subject: sub-023, Accuracy: 88.372%
+2025-07-14 21:53:16 - Subject: sub-024, Accuracy: 69.767%
+2025-07-14 21:53:17 - Subject: sub-025, Accuracy: 79.070%
+2025-07-14 21:53:18 - Subject: sub-026, Accuracy: 72.093%
+2025-07-14 21:53:19 - Subject: sub-027, Accuracy: 81.395%
+2025-07-14 21:53:20 - Subject: sub-028, Accuracy: 76.744%
+2025-07-14 21:53:21 - Subject: sub-029, Accuracy: 74.419%
+2025-07-14 21:53:22 - Subject: sub-030, Accuracy: 74.419%
+2025-07-14 21:53:23 - Subject: sub-031, Accuracy: 86.047%
+2025-07-14 21:53:23 - Subject: sub-032, Accuracy: 79.070%
+2025-07-14 21:53:24 - Subject: sub-033, Accuracy: 74.419%
+2025-07-14 21:53:25 - Subject: sub-034, Accuracy: 74.419%
+2025-07-14 21:53:26 - Subject: sub-035, Accuracy: 72.093%
+2025-07-14 21:53:27 - Subject: sub-036, Accuracy: 69.767%
+2025-07-14 21:53:28 - Subject: sub-037, Accuracy: 86.047%
+2025-07-14 21:53:28 - Subject: sub-038, Accuracy: 67.442%
+2025-07-14 21:53:29 - Subject: sub-039, Accuracy: 74.419%
+2025-07-14 21:53:30 - Subject: sub-040, Accuracy: 83.721%
+2025-07-14 21:53:31 - Subject: sub-041, Accuracy: 79.070%
+2025-07-14 21:53:32 - Subject: sub-042, Accuracy: 76.744%
+2025-07-14 21:53:33 - Subject: sub-043, Accuracy: 74.419%
+2025-07-14 21:53:34 - Subject: sub-044, Accuracy: 88.372%
+2025-07-14 21:53:35 - Subject: sub-045, Accuracy: 74.419%
+2025-07-14 21:53:36 - Subject: sub-046, Accuracy: 69.767%
+2025-07-14 21:53:36 - Subject: sub-047, Accuracy: 76.744%
+2025-07-14 21:53:37 - Subject: sub-048, Accuracy: 76.744%
+2025-07-14 21:53:38 - Subject: sub-049, Accuracy: 79.070%
+2025-07-14 21:53:40 - Subject: sub-050, Accuracy: 74.419%
+2025-07-14 21:53:40 - Subject: sub-051, Accuracy: 76.744%
+2025-07-14 21:53:41 - Subject: sub-052, Accuracy: 69.767%
+2025-07-14 21:53:42 - Subject: sub-053, Accuracy: 72.093%
+2025-07-14 21:53:43 - Subject: sub-054, Accuracy: 78.049%
+2025-07-14 21:53:44 - Subject: sub-056, Accuracy: 72.093%
+2025-07-14 21:53:45 - Subject: sub-057, Accuracy: 69.767%
+2025-07-14 21:53:46 - Subject: sub-058, Accuracy: 76.744%
+2025-07-14 21:53:47 - Subject: sub-059, Accuracy: 79.070%
+2025-07-14 21:53:48 - Subject: sub-060, Accuracy: 74.419%
+2025-07-14 21:53:49 - Subject: sub-061, Accuracy: 55.814%
+2025-07-14 21:53:50 - Subject: sub-062, Accuracy: 67.442%
+2025-07-14 21:53:50 - Subject: sub-063, Accuracy: 69.767%
+2025-07-14 21:53:51 - Subject: sub-064, Accuracy: 74.419%
+2025-07-14 21:53:52 - Subject: sub-065, Accuracy: 72.093%
+2025-07-14 21:53:53 - Subject: sub-066, Accuracy: 69.767%
+2025-07-14 21:53:54 - Subject: sub-067, Accuracy: 83.721%
+2025-07-14 21:53:55 - Subject: sub-068, Accuracy: 74.419%
+2025-07-14 21:53:55 - Subject: sub-069, Accuracy: 76.744%
+2025-07-14 21:53:56 - Subject: sub-070, Accuracy: 74.419%
+2025-07-14 21:53:57 - Subject: sub-071, Accuracy: 72.093%
+2025-07-14 21:53:58 - Subject: sub-073, Accuracy: 81.395%
+2025-07-14 21:53:59 - Subject: sub-074, Accuracy: 79.070%
+2025-07-14 21:53:59 - Subject: sub-075, Accuracy: 81.395%
+2025-07-14 21:54:00 - Subject: sub-076, Accuracy: 62.791%
+2025-07-14 21:54:01 - Subject: sub-077, Accuracy: 81.395%
+2025-07-14 21:54:02 - Subject: sub-078, Accuracy: 76.744%
+2025-07-14 21:54:03 - Subject: sub-079, Accuracy: 72.093%
+2025-07-14 21:54:03 - Subject: sub-080, Accuracy: 69.767%
+2025-07-14 21:54:04 - Subject: sub-081, Accuracy: 72.093%
+2025-07-14 21:54:05 - Subject: sub-082, Accuracy: 86.047%
+2025-07-14 21:54:06 - Subject: sub-083, Accuracy: 76.744%
+2025-07-14 21:54:07 - Subject: sub-111, Accuracy: 81.395%
+2025-07-14 21:54:08 - Subject: sub-112, Accuracy: 83.721%
+2025-07-14 21:54:08 - Subject: sub-113, Accuracy: 85.366%
+2025-07-14 21:54:09 - Subject: sub-114, Accuracy: 78.049%
+2025-07-14 21:54:10 - Subject: sub-115, Accuracy: 73.171%
+2025-07-14 21:54:11 - Subject: sub-116, Accuracy: 82.927%
+2025-07-14 21:54:11 - Subject: sub-117, Accuracy: 82.927%
+2025-07-14 21:54:12 - Subject: sub-118, Accuracy: 80.488%
+2025-07-14 21:54:13 - Subject: sub-119, Accuracy: 82.927%
+2025-07-14 21:54:14 - Subject: sub-120, Accuracy: 73.171%
+2025-07-14 21:54:15 - Subject: sub-121, Accuracy: 75.610%
+2025-07-14 21:54:16 - Subject: sub-122, Accuracy: 78.049%
+2025-07-14 21:54:16 - Subject: sub-123, Accuracy: 68.293%
+2025-07-14 21:54:17 - Subject: sub-124, Accuracy: 93.023%
+2025-07-14 21:54:18 - Subject: sub-125, Accuracy: 88.372%
+2025-07-14 21:54:18 - 
+Active Visual Oddball Statistics:
+2025-07-14 21:54:18 - Mean Accuracy: 0.765
+2025-07-14 21:54:18 - 95% Confidence Interval: [0.752, 0.778]
+2025-07-14 21:54:18 - Best Subject: sub-124 (0.930)
+2025-07-14 21:54:18 - Worst Subject: sub-061 (0.558)
