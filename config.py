@@ -60,8 +60,9 @@ GAMMA = 1
 EARLY_STOPPING_PATIENCE = 10
 
 # Data split parameters
-TEST_SIZE = 0.4
-VAL_SIZE = 0.5  # of the remaining data after train split
+TRAIN_SIZE = 0.6
+TEST_SIZE = 0.2
+VAL_SIZE = 0.2 
 
 # Preprocessing parameters
 TRIAL_START_OFFSET_SAMPLES = 26
