@@ -5,14 +5,28 @@ Experiment logic for EEG experiments
 import os
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset, Dataset
 from sklearn.model_selection import train_test_split
 from eegdash.data_utils import EEGBIDSDataset
+
+
+class SubjectDataset(Dataset):
+    """Dataset that includes subject indices for each sample."""
+    def __init__(self, data, labels, subject_indices):
+        self.data = data
+        self.labels = labels
+        self.subject_indices = subject_indices
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        return self.data[idx], self.labels[idx], self.subject_indices[idx]
 
 from config import (
     P3_DATA_DIR, AVO_DATA_DIR, BATCH_SIZE, seeds, 
     use_combined_datasets, separate_subject_classification, 
-    electrode_list, classifier, VAL_SIZE, TEST_SIZE
+    electrode_list, classifier, VAL_SIZE, TEST_SIZE, use_subject_layer
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
@@ -58,6 +72,50 @@ def process_dataset_subjects(dataset_info, dataset_type, prefix, channels, logge
             start_idx = end_idx
     
     return start_idx
+
+
+def process_dataset_subjects_with_indices(dataset_info, dataset_type, prefix, channels, logger,
+                           all_data, all_labels, all_subject_indices, subject_ranges, subject_ids, 
+                           subject_id_to_index, start_idx, current_subject_index):
+    """
+    Process subjects from a single dataset with subject indices for subject layer.
+    """
+    dataset_obj, subject_list = dataset_info
+    preprocessor = OddballPreprocessor(channels)
+    
+    for subject_id in subject_list:
+        print(f"Loading {dataset_type} subject {subject_id} ...", flush=True)
+        data, labels = process_subject_data(subject_id, dataset_obj, preprocessor, logger, dataset_type=dataset_type)
+        
+        if data is not None and labels is not None:
+            # Standardize label format
+            if labels.ndim > 1:
+                labels = np.argmax(labels, axis=1)
+            labels = labels.squeeze()
+            
+            # Create subject identifier
+            full_subject_id = f"{prefix}_{subject_id}" if prefix else subject_id
+            
+            # Assign subject index
+            if full_subject_id not in subject_id_to_index:
+                subject_id_to_index[full_subject_id] = current_subject_index
+                current_subject_index += 1
+            
+            subject_index = subject_id_to_index[full_subject_id]
+            
+            # Create subject indices array for all samples from this subject
+            subject_indices = np.full(len(data), subject_index, dtype=np.int64)
+            
+            # Add to combined dataset
+            all_data.append(data)
+            all_labels.append(labels)
+            all_subject_indices.append(subject_indices)
+            end_idx = start_idx + len(data)
+            subject_ranges.append((start_idx, end_idx))
+            subject_ids.append(full_subject_id)
+            start_idx = end_idx
+    
+    return start_idx, current_subject_index
 
 
 def run_experiment(datasets, training_mode, channels, logger, **kwargs):
@@ -132,26 +190,31 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     """Pooled training mode: all subject data combined to train one model"""
     all_data = []
     all_labels = []
+    all_subject_indices = []
     subject_ranges = []
     subject_ids = []
+    subject_id_to_index = {}  # Map subject_id to numeric index
     start_idx = 0
+    current_subject_index = 0
     
     # Collect data from all specified datasets
     for dataset_type in datasets:
         if dataset_type == 'P3':
             subjects = get_dataset_subjects('P3', p3_dir)
             prefix = 'P3' if len(datasets) > 1 else ''
-            start_idx = process_dataset_subjects(
+            start_idx, current_subject_index = process_dataset_subjects_with_indices(
                 (p3_dir, subjects), dataset_type, prefix, 
-                channels, logger, all_data, all_labels, subject_ranges, subject_ids, start_idx
+                channels, logger, all_data, all_labels, all_subject_indices, 
+                subject_ranges, subject_ids, subject_id_to_index, start_idx, current_subject_index
             )
         elif dataset_type == 'AVO':
             avo_dataset = EEGBIDSDataset(data_dir=avo_dir, dataset='ds005863')
             subjects = get_dataset_subjects('AVO', avo_dataset)
             prefix = 'AVO' if len(datasets) > 1 else 'sub'
-            start_idx = process_dataset_subjects(
+            start_idx, current_subject_index = process_dataset_subjects_with_indices(
                 (avo_dataset, subjects), dataset_type, prefix,
-                channels, logger, all_data, all_labels, subject_ranges, subject_ids, start_idx
+                channels, logger, all_data, all_labels, all_subject_indices,
+                subject_ranges, subject_ids, subject_id_to_index, start_idx, current_subject_index
             )
     
     if not all_data:
@@ -161,6 +224,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     # Combine all data
     all_data = np.concatenate(all_data)
     all_labels = np.concatenate(all_labels)
+    all_subject_indices = np.concatenate(all_subject_indices)
     
     # Create data splits
     temp_size = VAL_SIZE + TEST_SIZE
@@ -176,19 +240,38 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     val_indices = np.array(val_indices)
     test_indices = np.array(test_indices)
     
+    # Determine whether to use subject layer
+    n_subjects = len(subject_id_to_index)
+    should_use_subject_layer = (use_subject_layer and 
+                               exp_classifier == 'ShallowFBCSPNet' and 
+                               not separate_subject_classification and
+                               n_subjects > 1)
+    
     # Create data loaders
-    train_loader = DataLoader(
-        TensorDataset(torch.FloatTensor(all_data[train_indices]), torch.LongTensor(all_labels[train_indices])),
-        batch_size=BATCH_SIZE, shuffle=True
-    )
-    val_loader = DataLoader(
-        TensorDataset(torch.FloatTensor(all_data[val_indices]), torch.LongTensor(all_labels[val_indices])),
-        batch_size=BATCH_SIZE, shuffle=False
-    )
-    test_loader = DataLoader(
-        TensorDataset(torch.FloatTensor(all_data[test_indices]), torch.LongTensor(all_labels[test_indices])),
-        batch_size=BATCH_SIZE, shuffle=False
-    )
+    if should_use_subject_layer:
+        train_dataset = SubjectDataset(
+            torch.FloatTensor(all_data[train_indices]), 
+            torch.LongTensor(all_labels[train_indices]),
+            torch.LongTensor(all_subject_indices[train_indices])
+        )
+        val_dataset = SubjectDataset(
+            torch.FloatTensor(all_data[val_indices]), 
+            torch.LongTensor(all_labels[val_indices]),
+            torch.LongTensor(all_subject_indices[val_indices])
+        )
+        test_dataset = SubjectDataset(
+            torch.FloatTensor(all_data[test_indices]), 
+            torch.LongTensor(all_labels[test_indices]),
+            torch.LongTensor(all_subject_indices[test_indices])
+        )
+    else:
+        train_dataset = TensorDataset(torch.FloatTensor(all_data[train_indices]), torch.LongTensor(all_labels[train_indices]))
+        val_dataset = TensorDataset(torch.FloatTensor(all_data[val_indices]), torch.LongTensor(all_labels[val_indices]))
+        test_dataset = TensorDataset(torch.FloatTensor(all_data[test_indices]), torch.LongTensor(all_labels[test_indices]))
+    
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     
     # Multi-seed training
     model_accuracies = {}
@@ -201,7 +284,11 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             np.random.seed(seed)
             X_train = []
             y_train = []
-            for batch_X, batch_y in train_loader:
+            for batch_data in train_loader:
+                if len(batch_data) == 3:  # (X, y, subject_indices)
+                    batch_X, batch_y, _ = batch_data
+                else:  # (X, y)
+                    batch_X, batch_y = batch_data
                 X_train.append(batch_X.reshape(batch_X.shape[0], -1).numpy())
                 y_train.append(batch_y.numpy())
             X_train = np.concatenate(X_train)
@@ -213,7 +300,14 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             # Neural network training
             torch.manual_seed(seed)
             np.random.seed(seed)
-            model = create_model(len(channels), is_lda=False)
+            
+            # Create model with subject layer if enabled
+            model = create_model(
+                len(channels), 
+                is_lda=False, 
+                n_subjects=n_subjects if should_use_subject_layer else None,
+                enable_subject_layer=should_use_subject_layer
+            )
             model = model.to(device)
             
             if seed == exp_seeds[0]:
@@ -221,6 +315,8 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 print("="*60)
                 print(f"Model type: {type(model).__name__}")
                 print(f"Input channels: {len(channels)}")
+                print(f"Number of subjects: {n_subjects}")
+                print(f"Subject layer enabled: {should_use_subject_layer}")
                 print(f"Input shape: (batch_size, {len(channels)}, 128)")
                 print("="*60 + "\n")
             
@@ -242,7 +338,15 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             else:
                 X_subj = torch.FloatTensor(all_data[subject_test_indices])
                 y_subj = torch.LongTensor(all_labels[subject_test_indices])
-                subj_loader = DataLoader(TensorDataset(X_subj, y_subj), batch_size=BATCH_SIZE, shuffle=False)
+                
+                if should_use_subject_layer:
+                    # Include subject indices for evaluation
+                    subj_indices = torch.LongTensor(all_subject_indices[subject_test_indices])
+                    subj_dataset = SubjectDataset(X_subj, y_subj, subj_indices)
+                else:
+                    subj_dataset = TensorDataset(X_subj, y_subj)
+                
+                subj_loader = DataLoader(subj_dataset, batch_size=BATCH_SIZE, shuffle=False)
                 with torch.no_grad():
                     acc = evaluate(model, subj_loader, device)
             

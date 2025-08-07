@@ -3,15 +3,64 @@ Model definitions and related functions for EEG experiments
 """
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from braindecode.models import ShallowFBCSPNet
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
-from config import INPUT_WINDOW_SAMPLES
+from config import INPUT_WINDOW_SAMPLES, use_subject_layer
 
 
-def create_model(n_channels, is_lda=False, random_state=None):
+class SubjectInputLayer(nn.Module):
+    """Subject-specific input layer for personalized EEG processing.
+    
+    Each subject gets their own linear transformation matrix applied to the input.
+    """
+    def __init__(self, n_subjects, n_channels):
+        super().__init__()
+        # Initialize with identity matrices (no transformation initially)
+        self.weights = nn.Parameter(torch.eye(n_channels).unsqueeze(0).repeat(n_subjects, 1, 1))
+        self.n_subjects = n_subjects
+        self.n_channels = n_channels
+    
+    def forward(self, x, subject_indices):
+        """
+        Apply subject-specific linear transformation.
+        
+        Parameters
+        ----------
+        x : torch.Tensor
+            Input EEG data, shape (batch_size, n_channels, n_timepoints)
+        subject_indices : torch.Tensor
+            Subject indices for each sample, shape (batch_size,)
+            
+        Returns
+        -------
+        torch.Tensor
+            Transformed EEG data, same shape as input
+        """
+        batch_size = x.size(0)
+        # Get subject-specific weights: (batch_size, n_channels, n_channels)
+        subject_weights = self.weights[subject_indices]  
+        # Apply transformation: (batch_size, n_channels, n_timepoints)
+        return torch.einsum('bct,bcd->bdt', x, subject_weights)
+
+
+class ShallowFBCSPNetWithSubjectLayer(nn.Module):
+    """Wrapper that adds subject layer to ShallowFBCSPNet."""
+    def __init__(self, subject_layer, base_model):
+        super().__init__()
+        self.subject_layer = subject_layer
+        self.base_model = base_model
+    
+    def forward(self, x, subject_indices=None):
+        if subject_indices is not None:
+            x = self.subject_layer(x, subject_indices)
+        return self.base_model(x)
+
+
+def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None):
     """Create a new model based on configuration.
     
     Parameters
@@ -22,20 +71,36 @@ def create_model(n_channels, is_lda=False, random_state=None):
         Whether to create LDA model (True) or ShallowFBCSPNet (False)
     random_state : int, optional
         Random state for reproducibility (not used for LDA)
+    n_subjects : int, optional
+        Number of subjects (only used when enable_subject_layer=True)
+    enable_subject_layer : bool, optional
+        Whether to enable subject-specific input layer (only for ShallowFBCSPNet)
+        If None, uses global config use_subject_layer
         
     Returns
     -------
-    model : sklearn.LinearDiscriminantAnalysis or braindecode.models.ShallowFBCSPNet
+    model : sklearn.LinearDiscriminantAnalysis or torch.nn.Module
     """
     if is_lda:
         return LDA()
     else:
-        return ShallowFBCSPNet(
+        # Determine if subject layer should be enabled
+        if enable_subject_layer is None:
+            enable_subject_layer = use_subject_layer
+        
+        base_model = ShallowFBCSPNet(
             in_chans=n_channels,
             n_classes=2,
             input_window_samples=INPUT_WINDOW_SAMPLES,
             final_conv_length='auto'  # Let model auto-calculate based on input
         )
+        
+        # Add subject layer if enabled and we have subject information
+        if enable_subject_layer and n_subjects is not None and n_subjects > 1:
+            subject_layer = SubjectInputLayer(n_subjects, n_channels)
+            return ShallowFBCSPNetWithSubjectLayer(subject_layer, base_model)
+        else:
+            return base_model
 
 
 def normalize_data(x):
@@ -65,11 +130,15 @@ def early_stopping(val_acc, model, state, patience=5):
     return state['early_stop']
 
 
-def evaluate(model, loader, device, is_lda=False):
+def evaluate(model, loader, device, is_lda=False, subject_mapping=None):
     if is_lda:
         X = []
         y = []
-        for batch_X, batch_y in loader:
+        for batch_data in loader:
+            if len(batch_data) == 3:  # (X, y, subject_indices)
+                batch_X, batch_y, _ = batch_data
+            else:  # (X, y)
+                batch_X, batch_y = batch_data
             X.append(batch_X.reshape(batch_X.shape[0], -1).numpy())
             y.append(batch_y.numpy())
         X = np.concatenate(X)
@@ -82,7 +151,14 @@ def evaluate(model, loader, device, is_lda=False):
     total = 0
     
     with torch.no_grad():
-        for x, y in loader:
+        for batch_data in loader:
+            if len(batch_data) == 3:  # (X, y, subject_indices)
+                x, y, subject_indices = batch_data
+                subject_indices = subject_indices.to(device)
+            else:  # (X, y) - backward compatibility
+                x, y = batch_data
+                subject_indices = None
+            
             x = normalize_data(x).to(device)
             y = y.to(device)
             
@@ -90,7 +166,11 @@ def evaluate(model, loader, device, is_lda=False):
             if y.ndim > 1:
                 y = torch.argmax(y, dim=1)
             
-            scores = model(x)
+            # Forward pass with subject indices if model supports it
+            if hasattr(model, 'subject_layer') and subject_indices is not None:
+                scores = model(x, subject_indices)
+            else:
+                scores = model(x)
             
             if scores.ndim > 2:
                 scores = scores.view(scores.size(0), -1)  
@@ -107,7 +187,11 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
         # Prepare data for LDA
         X_train = []
         y_train = []
-        for batch_X, batch_y in train_loader:
+        for batch_data in train_loader:
+            if len(batch_data) == 3:  # (X, y, subject_indices)
+                batch_X, batch_y, _ = batch_data
+            else:  # (X, y)
+                batch_X, batch_y = batch_data
             X_train.append(batch_X.reshape(batch_X.shape[0], -1).numpy())
             y_train.append(batch_y.numpy())
         X_train = np.concatenate(X_train)
@@ -127,7 +211,14 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
 
     for epoch in range(max_epochs):
         model.train()
-        for x, y in train_loader:
+        for batch_data in train_loader:
+            if len(batch_data) == 3:  # (X, y, subject_indices)
+                x, y, subject_indices = batch_data
+                subject_indices = subject_indices.to(device)
+            else:  # (X, y) - backward compatibility
+                x, y = batch_data
+                subject_indices = None
+            
             x = normalize_data(x).to(device)
             y = y.to(device)
             
@@ -137,7 +228,12 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
                 y = y.long()
             
             optimizer.zero_grad()
-            scores = model(x)
+            
+            # Forward pass with subject indices if model supports it
+            if hasattr(model, 'subject_layer') and subject_indices is not None:
+                scores = model(x, subject_indices)
+            else:
+                scores = model(x)
 
             if scores.ndim > 2:
                 scores = scores.view(scores.size(0), -1)

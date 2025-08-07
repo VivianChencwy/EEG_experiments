@@ -11,7 +11,7 @@ from eegdash.data_utils import EEGBIDSDataset
 from config import (
     P3_DATA_DIR, AVO_DATA_DIR, data_dir, dataset, 
     use_combined_datasets, separate_subject_classification, 
-    electrode_list, classifier, seeds
+    electrode_list, classifier, seeds, use_subject_layer
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
@@ -62,6 +62,7 @@ def main():
         "electrode_list": current_electrode_list,
         "classifier": classifier,
         "separate_subject_classification": current_separate_subject_classification,
+        "use_subject_layer": use_subject_layer,
         "seeds": seeds
     })
     

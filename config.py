@@ -15,14 +15,14 @@ AVO_DATA_DIR = 'd:/Users/vivian/Desktop/UCSD/EEG/ds005863/ds005863'
 #######################
 
 # Option 1: P3 dataset only 
-data_dir = P3_DATA_DIR
-dataset = 'P3 Raw Data BIDS-Compatible'
-use_combined_datasets = False
+# data_dir = P3_DATA_DIR
+# dataset = 'P3 Raw Data BIDS-Compatible'
+# use_combined_datasets = False
 
 # Option 2: ds005863 only
-# data_dir = AVO_DATA_DIR
-# dataset = 'ds005863'
-# use_combined_datasets = False
+data_dir = AVO_DATA_DIR
+dataset = 'ds005863'
+use_combined_datasets = False
 
 # Option 3: Both datasets combined
 # use_combined_datasets = True
@@ -44,8 +44,11 @@ classifier = 'ShallowFBCSPNet'
 # Training Configuration
 separate_subject_classification = False
 
+# Subject Layer Configuration (only applies to ShallowFBCSPNet + pooled training)
+use_subject_layer = True
+
 # Random Seeds for multiple runs
-seeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+seeds = [1]#, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 #######################
 # Model Hyperparameters
