@@ -9,7 +9,11 @@ import numpy as np
 from braindecode.models import ShallowFBCSPNet
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
-from config import INPUT_WINDOW_SAMPLES, use_subject_layer
+from config import (
+    INPUT_WINDOW_SAMPLES, use_subject_layer, EARLY_STOPPING_PATIENCE,
+    LEARNING_RATE, WEIGHT_DECAY, GAMMA, MAX_EPOCHS, N_CLASSES
+)
+from constants import NORMALIZATION_EPSILON
 
 
 class SubjectInputLayer(nn.Module):
@@ -90,7 +94,7 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
         
         base_model = ShallowFBCSPNet(
             in_chans=n_channels,
-            n_classes=2,
+            n_classes=N_CLASSES,
             input_window_samples=INPUT_WINDOW_SAMPLES,
             final_conv_length='auto'  # Let model auto-calculate based on input
         )
@@ -108,11 +112,11 @@ def normalize_data(x):
     Normalize data by z-score normalization across time dimension.
     """
     mean = x.mean(dim=2, keepdim=True)
-    std = x.std(dim=2, keepdim=True) + 1e-7
+    std = x.std(dim=2, keepdim=True) + NORMALIZATION_EPSILON
     return (x - mean) / std
 
 
-def early_stopping(val_acc, model, state, patience=5):
+def early_stopping(val_acc, model, state, patience = EARLY_STOPPING_PATIENCE):
     if 'best_val_acc' not in state:
         state['best_val_acc'] = 0
         state['counter'] = 0
@@ -182,7 +186,7 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None):
     return correct / total
 
 
-def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=100):
+def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=MAX_EPOCHS):
     if is_lda:
         # Prepare data for LDA
         X_train = []
@@ -204,8 +208,8 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
         return evaluate(model, test_loader, device, is_lda=True)
     
     # Neural Network training
-    optimizer = torch.optim.Adamax(model.parameters(), lr=0.005, weight_decay=0.001)
-    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=1)
+    optimizer = torch.optim.Adamax(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=GAMMA)
     # Maintain state for early stopping using the helper function defined above
     es_state = {}
 
@@ -247,7 +251,7 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
         val_acc = evaluate(model, val_loader, device)
         
         # Early stopping check
-        if early_stopping(val_acc, model, es_state, patience=10):
+        if early_stopping(val_acc, model, es_state, patience = EARLY_STOPPING_PATIENCE):
             break
     
     # Load best model and evaluate on test set

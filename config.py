@@ -45,7 +45,7 @@ classifier = 'ShallowFBCSPNet'
 separate_subject_classification = False
 
 # Subject Layer Configuration (only applies to ShallowFBCSPNet + pooled training)
-use_subject_layer = True
+use_subject_layer = False
 
 # Random Seeds for multiple runs
 seeds = [1]#, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -56,11 +56,14 @@ seeds = [1]#, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 # Training parameters
 BATCH_SIZE = 32
-MAX_EPOCHS = 100
+MAX_EPOCHS = 1000
 LEARNING_RATE = 0.005
 WEIGHT_DECAY = 0.001
 GAMMA = 1
-EARLY_STOPPING_PATIENCE = 10
+EARLY_STOPPING_PATIENCE = 100
+
+# Model parameters
+N_CLASSES = 2
 
 # Data split parameters
 TRAIN_SIZE = 0.6
