@@ -45,7 +45,7 @@ classifier = 'ShallowFBCSPNet'
 separate_subject_classification = False
 
 # Subject Layer Configuration (only applies to ShallowFBCSPNet + pooled training)
-use_subject_layer = False
+use_subject_layer = True
 
 # Random Seeds for multiple runs
 seeds = [1]#, 2, 3, 4, 5, 6, 7, 8, 9, 10]
