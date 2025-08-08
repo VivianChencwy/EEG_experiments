@@ -1,0 +1,29 @@
+{
+    "onset": {
+        "Description": "Start time of the event, in seconds.",
+        "Units": "seconds"
+    },
+    "duration": {
+        "Description": "Duration of the event (required in BIDS but not a part of the EEG.event structure; therefore consists of 0 values"
+    },
+    "sample": {
+        "Description": "Sample point of the event in data points, relative to the start of the EEG recording.",
+        "Units": "data points"
+    },
+    "value": {
+        "Description": "The code used to indicate an event marker.",
+        "Levels": {
+            "boundary": "recording beginning",
+            "11": "Flanker type compatible, target direction left",
+            "12": "Flanker type compatible, target direction right",
+            "21": "Flanker type incompatible, target direction left",
+            "22": "Flanker type incompatible, target direction right",
+            "111": "Response hand left, flanker type compatible, target direction left",
+            "112": "Response hand left, flanker type compatible, target direction right",
+            "121": "Response hand left, flanker type incompatible, target direction left",
+            "122": "Response hand left, flanker type incompatible, target direction right",
+            "211": "Response hand right, flanker type compatible, target direction left",
+            "212": "Response hand right, flanker type compatible, target direction right",
+            "221": "Response hand right, flanker type incompatible, target direction left",
+            "222": "Response hand right, flanker type incompatible, target direction right"}
+}}

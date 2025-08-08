@@ -1,0 +1,27 @@
+{
+    "onset": {
+        "Description": "Start time of the event, in seconds.",
+        "Units": "seconds"
+    },
+    "duration": {
+        "Description": "Duration of the event (required in BIDS but not a part of the EEG.event structure; therefore consists of 0 values"
+    },
+    "sample": {
+        "Description": "Sample point of the event in data points, relative to the start of the EEG recording.",
+        "Units": "data points"
+    },
+    "value": {
+        "Description": "The code used to indicate an event marker.",
+        "Levels": {
+            "boundary": "recording beginning",
+            "111": "Target color (for that block) blue, target location left, target cap location top",
+            "112": "Target color (for that block) blue, target location left, target gap location bottom",
+            "121": "Target color (for that block) blue, target location right, target gap location top",
+            "122": "Target color (for that block) blue, target location right, target gap location bottom",
+            "211": "Target color (for that block) pink, target location left, target gap location top",
+            "212": "Target color (for that block) pink, target location left, target gap location bottom",
+            "221": "Target color (for that block) pink, target location right, target gap location top",
+            "222": "Target color (for that block) pink, target location right, target gap location bottom",
+            "201": "Correct response",
+            "202": "Incorrect response"
+}}}

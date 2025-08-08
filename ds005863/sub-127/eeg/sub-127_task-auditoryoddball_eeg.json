@@ -1,0 +1,19 @@
+{
+  "TaskName":"Passive Auditory Oddball",
+  "TaskDescription": "Please see Isbell, E., De León, N. E. R., & Richardson, D. M. (2024). Childhood family socioeconomic status is linked to adult brain electrophysiology. PloS One, 19(8), e0307406.",
+  "InstitutionName":"University of California Merced",
+  "SamplingFrequency":500,
+  "Manufacturer":"Brain Products",
+  "ManufacturersModelName":"Brain Products actiCHamp Plus",
+  "CapManufacturer":"EasyCap",
+  "CapManufacturersModelName":"actiCAP slim active electrode system",
+  "EEGChannelCount":27,
+  "EOGChannelCount":3,
+  "MISCChannelCount":2,
+  "PowerLineFrequency":60,
+  "EEGPlacementScheme":"10-20",
+  "EEGReference":"Cz",
+  "EEGGround":"single electrode placed on Fpz",
+  "SoftwareFilters": "n/a",
+  "RecordingType":"continuous"
+}

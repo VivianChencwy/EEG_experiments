@@ -7,8 +7,8 @@ Configuration file for EEG experiments
 #######################
 
 # Define paths for the datasets
-P3_DATA_DIR = 'd:/Users/vivian/Desktop/UCSD/EEG/P3 Raw Data BIDS-Compatible'
-AVO_DATA_DIR = 'd:/Users/vivian/Desktop/UCSD/EEG/ds005863/ds005863'
+P3_DATA_DIR = './P3 Raw Data BIDS-Compatible'
+AVO_DATA_DIR = './ds005863/ds005863'
 
 #######################
 # Dataset Configuration
@@ -42,7 +42,7 @@ classifier = 'ShallowFBCSPNet'
 # classifier = 'lda'
 
 # Training Configuration
-separate_subject_classification = False
+separate_subject_classification = True
 
 # Subject Layer Configuration (only applies to ShallowFBCSPNet + pooled training)
 use_subject_layer = True

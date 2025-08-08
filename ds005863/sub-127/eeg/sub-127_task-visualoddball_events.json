@@ -1,0 +1,44 @@
+{
+    "onset": {
+        "Description": "Start time of the event, in seconds.",
+        "Units": "seconds"
+    },
+    "duration": {
+        "Description": "Duration of the event (required in BIDS but not a part of the EEG.event structure; therefore consists of 0 values"
+    },
+    "sample": {
+        "Description": "Sample point of the event in data points, relative to the start of the EEG recording.",
+        "Units": "data points"
+    },
+    "value": {
+        "Description": "The code used to indicate an event marker.",
+        "Levels": {
+            "boundary": "recording beginning",
+            "11": "Target (for that block) A, stimulus type A",
+            "21": "Target (for that block) B, stimulus type A",
+            "31": "Target (for that block) C, stimulus type A",
+            "41": "Target (for that block) D, stimulus type A",
+            "51": "Target (for that block) E, stimulus type A",
+            "12": "Target (for that block) A, stimulus type B",
+            "22": "Target (for that block) B, stimulus type B",
+            "32": "Target (for that block) C, stimulus type B",
+            "42": "Target (for that block) D, stimulus type B",
+            "52": "Target (for that block) E, stimulus type B",
+            "13": "Target (for that block) A, stimulus type C",
+            "23": "Target (for that block) B, stimulus type C",
+            "33": "Target (for that block) C, stimulus type C",
+            "43": "Target (for that block) D, stimulus type C",
+            "53": "Target (for that block) E, stimulus type C",
+            "14": "Target (for that block) A, stimulus type D",
+            "24": "Target (for that block) B, stimulus type D",
+            "34": "Target (for that block) C, stimulus type D",
+            "44": "Target (for that block) D, stimulus type D",
+            "54": "Target (for that block) E, stimulus type D",
+            "15": "Target (for that block) A, stimulus type E",
+            "25": "Target (for that block) B, stimulus type E",
+            "35": "Target (for that block) C, stimulus type E",
+            "45": "Target (for that block) D, stimulus type E",
+            "55": "Target (for that block) E, stimulus type E",
+            "201": "Correct response",
+            "202": "Incorrect response"
+}}}
