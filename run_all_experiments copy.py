@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Run all EEG experiment configurations sequentially.
+Run all EEG experiment configurations in parallel across GPUs 0-3.
 
 This script DOES NOT change single-run behavior of main.py.
 It uses environment variables supported by config.py to override settings per run.
-Each configuration is run one by one, equivalent to running main.py with each configuration.
 """
 
 import os
@@ -149,73 +148,137 @@ def make_configs() -> list[dict]:
     return configs
 
 
-def run_single_experiment(env: dict) -> int:
-    """Run a single experiment configuration and wait for completion."""
+def launch_process(env: dict, gpu_id: int) -> subprocess.Popen:
     env_proc = os.environ.copy()
     env_proc.update(env)
-    
-    # Set appropriate GPU for the classifier type
-    if env.get('CLASSIFIER') == 'ShallowFBCSPNet':
-        # Use GPU 0 for neural networks (can be changed if needed)
-        env_proc['CUDA_VISIBLE_DEVICES'] = '0'
-    else:
-        # Use CPU for other classifiers like lda
-        env_proc['CUDA_VISIBLE_DEVICES'] = ''
+    env_proc['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
 
-    # Use environment-specific python to ensure correct environment
+    # Use environment-specific python to ensure correct environment with CUDA support
     proc = subprocess.Popen(
         ['/home/cwy/anaconda3/envs/eegtemp/bin/python', 'main.py'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
         env=env_proc,
         cwd=os.path.dirname(os.path.abspath(__file__)),
     )
 
-    # Wait for process to complete
-    return_code = proc.wait()
-    return return_code
+    return proc
+
+
+def launch_process_cpu(env: dict) -> subprocess.Popen:
+    """Launch a CPU-only process (for lda classifier)."""
+    env_proc = os.environ.copy()
+    env_proc.update(env)
+    # Set CUDA_VISIBLE_DEVICES to empty to force CPU usage
+    env_proc['CUDA_VISIBLE_DEVICES'] = ''
+
+    # Use environment-specific python to ensure correct environment
+    proc = subprocess.Popen(
+        ['/home/cwy/anaconda3/envs/eegtemp/bin/python', 'main.py'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env=env_proc,
+        cwd=os.path.dirname(os.path.abspath(__file__)),
+    )
+
+    return proc
 
 
 def main() -> int:
+    # GPUs to use for neural network tasks
+    gpu_ids = [0, 1, 2, 3]
+
     # Prepare configs
     configs = make_configs()
     
+    # Separate GPU tasks (ShallowFBCSPNet) from CPU tasks (lda)
+    gpu_configs = [cfg for cfg in configs if cfg.get('CLASSIFIER') == 'ShallowFBCSPNet']
+    cpu_configs = [cfg for cfg in configs if cfg.get('CLASSIFIER') == 'lda']
+    
     print(f"Total configs: {len(configs)}")
-    print(f"Running all experiments sequentially...")
-    print(f"Each experiment will run exactly like main.py with the specific configuration\n")
+    print(f"GPU tasks (ShallowFBCSPNet): {len(gpu_configs)}")
+    print(f"CPU tasks (lda): {len(cpu_configs)}")
 
-    start_time = time.time()
-    successful_runs = 0
-    failed_runs = 0
+    # Distribute GPU configs evenly across GPUs
+    per_gpu_queues: dict[int, list[dict]] = {g: [] for g in gpu_ids}
+    for i, cfg in enumerate(gpu_configs):
+        per_gpu_queues[gpu_ids[i % len(gpu_ids)]].append(cfg)
+
+    # Print distribution
+    print("\nGPU task distribution:")
+    for g in gpu_ids:
+        print(f"  GPU {g}: {len(per_gpu_queues[g])} tasks")
+
+    # Start ALL GPU tasks simultaneously
+    running_gpu_processes = []  # List of (process, gpu_id, config_name) tuples
+    print("\nStarting all GPU tasks simultaneously...")
     
-    # Run each configuration sequentially
-    for i, config in enumerate(configs, 1):
+    for gpu_id in gpu_ids:
+        for config in per_gpu_queues[gpu_id]:
+            proc = launch_process(config, gpu_id)
+            cfg_name = config_name(config)
+            running_gpu_processes.append((proc, gpu_id, cfg_name))
+            print(f"[GPU {gpu_id}] Started: {cfg_name}")
+
+    # Start CPU processes (can run multiple in parallel since they don't use GPU)
+    max_cpu_parallel = 4  # Increase CPU parallelism since GPUs are fully utilized
+    running_cpu_processes = []  # List of (process, config_name) tuples
+    
+    print("\nStarting CPU tasks...")
+    for i, config in enumerate(cpu_configs[:max_cpu_parallel]):
+        proc = launch_process_cpu(config)
         cfg_name = config_name(config)
-        classifier_type = "GPU" if config.get('CLASSIFIER') == 'ShallowFBCSPNet' else "CPU"
-        
-        print(f"[{i}/{len(configs)}] Running: {cfg_name} ({classifier_type})")
-        
-        experiment_start = time.time()
-        return_code = run_single_experiment(config)
-        experiment_time = time.time() - experiment_start
-        
-        if return_code == 0:
-            successful_runs += 1
-            print(f"[{i}/{len(configs)}] Completed: {cfg_name} (took {experiment_time:.1f}s)")
-        else:
-            failed_runs += 1
-            print(f"[{i}/{len(configs)}] Failed: {cfg_name} (return code: {return_code})")
-        
-        print()  # Empty line for readability
+        running_cpu_processes.append((proc, cfg_name))
+        print(f"[CPU] Started: {cfg_name}")
 
-    total_time = time.time() - start_time
+    remaining_cpu_configs = cpu_configs[max_cpu_parallel:]
+    remaining_cpu_index = 0
+
+    # Print initial status
+    print(f"\nRunning: {len(running_gpu_processes)} GPU tasks, {len(running_cpu_processes)} CPU tasks")
+    print("All GPU tasks started! Waiting for completion...")
     
-    print(" All experiments completed!")
-    print(f" Summary:")
-    print(f"   Total experiments: {len(configs)}")
-    print(f"   Successful: {successful_runs}")
-    print(f"   Failed: {failed_runs}")
-    print(f"   Total time: {total_time/60:.1f} minutes")
-    
-    return 0 if failed_runs == 0 else 1
+    # Monitor all processes
+    while running_gpu_processes or running_cpu_processes:
+        time.sleep(2)
+        
+        # Check GPU processes
+        finished_gpu_indices = []
+        for i, (proc, gpu_id, cfg_name) in enumerate(running_gpu_processes):
+            ret = proc.poll()
+            if ret is not None:
+                finished_gpu_indices.append(i)
+                print(f"[GPU {gpu_id}] Completed: {cfg_name}")
+        
+        # Remove finished GPU processes (reverse order to avoid index issues)
+        for i in reversed(finished_gpu_indices):
+            running_gpu_processes.pop(i)
+        
+        # Check CPU processes
+        finished_cpu_indices = []
+        for i, (proc, cfg_name) in enumerate(running_cpu_processes):
+            ret = proc.poll()
+            if ret is not None:
+                finished_cpu_indices.append(i)
+                print(f"[CPU] Completed: {cfg_name}")
+        
+        # Remove finished CPU processes and start new ones
+        for i in reversed(finished_cpu_indices):
+            running_cpu_processes.pop(i)
+        
+        # Start new CPU processes to maintain parallelism
+        while (len(running_cpu_processes) < max_cpu_parallel and 
+               remaining_cpu_index < len(remaining_cpu_configs)):
+            config = remaining_cpu_configs[remaining_cpu_index]
+            proc = launch_process_cpu(config)
+            cfg_name = config_name(config)
+            running_cpu_processes.append((proc, cfg_name))
+            print(f"[CPU] Started: {cfg_name}")
+            remaining_cpu_index += 1
+
+    print("\n🎉 All experiments completed!")
+    print(f"📊 Processed {len(gpu_configs)} GPU tasks and {len(cpu_configs)} CPU tasks")
+    return 0
 
 
 if __name__ == '__main__':
