@@ -48,12 +48,14 @@ class OddballPreprocessor(Preprocessor):
         if len(events) == 0:
             raise ValueError("No events found after reading annotations.")
 
-        # Remove last event
-        events = events[:-1]
-
-        # Drop response events
+        # Drop response events first
         response_mask = np.isin(events[:, 2], RESPONSE_EVENTS)
         events = events[~response_mask]
+        if len(events) == 0:
+            raise ValueError("No non-response events found after filtering.")
+
+        # Remove last remaining (non-response) event to avoid trailing window overflow
+        events = events[:-1]
 
         # Map oddball codes → 1, standard → 0
         oddball_mask = np.isin(events[:, 2], ODDBALL_EVENTS)

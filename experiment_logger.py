@@ -11,7 +11,7 @@ def setup_logger(experiment_type, classifier=None, separate_subject_classificati
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     
     # Create log directory if it doesn't exist
-    log_dir = './log'
+    log_dir = './log_0808'
     os.makedirs(log_dir, exist_ok=True)
     
     # Create descriptive filename with configuration parameters

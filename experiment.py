@@ -194,7 +194,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     subject_ranges = []
     subject_ids = []
     subject_id_to_index = {}  # Map subject_id to numeric index
-    start_idx = 0
+    start_idx = 26
     current_subject_index = 0
     
     # Collect data from all specified datasets
