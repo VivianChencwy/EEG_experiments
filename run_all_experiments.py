@@ -204,88 +204,80 @@ def main() -> int:
     for i, cfg in enumerate(gpu_configs):
         per_gpu_queues[gpu_ids[i % len(gpu_ids)]].append(cfg)
 
-    # Logs will be handled by experiment_logger.py
-
-    # Track running processes
-    running_gpu: dict[int, tuple[subprocess.Popen, int]] = {}  # GPU processes
-    running_cpu: list[tuple[subprocess.Popen, int]] = []  # CPU processes
-    next_gpu_index: dict[int, int] = {g: 0 for g in gpu_ids}
-    next_cpu_index = 0
-    cfg_global_index = 0
-
-    # Start one GPU process per GPU if available
+    # Print distribution
+    print("\nGPU task distribution:")
     for g in gpu_ids:
-        if next_gpu_index[g] < len(per_gpu_queues[g]):
-            proc = launch_process(per_gpu_queues[g][next_gpu_index[g]], g)
-            running_gpu[g] = (proc, cfg_global_index)
-            cfg_name = config_name(per_gpu_queues[g][next_gpu_index[g]])
-            print(f"[GPU {g}] Started: {cfg_name}")
-            next_gpu_index[g] += 1
-            cfg_global_index += 1
+        print(f"  GPU {g}: {len(per_gpu_queues[g])} tasks")
+
+    # Start ALL GPU tasks simultaneously
+    running_gpu_processes = []  # List of (process, gpu_id, config_name) tuples
+    print("\nStarting all GPU tasks simultaneously...")
+    
+    for gpu_id in gpu_ids:
+        for config in per_gpu_queues[gpu_id]:
+            proc = launch_process(config, gpu_id)
+            cfg_name = config_name(config)
+            running_gpu_processes.append((proc, gpu_id, cfg_name))
+            print(f"[GPU {gpu_id}] Started: {cfg_name}")
 
     # Start CPU processes (can run multiple in parallel since they don't use GPU)
-    max_cpu_parallel = 2  # Adjust based on your system
-    while len(running_cpu) < max_cpu_parallel and next_cpu_index < len(cpu_configs):
-        proc = launch_process_cpu(cpu_configs[next_cpu_index])
-        running_cpu.append((proc, cfg_global_index))
-        cfg_name = config_name(cpu_configs[next_cpu_index])
+    max_cpu_parallel = 4  # Increase CPU parallelism since GPUs are fully utilized
+    running_cpu_processes = []  # List of (process, config_name) tuples
+    
+    print("\nStarting CPU tasks...")
+    for i, config in enumerate(cpu_configs[:max_cpu_parallel]):
+        proc = launch_process_cpu(config)
+        cfg_name = config_name(config)
+        running_cpu_processes.append((proc, cfg_name))
         print(f"[CPU] Started: {cfg_name}")
-        next_cpu_index += 1
-        cfg_global_index += 1
+
+    remaining_cpu_configs = cpu_configs[max_cpu_parallel:]
+    remaining_cpu_index = 0
 
     # Print initial status
-    print(f"\nRunning: {len(running_gpu)} GPU tasks, {len(running_cpu)} CPU tasks")
+    print(f"\nRunning: {len(running_gpu_processes)} GPU tasks, {len(running_cpu_processes)} CPU tasks")
+    print("All GPU tasks started! Waiting for completion...")
     
-    # Loop until all queues are drained
-    while running_gpu or running_cpu:
+    # Monitor all processes
+    while running_gpu_processes or running_cpu_processes:
         time.sleep(2)
         
         # Check GPU processes
-        finished_gpus = []
-        for g, (proc, cfg_idx) in running_gpu.items():
+        finished_gpu_indices = []
+        for i, (proc, gpu_id, cfg_name) in enumerate(running_gpu_processes):
             ret = proc.poll()
             if ret is not None:
-                finished_gpus.append(g)
-                # Get the completed config name
-                completed_cfg = per_gpu_queues[g][next_gpu_index[g] - 1]
-                print(f"[GPU {g}] Completed: {config_name(completed_cfg)}")
+                finished_gpu_indices.append(i)
+                print(f"[GPU {gpu_id}] Completed: {cfg_name}")
         
-        for g in finished_gpus:
-            # Start next GPU task on this GPU if available
-            if next_gpu_index[g] < len(per_gpu_queues[g]):
-                proc = launch_process(per_gpu_queues[g][next_gpu_index[g]], g)
-                running_gpu[g] = (proc, cfg_global_index)
-                cfg_name = config_name(per_gpu_queues[g][next_gpu_index[g]])
-                print(f"[GPU {g}] Started: {cfg_name}")
-                next_gpu_index[g] += 1
-                cfg_global_index += 1
-            else:
-                # No more jobs for this GPU
-                print(f"[GPU {g}] All tasks completed")
-                del running_gpu[g]
+        # Remove finished GPU processes (reverse order to avoid index issues)
+        for i in reversed(finished_gpu_indices):
+            running_gpu_processes.pop(i)
         
         # Check CPU processes
         finished_cpu_indices = []
-        for i, (proc, cfg_idx) in enumerate(running_cpu):
+        for i, (proc, cfg_name) in enumerate(running_cpu_processes):
             ret = proc.poll()
             if ret is not None:
                 finished_cpu_indices.append(i)
-                print(f"[CPU] Completed task")
+                print(f"[CPU] Completed: {cfg_name}")
         
         # Remove finished CPU processes and start new ones
-        for i in reversed(finished_cpu_indices):  # Reverse to avoid index issues
-            running_cpu.pop(i)
+        for i in reversed(finished_cpu_indices):
+            running_cpu_processes.pop(i)
         
         # Start new CPU processes to maintain parallelism
-        while len(running_cpu) < max_cpu_parallel and next_cpu_index < len(cpu_configs):
-            proc = launch_process_cpu(cpu_configs[next_cpu_index])
-            running_cpu.append((proc, cfg_global_index))
-            cfg_name = config_name(cpu_configs[next_cpu_index])
+        while (len(running_cpu_processes) < max_cpu_parallel and 
+               remaining_cpu_index < len(remaining_cpu_configs)):
+            config = remaining_cpu_configs[remaining_cpu_index]
+            proc = launch_process_cpu(config)
+            cfg_name = config_name(config)
+            running_cpu_processes.append((proc, cfg_name))
             print(f"[CPU] Started: {cfg_name}")
-            next_cpu_index += 1
-            cfg_global_index += 1
+            remaining_cpu_index += 1
 
-    print("\n All experiments completed!")
+    print("\n🎉 All experiments completed!")
+    print(f"📊 Processed {len(gpu_configs)} GPU tasks and {len(cpu_configs)} CPU tasks")
     return 0
 
 

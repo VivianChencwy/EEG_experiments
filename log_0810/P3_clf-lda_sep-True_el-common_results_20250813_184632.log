@@ -1,0 +1,25 @@
+2025-08-13 18:46:32 - 
+Experiment Configuration:
+2025-08-13 18:46:32 - --------------------------------------------------
+2025-08-13 18:46:32 - dataset: P3 Raw Data BIDS-Compatible
+2025-08-13 18:46:32 - use_combined_datasets: False
+2025-08-13 18:46:32 - electrode_list: common
+2025-08-13 18:46:32 - classifier: lda
+2025-08-13 18:46:32 - separate_subject_classification: True
+2025-08-13 18:46:32 - use_subject_layer: False
+2025-08-13 18:46:32 - seeds: [1]
+2025-08-13 18:46:32 - --------------------------------------------------
+2025-08-13 18:46:32 - 
+==================================================
+2025-08-13 18:46:32 - Processing P3 Dataset
+2025-08-13 18:46:32 - ==================================================
+2025-08-13 18:47:04 - Subject: sub-001, Accuracy: 92.593%
+2025-08-13 18:47:33 - Subject: sub-002, Accuracy: 90.123%
+2025-08-13 18:48:10 - Subject: sub-003, Accuracy: 91.250%
+2025-08-13 18:48:53 - Subject: sub-004, Accuracy: 93.827%
+2025-08-13 18:49:30 - Subject: sub-005, Accuracy: 92.500%
+2025-08-13 18:50:04 - Subject: sub-006, Accuracy: 85.000%
+2025-08-13 18:50:42 - Subject: sub-007, Accuracy: 97.531%
+2025-08-13 18:51:20 - Subject: sub-008, Accuracy: 87.013%
+2025-08-13 18:52:00 - Subject: sub-009, Accuracy: 92.593%
+2025-08-13 18:52:41 - Subject: sub-010, Accuracy: 90.000%
