@@ -9,7 +9,7 @@ import os
 #######################
 
 # Define paths for the datasets
-P3_DATA_DIR = '../P3 Raw Data BIDS-Compatible'
+P3_DATA_DIR = '../P3_Raw_Data_BIDS-Compatible'
 AVO_DATA_DIR = '../ds005863/ds005863'
 
 #######################

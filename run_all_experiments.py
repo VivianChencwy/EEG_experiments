@@ -148,48 +148,38 @@ def make_configs() -> list[dict]:
     return configs
 
 
-def launch_process(env: dict, gpu_id: int, log_dir: str, idx: int) -> subprocess.Popen:
+def launch_process(env: dict, gpu_id: int) -> subprocess.Popen:
     env_proc = os.environ.copy()
     env_proc.update(env)
     env_proc['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
 
-    cfg_tag = config_name(env)
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    log_path = os.path.join(log_dir, f"{idx:02d}_{cfg_tag}_{timestamp}.log")
-
-    with open(log_path, 'wb') as log_file:
-        # Use conda run to ensure correct environment with CUDA support
-        proc = subprocess.Popen(
-            ['conda', 'run', '-n', 'eegtemp', 'python', 'main.py'],
-            stdout=log_file,
-            stderr=subprocess.STDOUT,
-            env=env_proc,
-            cwd=os.path.dirname(os.path.abspath(__file__)),
-        )
+    # Use environment-specific python to ensure correct environment with CUDA support
+    proc = subprocess.Popen(
+        ['/home/cwy/anaconda3/envs/eegtemp/bin/python', 'main.py'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env=env_proc,
+        cwd=os.path.dirname(os.path.abspath(__file__)),
+    )
 
     return proc
 
 
-def launch_process_cpu(env: dict, log_dir: str, idx: int) -> subprocess.Popen:
+def launch_process_cpu(env: dict) -> subprocess.Popen:
     """Launch a CPU-only process (for lda classifier)."""
     env_proc = os.environ.copy()
     env_proc.update(env)
     # Set CUDA_VISIBLE_DEVICES to empty to force CPU usage
     env_proc['CUDA_VISIBLE_DEVICES'] = ''
 
-    cfg_tag = config_name(env)
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    log_path = os.path.join(log_dir, f"{idx:02d}_{cfg_tag}_{timestamp}_CPU.log")
-
-    with open(log_path, 'wb') as log_file:
-        # Use conda run to ensure correct environment
-        proc = subprocess.Popen(
-            ['conda', 'run', '-n', 'eegtemp', 'python', 'main.py'],
-            stdout=log_file,
-            stderr=subprocess.STDOUT,
-            env=env_proc,
-            cwd=os.path.dirname(os.path.abspath(__file__)),
-        )
+    # Use environment-specific python to ensure correct environment
+    proc = subprocess.Popen(
+        ['/home/cwy/anaconda3/envs/eegtemp/bin/python', 'main.py'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env=env_proc,
+        cwd=os.path.dirname(os.path.abspath(__file__)),
+    )
 
     return proc
 
@@ -214,8 +204,7 @@ def main() -> int:
     for i, cfg in enumerate(gpu_configs):
         per_gpu_queues[gpu_ids[i % len(gpu_ids)]].append(cfg)
 
-    log_dir = os.path.join('log_', 'parallel')
-    ensure_log_dir(log_dir)
+    # Logs will be handled by experiment_logger.py
 
     # Track running processes
     running_gpu: dict[int, tuple[subprocess.Popen, int]] = {}  # GPU processes
@@ -227,47 +216,61 @@ def main() -> int:
     # Start one GPU process per GPU if available
     for g in gpu_ids:
         if next_gpu_index[g] < len(per_gpu_queues[g]):
-            proc = launch_process(per_gpu_queues[g][next_gpu_index[g]], g, log_dir, cfg_global_index)
+            proc = launch_process(per_gpu_queues[g][next_gpu_index[g]], g)
             running_gpu[g] = (proc, cfg_global_index)
+            cfg_name = config_name(per_gpu_queues[g][next_gpu_index[g]])
+            print(f"[GPU {g}] Started: {cfg_name}")
             next_gpu_index[g] += 1
             cfg_global_index += 1
 
     # Start CPU processes (can run multiple in parallel since they don't use GPU)
     max_cpu_parallel = 2  # Adjust based on your system
     while len(running_cpu) < max_cpu_parallel and next_cpu_index < len(cpu_configs):
-        proc = launch_process_cpu(cpu_configs[next_cpu_index], log_dir, cfg_global_index)
+        proc = launch_process_cpu(cpu_configs[next_cpu_index])
         running_cpu.append((proc, cfg_global_index))
+        cfg_name = config_name(cpu_configs[next_cpu_index])
+        print(f"[CPU] Started: {cfg_name}")
         next_cpu_index += 1
         cfg_global_index += 1
 
+    # Print initial status
+    print(f"\nRunning: {len(running_gpu)} GPU tasks, {len(running_cpu)} CPU tasks")
+    
     # Loop until all queues are drained
     while running_gpu or running_cpu:
         time.sleep(2)
         
         # Check GPU processes
         finished_gpus = []
-        for g, (proc, _) in running_gpu.items():
+        for g, (proc, cfg_idx) in running_gpu.items():
             ret = proc.poll()
             if ret is not None:
                 finished_gpus.append(g)
+                # Get the completed config name
+                completed_cfg = per_gpu_queues[g][next_gpu_index[g] - 1]
+                print(f"[GPU {g}] Completed: {config_name(completed_cfg)}")
         
         for g in finished_gpus:
             # Start next GPU task on this GPU if available
             if next_gpu_index[g] < len(per_gpu_queues[g]):
-                proc = launch_process(per_gpu_queues[g][next_gpu_index[g]], g, log_dir, cfg_global_index)
+                proc = launch_process(per_gpu_queues[g][next_gpu_index[g]], g)
                 running_gpu[g] = (proc, cfg_global_index)
+                cfg_name = config_name(per_gpu_queues[g][next_gpu_index[g]])
+                print(f"[GPU {g}] Started: {cfg_name}")
                 next_gpu_index[g] += 1
                 cfg_global_index += 1
             else:
                 # No more jobs for this GPU
+                print(f"[GPU {g}] All tasks completed")
                 del running_gpu[g]
         
         # Check CPU processes
         finished_cpu_indices = []
-        for i, (proc, _) in enumerate(running_cpu):
+        for i, (proc, cfg_idx) in enumerate(running_cpu):
             ret = proc.poll()
             if ret is not None:
                 finished_cpu_indices.append(i)
+                print(f"[CPU] Completed task")
         
         # Remove finished CPU processes and start new ones
         for i in reversed(finished_cpu_indices):  # Reverse to avoid index issues
@@ -275,11 +278,14 @@ def main() -> int:
         
         # Start new CPU processes to maintain parallelism
         while len(running_cpu) < max_cpu_parallel and next_cpu_index < len(cpu_configs):
-            proc = launch_process_cpu(cpu_configs[next_cpu_index], log_dir, cfg_global_index)
+            proc = launch_process_cpu(cpu_configs[next_cpu_index])
             running_cpu.append((proc, cfg_global_index))
+            cfg_name = config_name(cpu_configs[next_cpu_index])
+            print(f"[CPU] Started: {cfg_name}")
             next_cpu_index += 1
             cfg_global_index += 1
 
+    print("\n All experiments completed!")
     return 0
 
 
