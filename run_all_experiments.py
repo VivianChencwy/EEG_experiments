@@ -18,7 +18,7 @@ from datetime import datetime
 try:
     from config import P3_DATA_DIR, AVO_DATA_DIR
 except Exception:
-    P3_DATA_DIR, AVO_DATA_DIR = './P3 Raw Data BIDS-Compatible', './ds005863/ds005863'
+    P3_DATA_DIR, AVO_DATA_DIR = '../P3_Raw_Data _BIDS-Compatible', '../ds005863/ds005863'
 
 
 def ensure_log_dir(log_dir: str) -> None:
@@ -48,7 +48,7 @@ def make_configs() -> list[dict]:
     configs: list[dict] = []
 
     electrodes = ['common', 'all']
-    classifiers = ['ShallowFBCSPNet', 'lda']
+    classifiers = ['ShallowFBCSPNet']  # Only using ShallowFBCSPNet, removed lda
     sep_opts = ['True', 'False']
 
     # Helper to add config
@@ -68,8 +68,8 @@ def make_configs() -> list[dict]:
         }
         configs.append(cfg)
 
-    # use_subject_layer = False: 18
-    # P3 only: 8 (2 electrode × 2 classifier × 2 separate_subject)
+    # use_subject_layer = False: 9
+    # P3 only: 4 (2 electrode × 1 classifier × 2 separate_subject)
     for electrode in electrodes:
         for classifier in classifiers:
             for sep in [True, False]:
@@ -83,7 +83,7 @@ def make_configs() -> list[dict]:
                     use_subject_layer=False,
                 )
 
-    # ds005863 only: 8 (2 electrode × 2 classifier × 2 separate_subject)
+    # ds005863 only: 4 (2 electrode × 1 classifier × 2 separate_subject)
     for electrode in electrodes:
         for classifier in classifiers:
             for sep in [True, False]:
@@ -97,7 +97,7 @@ def make_configs() -> list[dict]:
                     use_subject_layer=False,
                 )
 
-    # Combined: 2 (1 electrode × 2 classifier × 1 separate_subject)
+    # Combined: 1 (1 electrode × 1 classifier × 1 separate_subject)
     for classifier in classifiers:
         add_cfg(
             dataset='use_combined_datasets',  # informational only
@@ -109,7 +109,7 @@ def make_configs() -> list[dict]:
             use_subject_layer=False,
         )
 
-    # use_subject_layer = True: 5
+    # use_subject_layer = True: 5 (unchanged since these were already ShallowFBCSPNet only)
     # P3 only + ShallowFBCSPNet + separate_subject_classification=False × 2 electrode
     for electrode in electrodes:
         add_cfg(
@@ -145,7 +145,7 @@ def make_configs() -> list[dict]:
         use_subject_layer=True,
     )
 
-    assert len(configs) == 23, f"Expected 23 configs, got {len(configs)}"
+    assert len(configs) == 14, f"Expected 14 configs, got {len(configs)}"
     return configs
 
 
@@ -154,13 +154,8 @@ def run_single_experiment(env: dict) -> int:
     env_proc = os.environ.copy()
     env_proc.update(env)
     
-    # Set appropriate GPU for the classifier type
-    if env.get('CLASSIFIER') == 'ShallowFBCSPNet':
-        # Use GPU 0 for neural networks (can be changed if needed)
-        env_proc['CUDA_VISIBLE_DEVICES'] = '0'
-    else:
-        # Use CPU for other classifiers like lda
-        env_proc['CUDA_VISIBLE_DEVICES'] = ''
+    # All experiments now use GPU since we only have ShallowFBCSPNet
+    env_proc['CUDA_VISIBLE_DEVICES'] = '0'
 
     # Use environment-specific python to ensure correct environment
     proc = subprocess.Popen(
@@ -189,9 +184,9 @@ def main() -> int:
     # Run each configuration sequentially
     for i, config in enumerate(configs, 1):
         cfg_name = config_name(config)
-        classifier_type = "GPU" if config.get('CLASSIFIER') == 'ShallowFBCSPNet' else "CPU"
+        # All experiments now use GPU since we only have ShallowFBCSPNet
         
-        print(f"[{i}/{len(configs)}] Running: {cfg_name} ({classifier_type})")
+        print(f"[{i}/{len(configs)}] Running: {cfg_name} (GPU)")
         
         experiment_start = time.time()
         return_code = run_single_experiment(config)
