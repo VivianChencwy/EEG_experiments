@@ -158,8 +158,9 @@ def launch_process(env: dict, gpu_id: int, log_dir: str, idx: int) -> subprocess
     log_path = os.path.join(log_dir, f"{idx:02d}_{cfg_tag}_{timestamp}.log")
 
     with open(log_path, 'wb') as log_file:
+        # Use conda run to ensure correct environment with CUDA support
         proc = subprocess.Popen(
-            [sys.executable, 'main.py'],
+            ['conda', 'run', '-n', 'eegtemp', 'python', 'main.py'],
             stdout=log_file,
             stderr=subprocess.STDOUT,
             env=env_proc,
@@ -181,8 +182,9 @@ def launch_process_cpu(env: dict, log_dir: str, idx: int) -> subprocess.Popen:
     log_path = os.path.join(log_dir, f"{idx:02d}_{cfg_tag}_{timestamp}_CPU.log")
 
     with open(log_path, 'wb') as log_file:
+        # Use conda run to ensure correct environment
         proc = subprocess.Popen(
-            [sys.executable, 'main.py'],
+            ['conda', 'run', '-n', 'eegtemp', 'python', 'main.py'],
             stdout=log_file,
             stderr=subprocess.STDOUT,
             env=env_proc,
