@@ -17,10 +17,7 @@ from constants import NORMALIZATION_EPSILON
 
 
 class SubjectInputLayer(nn.Module):
-    """Subject-specific input layer for personalized EEG processing.
-    
-    Each subject gets their own linear transformation matrix applied to the input.
-    """
+    """Layer that applies subject-specific linear transformations to input data."""
     def __init__(self, n_subjects, n_channels):
         super().__init__()
         # Initialize with identity matrices (no transformation initially)
@@ -29,21 +26,6 @@ class SubjectInputLayer(nn.Module):
         self.n_channels = n_channels
     
     def forward(self, x, subject_indices):
-        """
-        Apply subject-specific linear transformation.
-        
-        Parameters
-        ----------
-        x : torch.Tensor
-            Input EEG data, shape (batch_size, n_channels, n_timepoints)
-        subject_indices : torch.Tensor
-            Subject indices for each sample, shape (batch_size,)
-            
-        Returns
-        -------
-        torch.Tensor
-            Transformed EEG data, same shape as input
-        """
         batch_size = x.size(0)
         # Get subject-specific weights: (batch_size, n_channels, n_channels)
         subject_weights = self.weights[subject_indices]  
@@ -70,16 +52,9 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
     Parameters
     ----------
     n_channels : int
-        Number of input channels
     is_lda : bool, default False
-        Whether to create LDA model (True) or ShallowFBCSPNet (False)
-    random_state : int, optional
-        Random state for reproducibility (not used for LDA)
     n_subjects : int, optional
-        Number of subjects (only used when enable_subject_layer=True)
     enable_subject_layer : bool, optional
-        Whether to enable subject-specific input layer (only for ShallowFBCSPNet)
-        If None, uses global config use_subject_layer
         
     Returns
     -------
@@ -96,7 +71,7 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
             in_chans=n_channels,
             n_classes=N_CLASSES,
             input_window_samples=INPUT_WINDOW_SAMPLES,
-            final_conv_length='auto'  # Let model auto-calculate based on input
+            final_conv_length='auto'  
         )
         
         # Add subject layer if enabled and we have subject information
@@ -156,21 +131,20 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None):
     
     with torch.no_grad():
         for batch_data in loader:
-            if len(batch_data) == 3:  # (X, y, subject_indices)
+            if len(batch_data) == 3:  
                 x, y, subject_indices = batch_data
                 subject_indices = subject_indices.to(device)
-            else:  # (X, y) - backward compatibility
+            else: 
                 x, y = batch_data
                 subject_indices = None
             
             x = normalize_data(x).to(device)
             y = y.to(device)
             
-            # Fix: Ensure y is 1D (class indices, not one-hot)
+           
             if y.ndim > 1:
                 y = torch.argmax(y, dim=1)
-            
-            # Forward pass with subject indices if model supports it
+
             if hasattr(model, 'subject_layer') and subject_indices is not None:
                 scores = model(x, subject_indices)
             else:

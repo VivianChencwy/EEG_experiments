@@ -11,9 +11,9 @@ from torch.utils.data import DataLoader, TensorDataset
 try:
     from models import create_model, SubjectInputLayer, ShallowFBCSPNetWithSubjectLayer
     from experiment import SubjectDataset
-    print("✓ All imports successful")
+    print("All imports successful")
 except ImportError as e:
-    print(f"✗ Import error: {e}")
+    print(f"Import error: {e}")
     exit(1)
 
 def test_subject_layer():
@@ -28,7 +28,7 @@ def test_subject_layer():
     
     # Create subject layer
     subject_layer = SubjectInputLayer(n_subjects, n_channels)
-    print(f"✓ Created SubjectInputLayer with {n_subjects} subjects, {n_channels} channels")
+    print(f"Created SubjectInputLayer with {n_subjects} subjects, {n_channels} channels")
     
     # Test input data
     x = torch.randn(batch_size, n_channels, n_timepoints)
@@ -39,13 +39,13 @@ def test_subject_layer():
     
     # Verify output shape
     assert output.shape == x.shape, f"Output shape {output.shape} != input shape {x.shape}"
-    print(f"✓ Forward pass successful: {x.shape} -> {output.shape}")
+    print(f"Forward pass successful: {x.shape} -> {output.shape}")
     
     # Test with different subject indices
     subject_indices_all_zero = torch.zeros(batch_size, dtype=torch.long)
     output_zero = subject_layer(x, subject_indices_all_zero)
     assert output_zero.shape == x.shape
-    print("✓ Forward pass with zero indices successful")
+    print("Forward pass with zero indices successful")
 
 def test_model_creation():
     """Test model creation with and without subject layer"""
@@ -56,15 +56,15 @@ def test_model_creation():
     
     # Test standard model creation
     model_standard = create_model(n_channels, is_lda=False)
-    print(f"✓ Created standard model: {type(model_standard).__name__}")
+    print(f"Created standard model: {type(model_standard).__name__}")
     
     # Test LDA model creation
     model_lda = create_model(n_channels, is_lda=True)
-    print(f"✓ Created LDA model: {type(model_lda).__name__}")
+    print(f"Created LDA model: {type(model_lda).__name__}")
     
     # Test model with subject layer disabled
     model_no_subj = create_model(n_channels, is_lda=False, enable_subject_layer=False)
-    print(f"✓ Created model without subject layer: {type(model_no_subj).__name__}")
+    print(f"Created model without subject layer: {type(model_no_subj).__name__}")
     
     # Test model with subject layer enabled
     model_with_subj = create_model(
@@ -73,7 +73,7 @@ def test_model_creation():
         n_subjects=n_subjects, 
         enable_subject_layer=True
     )
-    print(f"✓ Created model with subject layer: {type(model_with_subj).__name__}")
+    print(f"Created model with subject layer: {type(model_with_subj).__name__}")
     
     # Test forward pass with subject layer model
     x = torch.randn(2, n_channels, 128)
@@ -81,11 +81,11 @@ def test_model_creation():
     
     # Standard model (should work without subject indices)
     output_standard = model_standard(x)
-    print(f"✓ Standard model forward pass: {x.shape} -> {output_standard.shape}")
+    print(f"Standard model forward pass: {x.shape} -> {output_standard.shape}")
     
     # Model with subject layer
     output_with_subj = model_with_subj(x, subject_indices)
-    print(f"✓ Subject layer model forward pass: {x.shape} -> {output_with_subj.shape}")
+    print(f"Subject layer model forward pass: {x.shape} -> {output_with_subj.shape}")
 
 def test_subject_dataset():
     """Test SubjectDataset functionality"""
@@ -102,14 +102,14 @@ def test_subject_dataset():
     
     # Create dataset
     dataset = SubjectDataset(data, labels, subject_indices)
-    print(f"✓ Created SubjectDataset with {len(dataset)} samples")
+    print(f"Created SubjectDataset with {len(dataset)} samples")
     
     # Test indexing
     sample_data, sample_label, sample_subject = dataset[0]
     assert sample_data.shape == data[0].shape
     assert sample_label == labels[0]
     assert sample_subject == subject_indices[0]
-    print("✓ Dataset indexing works correctly")
+    print("Dataset indexing works correctly")
     
     # Test DataLoader
     loader = DataLoader(dataset, batch_size=3, shuffle=False)
@@ -117,7 +117,7 @@ def test_subject_dataset():
     assert batch_data.shape[0] == 3
     assert batch_labels.shape[0] == 3
     assert batch_subjects.shape[0] == 3
-    print("✓ DataLoader works correctly")
+    print("DataLoader works correctly")
 
 def test_backward_compatibility():
     """Test that existing functionality still works"""
@@ -138,12 +138,12 @@ def test_backward_compatibility():
     batch_data, batch_labels = next(iter(loader))
     assert len(batch_data.shape) == 3  # Should be (batch, channels, time)
     assert len(batch_labels.shape) == 1  # Should be (batch,)
-    print("✓ Standard TensorDataset compatibility maintained")
+    print("Standard TensorDataset compatibility maintained")
     
     # Test model creation without optional parameters
     model = create_model(n_channels)
     output = model(data)
-    print(f"✓ Model creation and forward pass without optional params: {data.shape} -> {output.shape}")
+    print(f"Model creation and forward pass without optional params: {data.shape} -> {output.shape}")
 
 if __name__ == "__main__":
     print("Starting subject layer tests...")
@@ -155,13 +155,13 @@ if __name__ == "__main__":
         test_backward_compatibility()
         
         print("\n" + "="*50)
-        print("🎉 ALL TESTS PASSED!")
-        print("✓ Subject layer functionality working")
-        print("✓ Backward compatibility maintained")
+        print("ALL TESTS PASSED!")
+        print("Subject layer functionality working")
+        print("Backward compatibility maintained")
         print("="*50)
         
     except Exception as e:
-        print(f"\n❌ Test failed with error: {e}")
+        print(f"\n Test failed with error: {e}")
         import traceback
         traceback.print_exc()
         exit(1)
