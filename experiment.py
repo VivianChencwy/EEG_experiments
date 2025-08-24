@@ -143,6 +143,7 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
 def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
     """Individual training mode: each subject trains independently"""
     all_accuracies = {}
+    trial_counts = {}
     
     for dataset_type in datasets:
         if dataset_type == 'P3':
@@ -169,6 +170,14 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             # Create data loaders for the current subject
             train_loader, val_loader, test_loader = create_data_loaders(data, labels)
             
+            # Track trial counts for this subject
+            final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
+            trial_counts[final_key] = {
+                'train': len(train_loader.dataset),
+                'val': len(val_loader.dataset),
+                'test': len(test_loader.dataset)
+            }
+            
             # Multi-seed training
             subject_accuracies_seed = []
             for seed in exp_seeds:
@@ -183,7 +192,7 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             all_accuracies[final_key] = np.mean(subject_accuracies_seed)
             log_individual_results(logger, dataset_type, final_key, all_accuracies[final_key])
     
-    return all_accuracies
+    return all_accuracies, trial_counts
 
 
 def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
@@ -356,17 +365,31 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     
     # Cross-seed averaging
     final_accuracies = {}
+    trial_counts = {}
+    
     for subject_id in subject_ids:
+        # Calculate average accuracy across seeds
         accs = [model_accuracies[f"seed_{seed}"].get(subject_id, 0) for seed in exp_seeds]
         if accs:
             final_accuracies[subject_id] = np.mean(accs)
+            
+        # Calculate trial counts for each subject
+        mask_train = np.isin(train_indices, range(*subject_ranges[subject_ids.index(subject_id)]))
+        mask_val = np.isin(val_indices, range(*subject_ranges[subject_ids.index(subject_id)]))
+        mask_test = np.isin(test_indices, range(*subject_ranges[subject_ids.index(subject_id)]))
+        
+        trial_counts[subject_id] = {
+            'train': np.sum(mask_train),
+            'val': np.sum(mask_val),
+            'test': np.sum(mask_test)
+        }
     
-    return final_accuracies
+    return final_accuracies, trial_counts
 
 
 # Backward compatibility wrapper functions
 def train_combined_model(p3_dir, avo_dataset, channels, logger):
-    return run_experiment(
+    accuracies, _ = run_experiment(
         datasets=['P3', 'AVO'], 
         training_mode='pooled',
         channels=channels,
@@ -374,10 +397,11 @@ def train_combined_model(p3_dir, avo_dataset, channels, logger):
         p3_dir=p3_dir,
         avo_dir=avo_dataset
     )
+    return accuracies
 
 
 def train_single_dataset_model(dataset_dir, preprocess_fn, channel_list, logger, dataset_type):
-    return run_experiment(
+    accuracies, _ = run_experiment(
         datasets=[dataset_type],
         training_mode='pooled', 
         channels=channel_list,
@@ -385,14 +409,16 @@ def train_single_dataset_model(dataset_dir, preprocess_fn, channel_list, logger,
         p3_dir=dataset_dir if dataset_type == 'P3' else P3_DATA_DIR,
         avo_dir=dataset_dir if dataset_type == 'AVO' else AVO_DATA_DIR
     )
+    return accuracies
 
 
 def run_separate_subject_experiments(dataset_dir, channels, logger, dataset_type):
-    return run_experiment(
+    accuracies, _ = run_experiment(
         datasets=[dataset_type],
         training_mode='separate',
         channels=channels, 
         logger=logger,
         p3_dir=dataset_dir if dataset_type == 'P3' else P3_DATA_DIR,
         avo_dir=dataset_dir if dataset_type == 'AVO' else AVO_DATA_DIR
-    ) 
+    )
+    return accuracies
