@@ -31,7 +31,7 @@ from config import (
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
 from models import create_model, train_model, evaluate, normalize_data
-from utils import run_experiment_with_seed, create_data_loaders, calculate_statistics, print_statistics, process_subject_data
+from utils import run_experiment_with_seed, create_data_loaders, calculate_statistics, print_statistics, process_subject_data, print_event_values_for_splits
 from experiment_logger import log_error, log_individual_results, log_section_header
 
 
@@ -168,7 +168,13 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
                 continue
             
             # Create data loaders for the current subject
-            train_loader, val_loader, test_loader = create_data_loaders(data, labels)
+            # Check if this is sub-001 to get indices for event printing
+            if subject_key == 'sub-001' and dataset_type == 'P3':
+                train_loader, val_loader, test_loader, train_indices, val_indices, test_indices = create_data_loaders(
+                    data, labels, return_indices=True
+                )
+            else:
+                train_loader, val_loader, test_loader = create_data_loaders(data, labels)
             
             # Track trial counts for this subject
             final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
@@ -177,6 +183,10 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
                 'val': len(val_loader.dataset),
                 'test': len(test_loader.dataset)
             }
+            
+            # Print event values for sub-001
+            if subject_key == 'sub-001' and dataset_type == 'P3':
+                print_event_values_for_splits(subject_key, dataset_dir, train_indices, val_indices, test_indices)
             
             # Multi-seed training
             subject_accuracies_seed = []

@@ -5,6 +5,7 @@ Utility functions for EEG experiments
 import os
 import numpy as np
 import torch
+import pandas as pd
 from mne.io import read_raw_eeglab, read_raw_brainvision
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
@@ -34,6 +35,107 @@ def load_raw(file_path, dataset_type):
         return read_raw_eeglab(file_path, preload=False)
     else: 
         return read_raw_brainvision(file_path, preload=False)
+
+
+def load_events_tsv(subject_id, dataset_dir):
+    """Load events from TSV file for a P3 subject.
+    
+    Parameters
+    ----------
+    subject_id : str
+        Subject ID (e.g., 'sub-001')
+    dataset_dir : str
+        Path to dataset directory
+        
+    Returns
+    -------
+    pd.DataFrame or None
+        Events dataframe with columns including 'value', or None if file not found
+    """
+    try:
+        events_file = os.path.join(dataset_dir, subject_id, 'eeg', f'{subject_id}_task-P3_events.tsv')
+        if os.path.exists(events_file):
+            events_df = pd.read_csv(events_file, sep='\t')
+            return events_df
+        else:
+            print(f"Warning: Events file not found: {events_file}")
+            return None
+    except Exception as e:
+        print(f"Error loading events file: {e}")
+        return None
+
+
+def get_stimulus_event_values(events_df):
+    """Extract stimulus event values from events dataframe.
+    
+    Parameters
+    ----------
+    events_df : pd.DataFrame
+        Events dataframe from TSV file
+        
+    Returns
+    -------
+    list
+        List of stimulus event values in order
+    """
+    if events_df is None:
+        return []
+    
+    # Filter for stimulus events only (not response events)
+    stimulus_events = events_df[events_df['trial_type'] == 'stimulus']
+    
+    # Extract the 'value' column
+    event_values = stimulus_events['value'].tolist()
+    
+    return event_values
+
+
+def print_event_values_for_splits(subject_id, dataset_dir, train_indices, val_indices, test_indices):
+    """Print event values for train/val/test splits for a specific subject.
+    
+    Parameters
+    ----------
+    subject_id : str
+        Subject ID (e.g., 'sub-001')
+    dataset_dir : str
+        Path to dataset directory
+    train_indices : array-like
+        Indices of training samples
+    val_indices : array-like  
+        Indices of validation samples
+    test_indices : array-like
+        Indices of test samples
+    """
+    # Load events TSV file
+    events_df = load_events_tsv(subject_id, dataset_dir)
+    if events_df is None:
+        print(f"Could not load events for {subject_id}")
+        return
+    
+    # Get stimulus event values
+    event_values = get_stimulus_event_values(events_df)
+    if not event_values:
+        print(f"No stimulus events found for {subject_id}")
+        return
+    
+    # Note: The indices correspond to the processed trials after preprocessing
+    # which should match the order of stimulus events in the TSV file
+    
+    print(f"\nEvent values for {subject_id}:")
+    
+    # Print train event values
+    train_events = [event_values[i] for i in train_indices if i < len(event_values)]
+    print(f"Train events ({len(train_events)}): {train_events}")
+    
+    # Print validation event values
+    val_events = [event_values[i] for i in val_indices if i < len(event_values)]
+    print(f"Validation events ({len(val_events)}): {val_events}")
+    
+    # Print test event values
+    test_events = [event_values[i] for i in test_indices if i < len(event_values)]
+    print(f"Test events ({len(test_events)}): {test_events}")
+    
+    print()
 
 
 def calculate_statistics(accuracies):
@@ -130,17 +232,43 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
 
 
 def create_data_loaders(data, labels, batch_size=BATCH_SIZE, 
-                       train_size=TRAIN_SIZE, val_size=VAL_SIZE, test_size=TEST_SIZE):
+                       train_size=TRAIN_SIZE, val_size=VAL_SIZE, test_size=TEST_SIZE,
+                       return_indices=False):
     """Create train, validation, and test data loaders.
+    
+    Parameters
+    ----------
+    data : array-like
+        Input data
+    labels : array-like
+        Target labels  
+    batch_size : int, default BATCH_SIZE
+        Batch size for data loaders
+    train_size : float, default TRAIN_SIZE
+        Proportion of data for training
+    val_size : float, default VAL_SIZE
+        Proportion of data for validation
+    test_size : float, default TEST_SIZE
+        Proportion of data for testing
+    return_indices : bool, default False
+        If True, also return the indices for each split
+        
+    Returns
+    -------
+    tuple
+        (train_loader, val_loader, test_loader) or
+        (train_loader, val_loader, test_loader, train_indices, val_indices, test_indices)
     """
     temp_size = val_size + test_size
-    X_train, X_temp, y_train, y_temp = train_test_split(
-        data, labels, test_size=temp_size, stratify=labels
+    indices = np.arange(len(data))
+    
+    train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
+        indices, data, labels, test_size=temp_size, stratify=labels
     )
     
     test_ratio = test_size / temp_size  
-    X_val, X_test, y_val, y_test = train_test_split(
-        X_temp, y_temp, test_size=test_ratio, stratify=y_temp
+    val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
+        temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
     )
     
     train_loader = DataLoader(
@@ -156,7 +284,10 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         batch_size=batch_size, shuffle=False
     )
     
-    return train_loader, val_loader, test_loader
+    if return_indices:
+        return train_loader, val_loader, test_loader, train_indices, val_indices, test_indices
+    else:
+        return train_loader, val_loader, test_loader
 
 
 def get_channel_list(electrode_list, dataset_type):
