@@ -28,11 +28,11 @@ AVO_CHANNELS = [
 # Event Constants
 #######################
 
-# Response event codes to remove
-RESPONSE_EVENTS = [201, 202]
+# Response event codes to remove (mapped codes from MNE)
+RESPONSE_EVENTS = [6, 7]  # These correspond to original codes 201, 202
 
-# Oddball event codes
-ODDBALL_EVENTS = [11, 22, 33, 44, 55]
+# Oddball event codes (mapped codes from MNE)
+ODDBALL_EVENTS = [1, 9, 15, 21, 27]  # These correspond to original codes 11, 22, 33, 44, 55
 
 # Event mapping
 EVENT_MAPPING = {0: "standard", 1: "oddball"}
@@ -42,4 +42,4 @@ EVENT_MAPPING = {0: "standard", 1: "oddball"}
 #######################
 
 # Normalization epsilon for numerical stability
-NORMALIZATION_EPSILON = 1e-7 
+NORMALIZATION_EPSILON = 1e-7

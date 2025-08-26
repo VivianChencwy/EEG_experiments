@@ -4,7 +4,7 @@ Preprocessor classes for EEG experiments
 
 import numpy as np
 import mne
-from braindecode.preprocessing import Preprocessor, create_windows_from_events
+from braindecode.preprocessing import Preprocessor
 from braindecode.datasets import BaseConcatDataset, BaseDataset
 
 from constants import RESPONSE_EVENTS, ODDBALL_EVENTS, EVENT_MAPPING
@@ -12,6 +12,20 @@ from config import (
     TRIAL_START_OFFSET_SAMPLES, TRIAL_STOP_OFFSET_SAMPLES,
     LOW_FREQ, HIGH_FREQ, RESAMPLE_FREQ
 )
+
+
+class ManualWindowsDataset:
+    """Custom dataset that ensures one window per event."""
+    
+    def __init__(self, data, labels):
+        self.data = data
+        self.labels = labels
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        return self.data[idx], self.labels[idx]
 
 
 class OddballPreprocessor(Preprocessor):
@@ -56,6 +70,7 @@ class OddballPreprocessor(Preprocessor):
 
         # Remove last remaining (non-response) event to avoid trailing window overflow
         events = events[:-1]
+        
 
         # Map oddball codes → 1, standard → 0
         oddball_mask = np.isin(events[:, 2], ODDBALL_EVENTS)
@@ -63,20 +78,34 @@ class OddballPreprocessor(Preprocessor):
         new_events[:, 0] = events[:, 0]
         new_events[oddball_mask, 2] = 1
 
-        # Attach new annotations
-        annot_from_events = mne.annotations_from_events(
-            events=new_events,
-            event_desc=EVENT_MAPPING,
-            sfreq=raw.info["sfreq"],
-        )
-        raw.set_annotations(annot_from_events)
-
-        # Create windowed dataset
-        windows_ds = create_windows_from_events(
-            BaseConcatDataset([BaseDataset(raw, target_name=None)]),
-            trial_start_offset_samples=self.trial_start_offset_samples,
-            trial_stop_offset_samples=self.trial_stop_offset_samples,
-            preload=False,
-        )
-
-        return windows_ds 
+        # Manual window extraction to ensure one window per event
+        raw_data = raw.get_data()  # Shape: (n_channels, n_timepoints)
+        sfreq = raw.info['sfreq']
+        
+        # Extract windows manually
+        windows_data = []
+        windows_labels = []
+        
+        window_size = self.trial_stop_offset_samples - self.trial_start_offset_samples
+        
+        for event_sample, _, event_code in new_events:
+            # Calculate window boundaries
+            start_sample = event_sample + self.trial_start_offset_samples
+            end_sample = event_sample + self.trial_stop_offset_samples
+            
+            # Check if window is within data bounds
+            if start_sample >= 0 and end_sample <= raw_data.shape[1]:
+                # Extract window data
+                window_data = raw_data[:, start_sample:end_sample]  # Shape: (n_channels, window_size)
+                
+                # Store window and label
+                windows_data.append(window_data)
+                windows_labels.append(event_code)
+        
+        # Convert to numpy arrays
+        windows_data = np.array(windows_data)  # Shape: (n_windows, n_channels, window_size)
+        windows_labels = np.array(windows_labels)  # Shape: (n_windows,)
+        
+        
+        # Return custom dataset
+        return ManualWindowsDataset(windows_data, windows_labels)

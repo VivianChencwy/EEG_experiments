@@ -109,7 +109,7 @@ def early_stopping(val_acc, model, state, patience = EARLY_STOPPING_PATIENCE):
     return state['early_stop']
 
 
-def evaluate(model, loader, device, is_lda=False, subject_mapping=None):
+def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_details=False):
     if is_lda:
         X = []
         y = []
@@ -123,7 +123,18 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None):
         X = np.concatenate(X)
         y = np.concatenate(y)
         predictions = model.predict(X)
-        return np.mean(predictions == y)
+        correct_count = np.sum(predictions == y)
+        total_count = len(y)
+        accuracy = correct_count / total_count
+        
+        if return_details:
+            return {
+                'accuracy': accuracy,
+                'correct_count': correct_count,
+                'incorrect_count': total_count - correct_count,
+                'total_count': total_count
+            }
+        return accuracy
     
     model.eval()
     correct = 0
@@ -157,7 +168,15 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None):
             correct += (predicted == y).sum().item()
             total += y.size(0)
     
-    return correct / total
+    accuracy = correct / total
+    if return_details:
+        return {
+            'accuracy': accuracy,
+            'correct_count': correct,
+            'incorrect_count': total - correct,
+            'total_count': total
+        }
+    return accuracy
 
 
 def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=MAX_EPOCHS):
@@ -231,4 +250,4 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
     # Load best model and evaluate on test set
     if 'best_model' in es_state and es_state['best_model'] is not None:
         model.load_state_dict(es_state['best_model'])
-    return evaluate(model, test_loader, device) 
+    return evaluate(model, test_loader, device)

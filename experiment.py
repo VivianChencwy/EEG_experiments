@@ -144,6 +144,7 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
     """Individual training mode: each subject trains independently"""
     all_accuracies = {}
     trial_counts = {}
+    prediction_details = {}
     
     for dataset_type in datasets:
         if dataset_type == 'P3':
@@ -190,19 +191,34 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             
             # Multi-seed training
             subject_accuracies_seed = []
+            subject_details_seed = []
             for seed in exp_seeds:
-                acc, _ = run_experiment_with_seed(
+                details, _ = run_experiment_with_seed(
                     train_loader, val_loader, test_loader, len(channels), device, seed, 
-                    exp_classifier, print_model_summary=(i == 0 and seed == exp_seeds[0])
+                    exp_classifier, print_model_summary=(i == 0 and seed == exp_seeds[0]),
+                    return_details=True
                 )
-                subject_accuracies_seed.append(acc)
+                subject_accuracies_seed.append(details['accuracy'])
+                subject_details_seed.append(details)
             
-            # Store average accuracy
+            # Store average accuracy and aggregate prediction details
             final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
             all_accuracies[final_key] = np.mean(subject_accuracies_seed)
+            
+            # Average the prediction details across seeds
+            avg_correct = np.mean([d['correct_count'] for d in subject_details_seed])
+            avg_incorrect = np.mean([d['incorrect_count'] for d in subject_details_seed])
+            avg_total = np.mean([d['total_count'] for d in subject_details_seed])
+            
+            prediction_details[final_key] = {
+                'correct_count': int(round(avg_correct)),
+                'incorrect_count': int(round(avg_incorrect)),
+                'total_count': int(round(avg_total))
+            }
+            
             log_individual_results(logger, dataset_type, final_key, all_accuracies[final_key])
     
-    return all_accuracies, trial_counts
+    return all_accuracies, trial_counts, prediction_details
 
 
 def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
@@ -213,7 +229,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     subject_ranges = []
     subject_ids = []
     subject_id_to_index = {}  # Map subject_id to numeric index
-    start_idx = 26
+    start_idx = 0
     current_subject_index = 0
     
     # Collect data from all specified datasets
@@ -294,6 +310,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     
     # Multi-seed training
     model_accuracies = {}
+    model_details = {}
     for seed in exp_seeds:
         print(f"Training pooled model (datasets: {datasets}) with seed {seed} ...", flush=True)
         
@@ -343,6 +360,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
         
         # Evaluate each subject
         subject_accuracies = {}
+        subject_details = {}
         for subject_idx, (s_start, s_end) in enumerate(subject_ranges):
             mask = (test_indices >= s_start) & (test_indices < s_end)
             subject_test_indices = test_indices[mask]
@@ -353,7 +371,15 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 X_subj = all_data[subject_test_indices].reshape(len(subject_test_indices), -1)
                 y_subj = all_labels[subject_test_indices]
                 predictions = model.predict(X_subj)
-                acc = np.mean(predictions == y_subj)
+                correct_count = np.sum(predictions == y_subj)
+                total_count = len(y_subj)
+                acc = correct_count / total_count
+                details = {
+                    'accuracy': acc,
+                    'correct_count': correct_count,
+                    'incorrect_count': total_count - correct_count,
+                    'total_count': total_count
+                }
             else:
                 X_subj = torch.FloatTensor(all_data[subject_test_indices])
                 y_subj = torch.LongTensor(all_labels[subject_test_indices])
@@ -367,21 +393,38 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 
                 subj_loader = DataLoader(subj_dataset, batch_size=BATCH_SIZE, shuffle=False)
                 with torch.no_grad():
-                    acc = evaluate(model, subj_loader, device)
+                    details = evaluate(model, subj_loader, device, return_details=True)
+                    acc = details['accuracy']
             
             subject_accuracies[subject_ids[subject_idx]] = acc
+            subject_details[subject_ids[subject_idx]] = details
         
         model_accuracies[f"seed_{seed}"] = subject_accuracies
+        model_details[f"seed_{seed}"] = subject_details
     
     # Cross-seed averaging
     final_accuracies = {}
     trial_counts = {}
+    prediction_details = {}
     
     for subject_id in subject_ids:
         # Calculate average accuracy across seeds
         accs = [model_accuracies[f"seed_{seed}"].get(subject_id, 0) for seed in exp_seeds]
         if accs:
             final_accuracies[subject_id] = np.mean(accs)
+            
+        # Average prediction details across seeds
+        details_list = [model_details[f"seed_{seed}"].get(subject_id, {}) for seed in exp_seeds]
+        if details_list and all(d for d in details_list):
+            avg_correct = np.mean([d['correct_count'] for d in details_list])
+            avg_incorrect = np.mean([d['incorrect_count'] for d in details_list])
+            avg_total = np.mean([d['total_count'] for d in details_list])
+            
+            prediction_details[subject_id] = {
+                'correct_count': int(round(avg_correct)),
+                'incorrect_count': int(round(avg_incorrect)),
+                'total_count': int(round(avg_total))
+            }
             
         # Calculate trial counts for each subject
         mask_train = np.isin(train_indices, range(*subject_ranges[subject_ids.index(subject_id)]))
@@ -394,7 +437,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             'test': np.sum(mask_test)
         }
     
-    return final_accuracies, trial_counts
+    return final_accuracies, trial_counts, prediction_details
 
 
 # Backward compatibility wrapper functions

@@ -175,7 +175,7 @@ def print_statistics(stats, dataset_name, logger=None):
 
 
 def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, device, 
-                           seed, classifier_type, print_model_summary=False):
+                           seed, classifier_type, print_model_summary=False, return_details=False):
     """Run a single experiment with a specific random seed.
     
     Parameters
@@ -196,11 +196,13 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
         Type of classifier ('lda' or other)
     print_model_summary : bool, default False
         Whether to print model summary
+    return_details : bool, default False
+        Whether to return detailed prediction counts
         
     Returns
     -------
     tuple
-        (accuracy, model) tuple
+        (accuracy, model) or (details_dict, model) tuple
     """
     is_lda = classifier_type.lower() == 'lda'
     
@@ -227,8 +229,16 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
                 print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
             print("="*60 + "\n")
     
-    accuracy = train_model(model, train_loader, val_loader, test_loader, device, is_lda, MAX_EPOCHS)
-    return accuracy, model
+    # Train the model
+    train_model(model, train_loader, val_loader, test_loader, device, is_lda, MAX_EPOCHS)
+    
+    # Get test evaluation with details if requested
+    if return_details:
+        test_result = evaluate(model, test_loader, device, is_lda, return_details=True)
+        return test_result, model
+    else:
+        accuracy = evaluate(model, test_loader, device, is_lda)
+        return accuracy, model
 
 
 def create_data_loaders(data, labels, batch_size=BATCH_SIZE, 
@@ -367,12 +377,18 @@ def process_subject_data(subject_id_or_dir, dataset_dir_or_obj, preprocessor, lo
         # Process data
         windows = preprocessor.transform(raw)
 
-        # Prepare data
-        data = np.stack([windows[i][0] for i in range(len(windows))])
-        labels = np.array([windows[i][1] for i in range(len(windows))])
-        if labels.ndim > 1:
-            labels = np.argmax(labels, axis=1)
-        labels = labels.squeeze()
+        # Handle our custom ManualWindowsDataset
+        if hasattr(windows, 'data') and hasattr(windows, 'labels'):
+            # Custom dataset - direct access to data and labels
+            data = windows.data
+            labels = windows.labels
+        else:
+            # Original braindecode dataset - use indexing
+            data = np.stack([windows[i][0] for i in range(len(windows))])
+            labels = np.array([windows[i][1] for i in range(len(windows))])
+            if labels.ndim > 1:
+                labels = np.argmax(labels, axis=1)
+            labels = labels.squeeze()
 
         return data, labels
 
@@ -381,4 +397,4 @@ def process_subject_data(subject_id_or_dir, dataset_dir_or_obj, preprocessor, lo
             log_error(logger, "P3", subject_id_or_dir, e)
         else:
             log_error(logger, "Active Visual Oddball", f"sub-{subject_id_or_dir}", e)
-        return None, None 
+        return None, None

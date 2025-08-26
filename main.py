@@ -78,7 +78,7 @@ def main():
     if use_combined_datasets:
         # Configuration: Combined datasets + pooled training
         log_section_header(logger, "Processing Combined P3 and AVO Datasets")
-        combined_accuracies, combined_trial_counts = run_experiment(
+        combined_accuracies, combined_trial_counts, combined_prediction_details = run_experiment(
             datasets=['P3', 'AVO'],
             training_mode='pooled', 
             channels=channels,
@@ -95,6 +95,9 @@ def main():
                 if subj_id in combined_trial_counts:
                     counts = combined_trial_counts[subj_id]
                     print(f"Number of trials for {subj_id}: Train={counts['train']}, Val={counts['val']}, Test={counts['test']}")
+                if subj_id in combined_prediction_details:
+                    pred_details = combined_prediction_details[subj_id]
+                    print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
             stats_overall = calculate_statistics(combined_accuracies)
             print_statistics(stats_overall, "Combined Model (All Subjects)", logger)
             
@@ -113,7 +116,7 @@ def main():
         
         if current_separate_subject_classification:
             # Configuration: P3 dataset + individual training
-            p3_accuracies, p3_trial_counts = run_experiment(
+            p3_accuracies, p3_trial_counts, p3_prediction_details = run_experiment(
                 datasets=['P3'],
                 training_mode='separate',
                 channels=p3_channels,
@@ -124,7 +127,7 @@ def main():
             )
         else:
             # Configuration: P3 dataset + pooled training
-            p3_accuracies, p3_trial_counts = run_experiment(
+            p3_accuracies, p3_trial_counts, p3_prediction_details = run_experiment(
                 datasets=['P3'],
                 training_mode='pooled',
                 channels=p3_channels, 
@@ -141,6 +144,9 @@ def main():
                 if subj_id in p3_trial_counts:
                     counts = p3_trial_counts[subj_id]
                     print(f"Number of trials for {subj_id}: Train={counts['train']}, Val={counts['val']}, Test={counts['test']}")
+                if subj_id in p3_prediction_details:
+                    pred_details = p3_prediction_details[subj_id]
+                    print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
             stats = calculate_statistics(p3_accuracies)
             model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
             print_statistics(stats, f"P3 {model_type}", logger)
@@ -152,7 +158,7 @@ def main():
         
         if current_separate_subject_classification:
             # Configuration: AVO dataset + individual training
-            avo_accuracies, avo_trial_counts = run_experiment(
+            avo_accuracies, avo_trial_counts, avo_prediction_details = run_experiment(
                 datasets=['AVO'],
                 training_mode='separate',
                 channels=avo_channels,
@@ -163,7 +169,7 @@ def main():
             )
         else:
             # Configuration: AVO dataset + pooled training
-            avo_accuracies, avo_trial_counts = run_experiment(
+            avo_accuracies, avo_trial_counts, avo_prediction_details = run_experiment(
                 datasets=['AVO'],
                 training_mode='pooled',
                 channels=avo_channels,
@@ -180,6 +186,9 @@ def main():
                 if subj_id in avo_trial_counts:
                     counts = avo_trial_counts[subj_id]
                     print(f"Number of trials for {subj_id}: Train={counts['train']}, Val={counts['val']}, Test={counts['test']}")
+                if subj_id in avo_prediction_details:
+                    pred_details = avo_prediction_details[subj_id]
+                    print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
             stats = calculate_statistics(avo_accuracies)
             model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
             print_statistics(stats, f"AVO {model_type}", logger)
