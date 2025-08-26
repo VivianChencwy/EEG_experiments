@@ -28,8 +28,8 @@ AVO_CHANNELS = [
 # Event Constants
 #######################
 
-# Response event codes to remove (mapped codes from MNE)
-RESPONSE_EVENTS = [6, 7]  # These correspond to original codes 201, 202
+# Response event codes to remove (both original and MNE-mapped codes)
+RESPONSE_EVENTS = [6, 7, 201, 202]  # MNE-mapped: [6, 7], Original: [201, 202]
 
 # Oddball event codes (mapped codes from MNE)
 ODDBALL_EVENTS = [1, 9, 15, 21, 27]  # These correspond to original codes 11, 22, 33, 44, 55

@@ -1,0 +1,44 @@
+2025-08-26 13:45:28 - 
+Experiment Configuration:
+2025-08-26 13:45:28 - --------------------------------------------------
+2025-08-26 13:45:28 - dataset: ds005863
+2025-08-26 13:45:28 - use_combined_datasets: False
+2025-08-26 13:45:28 - electrode_list: all
+2025-08-26 13:45:28 - classifier: lda
+2025-08-26 13:45:28 - separate_subject_classification: True
+2025-08-26 13:45:28 - use_subject_layer: True
+2025-08-26 13:45:28 - seeds: [1]
+2025-08-26 13:45:28 - --------------------------------------------------
+2025-08-26 13:45:28 - 
+==================================================
+2025-08-26 13:45:28 - Processing Active Visual Oddball Dataset
+2025-08-26 13:45:28 - ==================================================
+2025-08-26 13:45:32 - Subject: sub-001, Accuracy: 90.476%
+2025-08-26 13:45:34 - Subject: sub-002, Accuracy: 90.476%
+2025-08-26 13:45:39 - Subject: sub-003, Accuracy: 88.095%
+2025-08-26 13:45:42 - Subject: sub-004, Accuracy: 90.476%
+2025-08-26 13:45:45 - Subject: sub-005, Accuracy: 92.857%
+2025-08-26 13:45:46 - Subject: sub-006, Accuracy: 85.714%
+2025-08-26 13:45:53 - Subject: sub-007, Accuracy: 92.857%
+2025-08-26 13:45:53 - Subject: sub-008, Accuracy: 80.952%
+2025-08-26 13:45:54 - Subject: sub-009, Accuracy: 83.333%
+2025-08-26 13:45:56 - Subject: sub-010, Accuracy: 83.333%
+2025-08-26 13:45:57 - Subject: sub-011, Accuracy: 92.857%
+2025-08-26 13:46:00 - Subject: sub-012, Accuracy: 92.857%
+2025-08-26 13:46:03 - Subject: sub-013, Accuracy: 92.857%
+2025-08-26 13:46:06 - Subject: sub-014, Accuracy: 88.095%
+2025-08-26 13:46:13 - Subject: sub-015, Accuracy: 83.333%
+2025-08-26 13:46:14 - Subject: sub-016, Accuracy: 88.095%
+2025-08-26 13:46:14 - Subject: sub-017, Accuracy: 92.857%
+2025-08-26 13:46:20 - Subject: sub-018, Accuracy: 88.095%
+2025-08-26 13:46:23 - Subject: sub-019, Accuracy: 78.571%
+2025-08-26 13:46:25 - Subject: sub-020, Accuracy: 88.095%
+2025-08-26 13:46:26 - Subject: sub-021, Accuracy: 85.714%
+2025-08-26 13:46:32 - Subject: sub-022, Accuracy: 90.476%
+2025-08-26 13:46:32 - Subject: sub-023, Accuracy: 88.095%
+2025-08-26 13:46:35 - Subject: sub-024, Accuracy: 90.476%
+2025-08-26 13:46:40 - Subject: sub-025, Accuracy: 88.095%
+2025-08-26 13:46:44 - Subject: sub-026, Accuracy: 83.333%
+2025-08-26 13:46:49 - Subject: sub-027, Accuracy: 69.048%
+2025-08-26 13:46:51 - Subject: sub-028, Accuracy: 90.476%
+2025-08-26 13:46:54 - Subject: sub-029, Accuracy: 85.714%
