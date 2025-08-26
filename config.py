@@ -10,7 +10,7 @@ import os
 
 # Define paths for the datasets
 P3_DATA_DIR = '../P3_Raw_Data_BIDS-Compatible'
-AVO_DATA_DIR = '../ds005863/ds005863'
+AVO_DATA_DIR = '../ds005863'
 
 #######################
 # Dataset Configuration
@@ -36,8 +36,8 @@ use_combined_datasets = False
 #######################
 
 # Electrode Configuration
-electrode_list = 'common'
-# electrode_list = 'all'
+#electrode_list = 'common'
+electrode_list = 'all'
 
 # Model Configuration
 #classifier = 'ShallowFBCSPNet'

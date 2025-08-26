@@ -69,9 +69,9 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
             enable_subject_layer = use_subject_layer
         
         base_model = ShallowFBCSPNet(
-            in_chans=n_channels,
-            n_classes=N_CLASSES,
-            input_window_samples=INPUT_WINDOW_SAMPLES,
+            n_chans=n_channels,
+            n_outputs=N_CLASSES,
+            n_times=INPUT_WINDOW_SAMPLES,
             final_conv_length='auto'  
         )
         

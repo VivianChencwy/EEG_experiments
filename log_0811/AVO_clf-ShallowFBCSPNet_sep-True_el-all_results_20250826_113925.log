@@ -1,0 +1,309 @@
+2025-08-26 11:39:25 - 
+Experiment Configuration:
+2025-08-26 11:39:25 - --------------------------------------------------
+2025-08-26 11:39:25 - dataset: ds005863
+2025-08-26 11:39:25 - use_combined_datasets: False
+2025-08-26 11:39:25 - electrode_list: all
+2025-08-26 11:39:25 - classifier: ShallowFBCSPNet
+2025-08-26 11:39:25 - separate_subject_classification: True
+2025-08-26 11:39:25 - use_subject_layer: True
+2025-08-26 11:39:25 - seeds: [1]
+2025-08-26 11:39:25 - --------------------------------------------------
+2025-08-26 11:39:25 - 
+==================================================
+2025-08-26 11:39:25 - Processing Active Visual Oddball Dataset
+2025-08-26 11:39:25 - ==================================================
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-001:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-001/eeg/COCOA_013_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-002:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-002/eeg/COCOA_014_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-003:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-003/eeg/COCOA_015_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-004:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-004/eeg/COCOA_016_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-005:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-005/eeg/COCOA_017_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-006:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-006/eeg/COCOA_018_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-007:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-007/eeg/COCOA_019_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-008:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-008/eeg/COCOA_020_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-009:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-009/eeg/COCOA_021_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-010:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-010/eeg/COCOA_022_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-011:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-011/eeg/COCOA_023_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-012:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-012/eeg/COCOA_024_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-013:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-013/eeg/COCOA_025_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-014:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-014/eeg/COCOA_026_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-015:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-015/eeg/COCOA_027_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-016:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-016/eeg/COCOA_028_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-017:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-017/eeg/COCOA_029_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-018:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-018/eeg/COCOA_030_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-019:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-019/eeg/COCOA_031_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-020:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-020/eeg/COCOA_032_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-021:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-021/eeg/COCOA_033_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-022:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-022/eeg/COCOA_034_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-023:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-023/eeg/COCOA_035_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-024:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-024/eeg/COCOA_036_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-025:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-025/eeg/COCOA_037_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-026:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-026/eeg/COCOA_038_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-027:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-027/eeg/COCOA_039_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-028:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-028/eeg/COCOA_040_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-029:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-029/eeg/COCOA_041_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-030:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-030/eeg/COCOA_042_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-031:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-031/eeg/COCOA_043_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-032:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-032/eeg/COCOA_044_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-033:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-033/eeg/COCOA_045_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-034:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-034/eeg/COCOA_046_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-035:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-035/eeg/COCOA_047_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-036:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-036/eeg/COCOA_048_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-037:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-037/eeg/COCOA_049_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-038:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-038/eeg/COCOA_050_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-039:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-039/eeg/COCOA_051_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-040:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-040/eeg/COCOA_052_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-041:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-041/eeg/COCOA_053_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-042:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-042/eeg/COCOA_054_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-043:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-043/eeg/COCOA_055_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-044:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-044/eeg/COCOA_056_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-045:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-045/eeg/COCOA_057_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-046:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-046/eeg/COCOA_058_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-047:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-047/eeg/COCOA_059_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-048:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-048/eeg/COCOA_060_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-049:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-049/eeg/COCOA_061_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-050:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-050/eeg/COCOA_062_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-051:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-051/eeg/COCOA_063_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-052:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-052/eeg/COCOA_064_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-053:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-053/eeg/COCOA_065_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-054:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-054/eeg/COCOA_066_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-055:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-055/eeg/COCOA_067_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-056:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-056/eeg/COCOA_068_VO.eeg'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-057:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-057/eeg/COCOA_070_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-058:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-058/eeg/COCOA_071_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-059:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-059/eeg/COCOA_072_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-060:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-060/eeg/COCOA_073_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-061:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-061/eeg/COCOA_074_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-062:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-062/eeg/COCOA_075_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-063:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-063/eeg/COCOA_076_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-064:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-064/eeg/COCOA_077_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-065:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-065/eeg/COCOA_078_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-066:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-066/eeg/COCOA_079_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-067:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-067/eeg/COCOA_080_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-068:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-068/eeg/COCOA_081_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-069:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-069/eeg/COCOA_082_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-070:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-070/eeg/COCOA_083_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-071:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-071/eeg/COCOA_084_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-073:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-073/eeg/COCOA_086_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-074:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-074/eeg/COCOA_087_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-075:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-075/eeg/COCOA_088_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-076:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-076/eeg/COCOA_089_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-077:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-077/eeg/COCOA_090_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-078:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-078/eeg/COCOA_092_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-079:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-079/eeg/COCOA_093_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-080:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-080/eeg/COCOA_094_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-081:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-081/eeg/COCOA_095_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-082:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-082/eeg/COCOA_096_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-083:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-083/eeg/COCOA_097_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-111:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-111/eeg/SASA_015_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-112:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-112/eeg/SASA_016_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-113:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-113/eeg/SASA_017_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-114:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-114/eeg/SASA_018_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-115:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-115/eeg/SASA_019_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-116:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-116/eeg/SASA_020_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-117:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-117/eeg/SASA_021_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-118:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-118/eeg/SASA_022_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-119:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-119/eeg/SASA_023_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-120:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-120/eeg/SASA_024_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-121:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-121/eeg/SASA_025_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-122:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-122/eeg/SASA_026_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-123:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-123/eeg/SASA_027_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-124:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-124/eeg/SASA_028_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-125:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-125/eeg/SASA_029_VO.vmrk'
+2025-08-26 11:39:27 - 
+Error in Active Visual Oddball - Subject sub-127:
+2025-08-26 11:39:27 - [Errno 2] No such file or directory: '/home/vivian/eeg/ds005863/sub-127/eeg/SASA_031_VO.vmrk'
