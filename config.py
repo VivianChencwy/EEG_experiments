@@ -17,14 +17,14 @@ AVO_DATA_DIR = '../ds005863/ds005863'
 #######################
 
 # Option 1: P3 dataset only 
-data_dir = P3_DATA_DIR
-dataset = 'P3 Raw Data BIDS-Compatible'
-use_combined_datasets = False
+# data_dir = P3_DATA_DIR
+# dataset = 'P3 Raw Data BIDS-Compatible'
+# use_combined_datasets = False
 
 # Option 2: ds005863 only
-# data_dir = AVO_DATA_DIR
-# dataset = 'ds005863'
-# use_combined_datasets = False
+data_dir = AVO_DATA_DIR
+dataset = 'ds005863'
+use_combined_datasets = False
 
 # Option 3: Both datasets combined
 # use_combined_datasets = True
