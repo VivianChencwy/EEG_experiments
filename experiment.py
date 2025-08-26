@@ -31,7 +31,7 @@ from config import (
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
 from models import create_model, train_model, evaluate, normalize_data
-from utils import run_experiment_with_seed, create_data_loaders, calculate_statistics, print_statistics, process_subject_data, print_event_values_for_splits
+from utils import run_experiment_with_seed, create_data_loaders, calculate_statistics, print_statistics, process_subject_data
 from experiment_logger import log_error, log_individual_results, log_section_header
 
 
@@ -185,9 +185,6 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
                 'test': len(test_loader.dataset)
             }
             
-            # Print event values for sub-001
-            if subject_key == 'sub-001' and dataset_type == 'P3':
-                print_event_values_for_splits(subject_key, dataset_dir, train_indices, val_indices, test_indices)
             
             # Multi-seed training
             subject_accuracies_seed = []
@@ -209,11 +206,17 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             avg_correct = np.mean([d['correct_count'] for d in subject_details_seed])
             avg_incorrect = np.mean([d['incorrect_count'] for d in subject_details_seed])
             avg_total = np.mean([d['total_count'] for d in subject_details_seed])
+            avg_precision = np.mean([d['precision'] for d in subject_details_seed])
+            avg_recall = np.mean([d['recall'] for d in subject_details_seed])
+            avg_f1 = np.mean([d['f1_score'] for d in subject_details_seed])
             
             prediction_details[final_key] = {
                 'correct_count': int(round(avg_correct)),
                 'incorrect_count': int(round(avg_incorrect)),
-                'total_count': int(round(avg_total))
+                'total_count': int(round(avg_total)),
+                'precision': avg_precision,
+                'recall': avg_recall,
+                'f1_score': avg_f1
             }
             
             log_individual_results(logger, dataset_type, final_key, all_accuracies[final_key])
@@ -419,11 +422,17 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             avg_correct = np.mean([d['correct_count'] for d in details_list])
             avg_incorrect = np.mean([d['incorrect_count'] for d in details_list])
             avg_total = np.mean([d['total_count'] for d in details_list])
+            avg_precision = np.mean([d.get('precision', 0) for d in details_list])
+            avg_recall = np.mean([d.get('recall', 0) for d in details_list])
+            avg_f1 = np.mean([d.get('f1_score', 0) for d in details_list])
             
             prediction_details[subject_id] = {
                 'correct_count': int(round(avg_correct)),
                 'incorrect_count': int(round(avg_incorrect)),
-                'total_count': int(round(avg_total))
+                'total_count': int(round(avg_total)),
+                'precision': avg_precision,
+                'recall': avg_recall,
+                'f1_score': avg_f1
             }
             
         # Calculate trial counts for each subject

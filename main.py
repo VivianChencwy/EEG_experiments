@@ -98,6 +98,7 @@ def main():
                 if subj_id in combined_prediction_details:
                     pred_details = combined_prediction_details[subj_id]
                     print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
+                    print(f"Precision: {pred_details['precision']:.3f}, Recall: {pred_details['recall']:.3f}, F1 Score: {pred_details['f1_score']:.3f}")
             stats_overall = calculate_statistics(combined_accuracies)
             print_statistics(stats_overall, "Combined Model (All Subjects)", logger)
             
@@ -147,6 +148,7 @@ def main():
                 if subj_id in p3_prediction_details:
                     pred_details = p3_prediction_details[subj_id]
                     print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
+                    print(f"Precision: {pred_details['precision']:.3f}, Recall: {pred_details['recall']:.3f}, F1 Score: {pred_details['f1_score']:.3f}")
             stats = calculate_statistics(p3_accuracies)
             model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
             print_statistics(stats, f"P3 {model_type}", logger)
@@ -189,6 +191,7 @@ def main():
                 if subj_id in avo_prediction_details:
                     pred_details = avo_prediction_details[subj_id]
                     print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
+                    print(f"Precision: {pred_details['precision']:.3f}, Recall: {pred_details['recall']:.3f}, F1 Score: {pred_details['f1_score']:.3f}")
             stats = calculate_statistics(avo_accuracies)
             model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
             print_statistics(stats, f"AVO {model_type}", logger)
