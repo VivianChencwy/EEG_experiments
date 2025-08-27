@@ -1,0 +1,61 @@
+2025-08-26 15:05:06 - 
+Experiment Configuration:
+2025-08-26 15:05:06 - --------------------------------------------------
+2025-08-26 15:05:06 - dataset: P3 Raw Data BIDS-Compatible
+2025-08-26 15:05:06 - use_combined_datasets: False
+2025-08-26 15:05:06 - electrode_list: all
+2025-08-26 15:05:06 - classifier: lda
+2025-08-26 15:05:06 - separate_subject_classification: False
+2025-08-26 15:05:06 - use_subject_layer: False
+2025-08-26 15:05:06 - seeds: [1]
+2025-08-26 15:05:06 - --------------------------------------------------
+2025-08-26 15:05:06 - 
+==================================================
+2025-08-26 15:05:06 - Processing P3 Dataset
+2025-08-26 15:05:06 - ==================================================
+2025-08-26 15:05:27 - Subject: sub-001, Accuracy: 75.676%
+2025-08-26 15:05:27 - Subject: sub-002, Accuracy: 74.359%
+2025-08-26 15:05:27 - Subject: sub-003, Accuracy: 68.293%
+2025-08-26 15:05:27 - Subject: sub-004, Accuracy: 90.909%
+2025-08-26 15:05:27 - Subject: sub-005, Accuracy: 78.049%
+2025-08-26 15:05:27 - Subject: sub-006, Accuracy: 61.765%
+2025-08-26 15:05:27 - Subject: sub-007, Accuracy: 82.979%
+2025-08-26 15:05:27 - Subject: sub-008, Accuracy: 75.000%
+2025-08-26 15:05:27 - Subject: sub-009, Accuracy: 69.767%
+2025-08-26 15:05:27 - Subject: sub-010, Accuracy: 80.000%
+2025-08-26 15:05:27 - Subject: sub-011, Accuracy: 78.261%
+2025-08-26 15:05:27 - Subject: sub-012, Accuracy: 94.737%
+2025-08-26 15:05:27 - Subject: sub-013, Accuracy: 80.488%
+2025-08-26 15:05:27 - Subject: sub-014, Accuracy: 77.500%
+2025-08-26 15:05:27 - Subject: sub-015, Accuracy: 77.551%
+2025-08-26 15:05:27 - Subject: sub-016, Accuracy: 79.487%
+2025-08-26 15:05:27 - Subject: sub-017, Accuracy: 81.081%
+2025-08-26 15:05:27 - Subject: sub-018, Accuracy: 75.510%
+2025-08-26 15:05:27 - Subject: sub-019, Accuracy: 77.143%
+2025-08-26 15:05:27 - Subject: sub-020, Accuracy: 63.889%
+2025-08-26 15:05:27 - Subject: sub-021, Accuracy: 81.818%
+2025-08-26 15:05:27 - Subject: sub-022, Accuracy: 73.171%
+2025-08-26 15:05:27 - Subject: sub-023, Accuracy: 83.333%
+2025-08-26 15:05:27 - Subject: sub-024, Accuracy: 90.909%
+2025-08-26 15:05:27 - Subject: sub-025, Accuracy: 77.778%
+2025-08-26 15:05:27 - Subject: sub-026, Accuracy: 76.923%
+2025-08-26 15:05:27 - Subject: sub-027, Accuracy: 80.000%
+2025-08-26 15:05:27 - Subject: sub-028, Accuracy: 71.053%
+2025-08-26 15:05:27 - Subject: sub-029, Accuracy: 67.568%
+2025-08-26 15:05:27 - Subject: sub-030, Accuracy: 64.103%
+2025-08-26 15:05:27 - Subject: sub-031, Accuracy: 72.973%
+2025-08-26 15:05:27 - Subject: sub-032, Accuracy: 81.818%
+2025-08-26 15:05:27 - Subject: sub-033, Accuracy: 74.468%
+2025-08-26 15:05:27 - Subject: sub-034, Accuracy: 70.588%
+2025-08-26 15:05:27 - Subject: sub-035, Accuracy: 73.913%
+2025-08-26 15:05:27 - Subject: sub-036, Accuracy: 81.081%
+2025-08-26 15:05:27 - Subject: sub-037, Accuracy: 82.051%
+2025-08-26 15:05:27 - Subject: sub-038, Accuracy: 80.952%
+2025-08-26 15:05:27 - Subject: sub-039, Accuracy: 73.810%
+2025-08-26 15:05:27 - Subject: sub-040, Accuracy: 64.706%
+2025-08-26 15:05:27 - 
+P3 Pooled Model Statistics:
+2025-08-26 15:05:27 - Mean Accuracy: 0.766
+2025-08-26 15:05:27 - 95% Confidence Interval: [0.743, 0.789]
+2025-08-26 15:05:27 - Best Subject: sub-012 (0.947)
+2025-08-26 15:05:27 - Worst Subject: sub-006 (0.618)

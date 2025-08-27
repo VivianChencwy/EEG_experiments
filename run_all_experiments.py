@@ -48,7 +48,7 @@ def make_configs() -> list[dict]:
     configs: list[dict] = []
 
     electrodes = ['common', 'all']
-    classifiers = ['ShallowFBCSPNet']  # Only using ShallowFBCSPNet, removed lda
+    classifiers = ['ShallowFBCSPNet', 'lda']  # Both ShallowFBCSPNet and LDA
     sep_opts = ['True', 'False']
 
     # Helper to add config
@@ -68,8 +68,8 @@ def make_configs() -> list[dict]:
         }
         configs.append(cfg)
 
-    # use_subject_layer = False: 9
-    # P3 only: 4 (2 electrode × 1 classifier × 2 separate_subject)
+    # use_subject_layer = False: 18
+    # P3 only: 8 (2 electrode × 2 classifier × 2 separate_subject)
     for electrode in electrodes:
         for classifier in classifiers:
             for sep in [True, False]:
@@ -83,7 +83,7 @@ def make_configs() -> list[dict]:
                     use_subject_layer=False,
                 )
 
-    # ds005863 only: 4 (2 electrode × 1 classifier × 2 separate_subject)
+    # ds005863 only: 8 (2 electrode × 2 classifier × 2 separate_subject)
     for electrode in electrodes:
         for classifier in classifiers:
             for sep in [True, False]:
@@ -97,7 +97,7 @@ def make_configs() -> list[dict]:
                     use_subject_layer=False,
                 )
 
-    # Combined: 1 (1 electrode × 1 classifier × 1 separate_subject)
+    # Combined: 4 (1 electrode × 2 classifier × 1 separate_subject + 2 additional configs)
     for classifier in classifiers:
         add_cfg(
             dataset='use_combined_datasets',  # informational only
@@ -108,8 +108,31 @@ def make_configs() -> list[dict]:
             separate_subject=False,
             use_subject_layer=False,
         )
+    
+    # Additional combined configs
+    # Combined + LDA + pooled (separate_subject=True)
+    add_cfg(
+        dataset='use_combined_datasets',
+        data_dir=P3_DATA_DIR,
+        use_combined=True,
+        electrode='common',
+        classifier='lda',
+        separate_subject=True,
+        use_subject_layer=False,
+    )
+    
+    # Combined + ShallowFBCSPNet + use_subject_layer=True + common
+    add_cfg(
+        dataset='use_combined_datasets',
+        data_dir=P3_DATA_DIR,
+        use_combined=True,
+        electrode='common',
+        classifier='ShallowFBCSPNet',
+        separate_subject=False,
+        use_subject_layer=True,
+    )
 
-    # use_subject_layer = True: 5 (unchanged since these were already ShallowFBCSPNet only)
+    # use_subject_layer = True: 4 (2 electrode × 1 classifier × 1 separate_subject + 2 electrode × 1 classifier × 1 separate_subject)
     # P3 only + ShallowFBCSPNet + separate_subject_classification=False × 2 electrode
     for electrode in electrodes:
         add_cfg(
@@ -134,18 +157,7 @@ def make_configs() -> list[dict]:
             use_subject_layer=True,
         )
 
-    # Combined + ShallowFBCSPNet + separate_subject_classification=False + common
-    add_cfg(
-        dataset='use_combined_datasets',
-        data_dir=P3_DATA_DIR,
-        use_combined=True,
-        electrode='common',
-        classifier='ShallowFBCSPNet',
-        separate_subject=False,
-        use_subject_layer=True,
-    )
-
-    assert len(configs) == 14, f"Expected 14 configs, got {len(configs)}"
+    assert len(configs) == 24, f"Expected 24 configs, got {len(configs)}"
     return configs
 
 
@@ -154,12 +166,15 @@ def run_single_experiment(env: dict) -> int:
     env_proc = os.environ.copy()
     env_proc.update(env)
     
-    # All experiments now use GPU since we only have ShallowFBCSPNet
-    env_proc['CUDA_VISIBLE_DEVICES'] = '0'
+    # Set GPU for ShallowFBCSPNet, CPU for LDA
+    if env.get('CLASSIFIER') == 'ShallowFBCSPNet':
+        env_proc['CUDA_VISIBLE_DEVICES'] = '0'  # Use GPU
+    else:
+        env_proc['CUDA_VISIBLE_DEVICES'] = ''   # Use CPU for LDA
 
-    # Use environment-specific python to ensure correct environment
+    # Use current Python interpreter to ensure correct environment
     proc = subprocess.Popen(
-        ['/home/cwy/anaconda3/envs/eegtemp/bin/python', 'main.py'],
+        [sys.executable, 'main.py'],
         env=env_proc,
         cwd=os.path.dirname(os.path.abspath(__file__)),
     )
@@ -184,9 +199,10 @@ def main() -> int:
     # Run each configuration sequentially
     for i, config in enumerate(configs, 1):
         cfg_name = config_name(config)
-        # All experiments now use GPU since we only have ShallowFBCSPNet
+        # Determine device based on classifier
+        device = "GPU" if config.get('CLASSIFIER') == 'ShallowFBCSPNet' else "CPU"
         
-        print(f"[{i}/{len(configs)}] Running: {cfg_name} (GPU)")
+        print(f"[{i}/{len(configs)}] Running: {cfg_name} ({device})")
         
         experiment_start = time.time()
         return_code = run_single_experiment(config)
