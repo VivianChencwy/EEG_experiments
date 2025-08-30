@@ -5,9 +5,11 @@ Experiment logic for EEG experiments
 import os
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset, Dataset
 from sklearn.model_selection import train_test_split
 from eegdash.data_utils import EEGBIDSDataset
+from datetime import datetime
 
 
 class SubjectDataset(Dataset):
@@ -32,7 +34,11 @@ from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
 from models import create_model, train_model, evaluate, normalize_data
 from utils import run_experiment_with_seed, create_data_loaders, calculate_statistics, print_statistics, process_subject_data
-from experiment_logger import log_error, log_individual_results, log_section_header
+from experiment_logger import (
+    log_error, log_individual_results, log_section_header, 
+    log_detailed_results, log_overall_metrics
+)
+from visualization import plot_confusion_matrix
 
 
 def get_dataset_subjects(dataset_type, dataset_obj):
@@ -132,12 +138,41 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
     
     if training_mode == 'separate':
         # Individual training mode: each subject trains a separate model
-        return _run_separate_training(datasets, channels, logger, device, 
-                                    p3_dir, avo_dir, exp_classifier, exp_seeds)
+        results = _run_separate_training(datasets, channels, logger, device, 
+                                       p3_dir, avo_dir, exp_classifier, exp_seeds)
     else:
         # Pooled training mode: all selected datasets' subjects train one combined model
-        return _run_pooled_training(datasets, channels, logger, device,
-                                  p3_dir, avo_dir, exp_classifier, exp_seeds)
+        results = _run_pooled_training(datasets, channels, logger, device,
+                                     p3_dir, avo_dir, exp_classifier, exp_seeds)
+    
+    # Unpack results
+    accuracies, trial_counts, prediction_details, true_labels, predictions = results
+    
+    # Get experiment identifier components
+    dataset_name = '_'.join(datasets)
+    training_mode_display = 'separate' if training_mode == 'separate' else 'pooled'
+    electrode_str = '_'.join(channels) if isinstance(channels, list) else channels
+    
+    # Generate save path for confusion matrix
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_dir = './log_0829'
+    os.makedirs(log_dir, exist_ok=True)
+    cm_filename = f"{dataset_name}_clf-{exp_classifier}_sep-{training_mode=='separate'}_el-{electrode_str}_confusion_matrix_{timestamp}.png"
+    cm_path = os.path.join(log_dir, cm_filename)
+    
+    # Plot and save confusion matrix
+    if true_labels and predictions:
+        # Plot confusion matrix with metrics
+        metrics = plot_confusion_matrix(
+            np.array(true_labels),
+            np.array(predictions),
+            save_path=cm_path
+        )
+        
+        # Log overall experiment metrics
+        log_overall_metrics(logger, metrics, cm_path)
+    
+    return results
 
 
 def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
@@ -145,6 +180,9 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
     all_accuracies = {}
     trial_counts = {}
     prediction_details = {}
+    # Collect data for confusion matrix
+    all_true_labels = []
+    all_predictions = []
     
     for dataset_type in datasets:
         if dataset_type == 'P3':
@@ -189,14 +227,67 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             # Multi-seed training
             subject_accuracies_seed = []
             subject_details_seed = []
+            subject_predictions_all = []
+            subject_true_labels_all = []
+            
             for seed in exp_seeds:
-                details, _ = run_experiment_with_seed(
+                details, model = run_experiment_with_seed(
                     train_loader, val_loader, test_loader, len(channels), device, seed, 
                     exp_classifier, print_model_summary=(i == 0 and seed == exp_seeds[0]),
                     return_details=True
                 )
                 subject_accuracies_seed.append(details['accuracy'])
                 subject_details_seed.append(details)
+                
+                # Collect predictions and true labels for confusion matrix
+                is_lda = exp_classifier.lower() == 'lda'
+                if is_lda:
+                    # Get predictions for test set
+                    X_test = []
+                    y_test = []
+                    for batch_data in test_loader:
+                        if len(batch_data) == 3:
+                            batch_X, batch_y, _ = batch_data
+                        else:
+                            batch_X, batch_y = batch_data
+                        X_test.append(batch_X.reshape(batch_X.shape[0], -1).numpy())
+                        y_test.append(batch_y.numpy())
+                    X_test = np.concatenate(X_test)
+                    y_test = np.concatenate(y_test)
+                    predictions = model.predict(X_test)
+                    subject_predictions_all.extend(predictions)
+                    subject_true_labels_all.extend(y_test)
+                else:
+                    # Neural network - collect predictions during evaluation
+                    import torch
+                    model.eval()
+                    with torch.no_grad():
+                        for batch_data in test_loader:
+                            if len(batch_data) == 3:
+                                x, y, subject_indices = batch_data
+                                subject_indices = subject_indices.to(device)
+                            else:
+                                x, y = batch_data
+                                subject_indices = None
+                            
+                            from models import normalize_data
+                            x = normalize_data(x).to(device)
+                            y = y.to(device)
+                            
+                            if y.ndim > 1:
+                                y = torch.argmax(y, dim=1)
+                            
+                            if hasattr(model, 'subject_layer') and subject_indices is not None:
+                                scores = model(x, subject_indices)
+                            else:
+                                scores = model(x)
+                            
+                            if scores.ndim > 2:
+                                scores = scores.view(scores.size(0), -1)
+                            
+                            _, predicted = scores.max(1)
+                            subject_predictions_all.extend(predicted.cpu().numpy())
+                            subject_true_labels_all.extend(y.cpu().numpy())
             
             # Store average accuracy and aggregate prediction details
             final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
@@ -219,9 +310,16 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
                 'f1_score': avg_f1
             }
             
-            log_individual_results(logger, dataset_type, final_key, all_accuracies[final_key])
+            # Add to global lists for confusion matrix (use only first seed's predictions)
+            if subject_predictions_all and subject_true_labels_all:
+                # Take only first seed's worth of predictions
+                n_test_samples = len(subject_true_labels_all) // len(exp_seeds)
+                all_predictions.extend(subject_predictions_all[:n_test_samples])
+                all_true_labels.extend(subject_true_labels_all[:n_test_samples])
+            
+            # log_individual_results(logger, dataset_type, final_key, all_accuracies[final_key])
     
-    return all_accuracies, trial_counts, prediction_details
+    return all_accuracies, trial_counts, prediction_details, all_true_labels, all_predictions
 
 
 def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
@@ -234,6 +332,9 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     subject_id_to_index = {}  # Map subject_id to numeric index
     start_idx = 0
     current_subject_index = 0
+    # Collect data for confusion matrix
+    confusion_true_labels = []
+    confusion_predictions = []
     
     # Collect data from all specified datasets
     for dataset_type in datasets:
@@ -383,6 +484,10 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                     'incorrect_count': total_count - correct_count,
                     'total_count': total_count
                 }
+                # Collect data for confusion matrix (only for first seed)
+                if seed == exp_seeds[0]:
+                    confusion_predictions.extend(predictions)
+                    confusion_true_labels.extend(y_subj)
             else:
                 X_subj = torch.FloatTensor(all_data[subject_test_indices])
                 y_subj = torch.LongTensor(all_labels[subject_test_indices])
@@ -398,6 +503,36 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 with torch.no_grad():
                     details = evaluate(model, subj_loader, device, return_details=True)
                     acc = details['accuracy']
+                
+                # Collect predictions for confusion matrix (only for first seed)
+                if seed == exp_seeds[0]:
+                    model.eval()
+                    with torch.no_grad():
+                        for batch_data in subj_loader:
+                            if len(batch_data) == 3:
+                                x, y, subject_indices_batch = batch_data
+                                subject_indices_batch = subject_indices_batch.to(device)
+                            else:
+                                x, y = batch_data
+                                subject_indices_batch = None
+                            
+                            x = normalize_data(x).to(device)
+                            y = y.to(device)
+                            
+                            if y.ndim > 1:
+                                y = torch.argmax(y, dim=1)
+                            
+                            if hasattr(model, 'subject_layer') and subject_indices_batch is not None:
+                                scores = model(x, subject_indices_batch)
+                            else:
+                                scores = model(x)
+                            
+                            if scores.ndim > 2:
+                                scores = scores.view(scores.size(0), -1)
+                            
+                            _, predicted = scores.max(1)
+                            confusion_predictions.extend(predicted.cpu().numpy())
+                            confusion_true_labels.extend(y.cpu().numpy())
             
             subject_accuracies[subject_ids[subject_idx]] = acc
             subject_details[subject_ids[subject_idx]] = details
@@ -446,12 +581,12 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             'test': np.sum(mask_test)
         }
     
-    return final_accuracies, trial_counts, prediction_details
+    return final_accuracies, trial_counts, prediction_details, confusion_true_labels, confusion_predictions
 
 
 # Backward compatibility wrapper functions
 def train_combined_model(p3_dir, avo_dataset, channels, logger):
-    accuracies, _ = run_experiment(
+    accuracies, trial_counts, prediction_details, _, _ = run_experiment(
         datasets=['P3', 'AVO'], 
         training_mode='pooled',
         channels=channels,
@@ -459,7 +594,7 @@ def train_combined_model(p3_dir, avo_dataset, channels, logger):
         p3_dir=p3_dir,
         avo_dir=avo_dataset
     )
-    return accuracies
+    return accuracies, trial_counts, prediction_details
 
 
 def train_single_dataset_model(dataset_dir, preprocess_fn, channel_list, logger, dataset_type):

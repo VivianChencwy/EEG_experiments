@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import numpy as np
 from braindecode.models import ShallowFBCSPNet
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
 
 from config import (
     INPUT_WINDOW_SAMPLES, use_subject_layer, EARLY_STOPPING_PATIENCE,
@@ -129,10 +129,20 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
         accuracy = correct_count / total_count
         
         if return_details:
-            # Calculate precision, recall, and F1 score
+            try:
+                # Get probability estimates for AUC calculation
+                y_proba = model.predict_proba(X)[:, 1]  # Probability of positive class
+            except:
+                y_proba = predictions  # Fallback to binary predictions if probabilities not available
+            
+            # Calculate metrics
             precision = precision_score(y, predictions, average='binary', zero_division=0)
             recall = recall_score(y, predictions, average='binary', zero_division=0)
             f1 = f1_score(y, predictions, average='binary', zero_division=0)
+            try:
+                auc = roc_auc_score(y, y_proba)
+            except:
+                auc = 0.5  # Default AUC if calculation fails
             
             return {
                 'accuracy': accuracy,
@@ -141,13 +151,15 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
                 'total_count': total_count,
                 'precision': precision,
                 'recall': recall,
-                'f1_score': f1
+                'f1_score': f1,
+                'auc': auc
             }
         return accuracy
     
     model.eval()
     all_predictions = []
     all_targets = []
+    all_probabilities = []
     correct = 0
     total = 0
     
@@ -183,15 +195,26 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             if return_details:
                 all_predictions.extend(predicted.cpu().numpy())
                 all_targets.extend(y.cpu().numpy())
+                # Store probabilities for AUC calculation
+                probabilities = F.softmax(scores, dim=1)[:, 1]  # Probability of positive class
+                all_probabilities.extend(probabilities.cpu().numpy())
     
     accuracy = correct / total
     if return_details:
-        # Calculate precision, recall, and F1 score
+        # Calculate precision, recall, F1 score and AUC
         all_predictions = np.array(all_predictions)
         all_targets = np.array(all_targets)
+        all_probabilities = np.array(all_probabilities)
+        
         precision = precision_score(all_targets, all_predictions, average='binary', zero_division=0)
         recall = recall_score(all_targets, all_predictions, average='binary', zero_division=0)
         f1 = f1_score(all_targets, all_predictions, average='binary', zero_division=0)
+        
+        # Calculate AUC
+        try:
+            auc = roc_auc_score(all_targets, all_probabilities)
+        except:
+            auc = 0.5  # Default AUC if calculation fails
         
         return {
             'accuracy': accuracy,
@@ -200,7 +223,8 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             'total_count': total,
             'precision': precision,
             'recall': recall,
-            'f1_score': f1
+            'f1_score': f1,
+            'auc': auc
         }
     return accuracy
 

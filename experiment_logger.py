@@ -11,7 +11,7 @@ def setup_logger(experiment_type, classifier=None, separate_subject_classificati
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     
     # Create log directory if it doesn't exist
-    log_dir = './log_0825'
+    log_dir = './log_0829'
     os.makedirs(log_dir, exist_ok=True)
     
     # Create descriptive filename with configuration parameters
@@ -42,6 +42,17 @@ def log_section_header(logger, title):
 def log_individual_results(logger, experiment_type, subject_id, accuracy):
     logger.info(f"Subject: {subject_id}, Accuracy: {accuracy:.3%}")
 
+
+def log_detailed_results(logger, experiment_type, subject_id, metrics):
+    """Log detailed metrics including accuracy, precision, recall, f1 score and AUC."""
+    logger.info(f"Subject: {subject_id}")
+    logger.info(f"  Accuracy: {metrics.get('accuracy', 0):.3%}")
+    logger.info(f"  Precision: {metrics.get('precision', 0):.3f}")
+    logger.info(f"  Recall: {metrics.get('recall', 0):.3f}")
+    logger.info(f"  F1 Score: {metrics.get('f1_score', 0):.3f}")
+    logger.info(f"  AUC: {metrics.get('auc', 0):.3f}")
+    logger.info(f"  Correct/Total: {metrics.get('correct_count', 0)}/{metrics.get('total_count', 0)}")
+
 def log_error(logger, experiment_type, subject_id, error_msg):
     logger.error(f"\nError in {experiment_type} - Subject {subject_id}:")
     logger.error(str(error_msg))
@@ -51,4 +62,17 @@ def log_configuration(logger, config_dict):
     logger.info("-" * 50)
     for key, value in config_dict.items():
         logger.info(f"{key}: {value}")
+    logger.info("-" * 50)
+
+def log_overall_metrics(logger, metrics, confusion_matrix_path=None):
+    """Log overall experiment metrics and confusion matrix location."""
+    logger.info("\nOverall Experiment Metrics:")
+    logger.info("-" * 50)
+    logger.info(f"Accuracy: {metrics['accuracy']:.4f}")
+    logger.info(f"Precision: {metrics['precision']:.4f}")
+    logger.info(f"Recall: {metrics['recall']:.4f}")
+    logger.info(f"F1 Score: {metrics['f1_score']:.4f}")
+    logger.info(f"AUC: {metrics['auc']:.4f}")
+    if confusion_matrix_path:
+        logger.info(f"\nConfusion Matrix Plot: {confusion_matrix_path}")
     logger.info("-" * 50)
