@@ -146,8 +146,13 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
         results = _run_pooled_training(datasets, channels, logger, device,
                                      p3_dir, avo_dir, exp_classifier, exp_seeds)
     
-    # Unpack results
-    accuracies, trial_counts, prediction_details, true_labels, predictions = results
+    # Unpack results - handle both separate and pooled modes
+    if len(results) == 6:  # Pooled mode returns probabilities
+        accuracies, trial_counts, prediction_details, true_labels, predictions, probabilities = results
+        overall_probabilities = np.array(probabilities) if probabilities else None
+    else:  # Separate mode
+        accuracies, trial_counts, prediction_details, true_labels, predictions = results
+        overall_probabilities = None
     
     # Get experiment identifier components
     dataset_name = '_'.join(datasets)
@@ -167,6 +172,7 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
         metrics = plot_confusion_matrix(
             np.array(true_labels),
             np.array(predictions),
+            y_proba=overall_probabilities,
             save_path=cm_path
         )
         
@@ -349,6 +355,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     # Collect data for confusion matrix
     confusion_true_labels = []
     confusion_predictions = []
+    confusion_probabilities = []
     
     # Collect data from all specified datasets
     for dataset_type in datasets:
@@ -422,7 +429,27 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
         val_dataset = TensorDataset(torch.FloatTensor(all_data[val_indices]), torch.LongTensor(all_labels[val_indices]))
         test_dataset = TensorDataset(torch.FloatTensor(all_data[test_indices]), torch.LongTensor(all_labels[test_indices]))
     
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    # Create weighted sampler for training set to handle class imbalance
+    train_sampler = None
+    train_labels = all_labels[train_indices]
+    class_counts = np.bincount(train_labels)
+    total_samples = len(train_labels)
+    class_weights = total_samples / (len(class_counts) * class_counts)
+    
+    # Assign weights to each sample
+    sample_weights = np.array([class_weights[label] for label in train_labels])
+    sample_weights = torch.from_numpy(sample_weights).double()
+    
+    from torch.utils.data import WeightedRandomSampler
+    train_sampler = WeightedRandomSampler(
+        weights=sample_weights,
+        num_samples=len(sample_weights),
+        replacement=True
+    )
+    print(f"Pooled training - Class distribution: {class_counts.tolist()}, "
+          f"Class weights: {class_weights.tolist()}")
+    
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, sampler=train_sampler)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     
@@ -492,16 +519,38 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 correct_count = np.sum(predictions == y_subj)
                 total_count = len(y_subj)
                 acc = correct_count / total_count
+                
+                # Calculate detailed metrics for LDA
+                from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+                try:
+                    # Get probability estimates for AUC calculation
+                    y_proba = model.predict_proba(X_subj)[:, 1]  # Probability of positive class
+                except:
+                    y_proba = predictions  # Fallback to binary predictions if probabilities not available
+                
+                precision = precision_score(y_subj, predictions, average='binary', zero_division=0)
+                recall = recall_score(y_subj, predictions, average='binary', zero_division=0)
+                f1 = f1_score(y_subj, predictions, average='binary', zero_division=0)
+                try:
+                    auc = roc_auc_score(y_subj, y_proba)
+                except:
+                    auc = 0.5  # Default AUC if calculation fails
+                
                 details = {
                     'accuracy': acc,
                     'correct_count': correct_count,
                     'incorrect_count': total_count - correct_count,
-                    'total_count': total_count
+                    'total_count': total_count,
+                    'precision': precision,
+                    'recall': recall,
+                    'f1_score': f1,
+                    'auc': auc
                 }
                 # Collect data for confusion matrix (only for first seed)
                 if seed == exp_seeds[0]:
                     confusion_predictions.extend(predictions)
                     confusion_true_labels.extend(y_subj)
+                    confusion_probabilities.extend(y_proba)
             else:
                 X_subj = torch.FloatTensor(all_data[subject_test_indices])
                 y_subj = torch.LongTensor(all_labels[subject_test_indices])
@@ -574,6 +623,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             avg_precision = np.mean([d.get('precision', 0) for d in details_list])
             avg_recall = np.mean([d.get('recall', 0) for d in details_list])
             avg_f1 = np.mean([d.get('f1_score', 0) for d in details_list])
+            avg_auc = np.mean([d.get('auc', 0.5) for d in details_list])
             
             prediction_details[subject_id] = {
                 'correct_count': int(round(avg_correct)),
@@ -581,7 +631,8 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 'total_count': int(round(avg_total)),
                 'precision': avg_precision,
                 'recall': avg_recall,
-                'f1_score': avg_f1
+                'f1_score': avg_f1,
+                'auc': avg_auc
             }
             
         # Calculate trial counts for each subject
@@ -595,7 +646,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             'test': np.sum(mask_test)
         }
     
-    return final_accuracies, trial_counts, prediction_details, confusion_true_labels, confusion_predictions
+    return final_accuracies, trial_counts, prediction_details, confusion_true_labels, confusion_predictions, confusion_probabilities
 
 
 # Backward compatibility wrapper functions

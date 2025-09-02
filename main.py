@@ -87,7 +87,7 @@ def main():
     if use_combined_datasets:
         # Configuration: Combined datasets + pooled training
         log_section_header(logger, "Processing Combined P3 and AVO Datasets")
-        combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = run_experiment(
+        results = run_experiment(
             datasets=['P3', 'AVO'],
             training_mode='pooled', 
             channels=channels,
@@ -97,6 +97,11 @@ def main():
             classifier=classifier,
             seeds=seeds
         )
+        # Handle variable return values (5 for separate, 6 for pooled)
+        if len(results) == 6:
+            combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions, _ = results
+        else:
+            combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
         
         if combined_accuracies:
             # Detailed output is already handled in experiment.py
@@ -122,7 +127,7 @@ def main():
         
         if current_separate_subject_classification:
             # Configuration: P3 dataset + individual training
-            p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions = run_experiment(
+            results = run_experiment(
                 datasets=['P3'],
                 training_mode='separate',
                 channels=p3_channels,
@@ -133,7 +138,7 @@ def main():
             )
         else:
             # Configuration: P3 dataset + pooled training
-            p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions = run_experiment(
+            results = run_experiment(
                 datasets=['P3'],
                 training_mode='pooled',
                 channels=p3_channels, 
@@ -142,6 +147,12 @@ def main():
                 classifier=classifier,
                 seeds=seeds
             )
+        
+        # Handle variable return values (5 for separate, 6 for pooled)
+        if len(results) == 6:
+            p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions, _ = results
+        else:
+            p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions = results
         
         if p3_accuracies:
             # Detailed output is already handled in experiment.py
@@ -158,7 +169,7 @@ def main():
         
         if current_separate_subject_classification:
             # Configuration: AVO dataset + individual training
-            avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions = run_experiment(
+            results = run_experiment(
                 datasets=['AVO'],
                 training_mode='separate',
                 channels=avo_channels,
@@ -169,7 +180,7 @@ def main():
             )
         else:
             # Configuration: AVO dataset + pooled training
-            avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions = run_experiment(
+            results = run_experiment(
                 datasets=['AVO'],
                 training_mode='pooled',
                 channels=avo_channels,
@@ -178,6 +189,12 @@ def main():
                 classifier=classifier,
                 seeds=seeds
             )
+        
+        # Handle variable return values (5 for separate, 6 for pooled)
+        if len(results) == 6:
+            avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions, _ = results
+        else:
+            avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions = results
         
         if avo_accuracies:
             # Detailed output is already handled in experiment.py

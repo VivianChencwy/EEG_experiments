@@ -44,10 +44,10 @@ electrode_list = 'all'
 classifier = 'lda'
 
 # Training Configuration
-separate_subject_classification = True
+separate_subject_classification = False
 
 # Subject Layer Configuration (only applies to ShallowFBCSPNet + pooled training)
-use_subject_layer = True
+use_subject_layer = False
 
 # Random Seeds for multiple runs
 seeds = [1]#, 2, 3, 4, 5, 6, 7, 8, 9, 10]
