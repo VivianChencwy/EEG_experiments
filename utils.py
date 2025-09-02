@@ -174,7 +174,10 @@ def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
         total_precision = np.mean([details['precision'] for details in prediction_details.values() if 'precision' in details])
         total_recall = np.mean([details['recall'] for details in prediction_details.values() if 'recall' in details])
         total_f1 = np.mean([details['f1_score'] for details in prediction_details.values() if 'f1_score' in details])
-        total_auc = np.mean([details.get('auc', 0.5) for details in prediction_details.values()])
+        auc_values = [details.get('auc', 0.5) for details in prediction_details.values()]
+        # Filter out nan values and calculate mean
+        valid_auc_values = [auc for auc in auc_values if not np.isnan(auc)]
+        total_auc = np.mean(valid_auc_values) if valid_auc_values else 0.5
         
         out_lines.extend([
             f"Mean Precision: {total_precision:.3f}",

@@ -10,8 +10,8 @@ import os
 
 # Define paths for the datasets
 P3_DATA_DIR = '../P3_Raw_Data_BIDS-Compatible'
-AVO_DATA_DIR = '../ds005863'
-LOG_DIR = './log_0830'
+AVO_DATA_DIR = '../ds005863/ds005863'
+LOG_DIR = './log_0902'
 #######################
 # Dataset Configuration
 #######################

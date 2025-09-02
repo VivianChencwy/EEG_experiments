@@ -7,7 +7,7 @@ import numpy as np
 import os
 from config import LOG_DIR
 
-def setup_logger(experiment_type, classifier=None, separate_subject_classification=None, electrode_list=None):
+def setup_logger(experiment_type, classifier=None, separate_subject_classification=None, electrode_list=None, create_file=True):
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     
@@ -21,19 +21,36 @@ def setup_logger(experiment_type, classifier=None, separate_subject_classificati
     else:
         logfile = os.path.join(log_dir, f'{experiment_type}_results_{timestamp}.log')
 
+    # Only create file handler if requested
+    handlers = [logging.StreamHandler()]
+    if create_file:
+        handlers.append(logging.FileHandler(logfile))
+
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(message)s',
-        handlers=[
-            logging.FileHandler(logfile),
-            logging.StreamHandler()
-        ],
+        handlers=handlers,
         datefmt='%Y-%m-%d %H:%M:%S',
         force=True  # Python>=3.8
     )
 
     # Return a named logger (avoids duplicate handlers if caller also uses logging).
-    return logging.getLogger(experiment_type)
+    logger = logging.getLogger(experiment_type)
+    
+    # Store the log file path for potential cleanup
+    if create_file:
+        logger.log_file_path = logfile
+    
+    return logger
+
+def cleanup_failed_log(logger):
+    """Clean up log file if experiment failed."""
+    if hasattr(logger, 'log_file_path') and os.path.exists(logger.log_file_path):
+        try:
+            os.remove(logger.log_file_path)
+            print(f"Cleaned up failed experiment log: {logger.log_file_path}")
+        except Exception as e:
+            print(f"Failed to clean up log file {logger.log_file_path}: {e}")
 
 def log_section_header(logger, title):
     logger.info("\n" + "="*50)

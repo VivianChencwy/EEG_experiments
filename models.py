@@ -202,9 +202,24 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             recall = recall_score(y, predictions, average='binary', zero_division=0)
             f1 = f1_score(y, predictions, average='binary', zero_division=0)
             try:
-                auc = roc_auc_score(y, y_proba)
-            except:
-                auc = 0.5  # Default AUC if calculation fails
+                # Check if we have both classes in the true labels
+                unique_labels = np.unique(y)
+                if len(unique_labels) < 2:
+                    print(f"Warning: Only one class present in test set: {unique_labels}. Setting AUC to 0.5.")
+                    auc = 0.5
+                else:
+                    # Check for problematic probability values
+                    if np.any(np.isnan(y_proba)) or np.any(np.isinf(y_proba)):
+                        print(f"Warning: Found NaN or infinite values in probabilities. Setting AUC to 0.5.")
+                        auc = 0.5
+                    else:
+                        auc = roc_auc_score(y, y_proba)
+                        if np.isnan(auc):
+                            print(f"Warning: AUC calculation returned NaN. Setting to 0.5.")
+                            auc = 0.5
+            except Exception as e:
+                print(f"Warning: AUC calculation failed: {e}. Setting to 0.5.")
+                auc = 0.5
             
             return {
                 'accuracy': accuracy,
@@ -274,9 +289,24 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
         
         # Calculate AUC
         try:
-            auc = roc_auc_score(all_targets, all_probabilities)
-        except:
-            auc = 0.5  # Default AUC if calculation fails
+            # Check if we have both classes in the true labels
+            unique_labels = np.unique(all_targets)
+            if len(unique_labels) < 2:
+                print(f"Warning: Only one class present in overall test set: {unique_labels}. Setting AUC to 0.5.")
+                auc = 0.5
+            else:
+                # Check for problematic probability values
+                if np.any(np.isnan(all_probabilities)) or np.any(np.isinf(all_probabilities)):
+                    print(f"Warning: Found NaN or infinite values in overall probabilities. Setting AUC to 0.5.")
+                    auc = 0.5
+                else:
+                    auc = roc_auc_score(all_targets, all_probabilities)
+                    if np.isnan(auc):
+                        print(f"Warning: Overall AUC calculation returned NaN. Setting to 0.5.")
+                        auc = 0.5
+        except Exception as e:
+            print(f"Warning: Overall AUC calculation failed: {e}. Setting to 0.5.")
+            auc = 0.5
         
         return {
             'accuracy': accuracy,

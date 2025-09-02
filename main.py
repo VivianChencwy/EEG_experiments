@@ -25,7 +25,8 @@ from experiment import (
 from utils import calculate_statistics, print_statistics, get_channel_list
 from experiment_logger import (
     setup_logger, log_section_header, log_configuration, 
-    log_individual_results, log_detailed_results, log_overall_metrics
+    log_individual_results, log_detailed_results, log_overall_metrics,
+    cleanup_failed_log
 )
 from visualization import plot_confusion_matrix
 
@@ -36,176 +37,189 @@ warnings.filterwarnings('ignore')
 
 
 def main():
-    current_electrode_list = electrode_list
-    current_separate_subject_classification = separate_subject_classification
-    
-    # Validate configuration
-    if use_combined_datasets:
-        if current_electrode_list != 'common':
-            print("Warning: Forcing electrode_list to 'common' for combined datasets")
-            current_electrode_list = 'common'
-        if current_separate_subject_classification:
-            print("Warning: Forcing separate_subject_classification to False for combined datasets")
-            current_separate_subject_classification = False
-    
-    # Determine dataset name for logging
-    if use_combined_datasets:
-        dataset_name = "Combined"
-    elif 'P3' in dataset:
-        dataset_name = "P3"
-    elif 'ds005863' in dataset:
-        dataset_name = "AVO"
-    else:
-        dataset_name = "ConfigurableExperiments"
-    
-    # Results will be saved in the log directory
-    log_dir = './log_0829'
-    
-    # Setup logger with configuration parameters
-    logger = setup_logger(dataset_name, classifier, current_separate_subject_classification, current_electrode_list)
-
-    # Log current configuration for reproducibility
-    log_configuration(logger, {
-        "dataset": dataset,
-        "use_combined_datasets": use_combined_datasets,
-        "electrode_list": current_electrode_list,
-        "classifier": classifier,
-        "separate_subject_classification": current_separate_subject_classification,
-        "use_subject_layer": use_subject_layer,
-        "seeds": seeds
-    })
-    
-    # Determine which electrodes to use
-    if current_electrode_list == 'common':
-        channels = COMMON_CHANNELS
-    else:
-        # For individual datasets, we'll determine channels within the function
-        channels = COMMON_CHANNELS  # Default for combined datasets
-    
-    all_accuracies = {}
-
-    if use_combined_datasets:
-        # Configuration: Combined datasets + pooled training
-        log_section_header(logger, "Processing Combined P3 and AVO Datasets")
-        results = run_experiment(
-            datasets=['P3', 'AVO'],
-            training_mode='pooled', 
-            channels=channels,
-            logger=logger,
-            p3_dir=P3_DATA_DIR,
-            avo_dir=AVO_DATA_DIR,
-            classifier=classifier,
-            seeds=seeds
-        )
-        # Handle variable return values (5 for separate, 6 for pooled)
-        if len(results) == 6:
-            combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions, _ = results
+    logger = None
+    try:
+        current_electrode_list = electrode_list
+        current_separate_subject_classification = separate_subject_classification
+        
+        # Validate configuration
+        if use_combined_datasets:
+            if current_electrode_list != 'common':
+                print("Warning: Forcing electrode_list to 'common' for combined datasets")
+                current_electrode_list = 'common'
+            if current_separate_subject_classification:
+                print("Warning: Forcing separate_subject_classification to False for combined datasets")
+                current_separate_subject_classification = False
+        
+        # Determine dataset name for logging
+        if use_combined_datasets:
+            dataset_name = "Combined"
+        elif 'P3' in dataset:
+            dataset_name = "P3"
+        elif 'ds005863' in dataset:
+            dataset_name = "AVO"
         else:
-            combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
+            dataset_name = "ConfigurableExperiments"
         
-        if combined_accuracies:
-            # Detailed output is already handled in experiment.py
-            stats_overall = calculate_statistics(combined_accuracies)
-            print_statistics(stats_overall, "Combined Model (All Subjects)", logger, combined_prediction_details)
-            
-            # Analyze P3 and AVO subset performance
-            p3_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('P3_')}
-            avo_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('AVO_')}
-            p3_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('P3_')}
-            avo_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('AVO_')}
-            if p3_subset:
-                print_statistics(calculate_statistics(p3_subset), "Combined Model – P3 Subjects", logger, p3_details_subset)
-            if avo_subset:
-                print_statistics(calculate_statistics(avo_subset), "Combined Model – AVO Subjects", logger, avo_details_subset)
-            all_accuracies['Combined'] = stats_overall
-            
-            # Metrics will be logged by run_experiment
+        # Results will be saved in the log directory
+        log_dir = './log_0829'
+        
+        # Setup logger with configuration parameters
+        logger = setup_logger(dataset_name, classifier, current_separate_subject_classification, current_electrode_list)
 
-    elif 'P3' in dataset:
-        log_section_header(logger, "Processing P3 Dataset")
-        p3_channels = P3_CHANNELS if current_electrode_list == 'all' else COMMON_CHANNELS
+        # Log current configuration for reproducibility
+        log_configuration(logger, {
+            "dataset": dataset,
+            "use_combined_datasets": use_combined_datasets,
+            "electrode_list": current_electrode_list,
+            "classifier": classifier,
+            "separate_subject_classification": current_separate_subject_classification,
+            "use_subject_layer": use_subject_layer,
+            "seeds": seeds
+        })
         
-        if current_separate_subject_classification:
-            # Configuration: P3 dataset + individual training
+        # Determine which electrodes to use
+        if current_electrode_list == 'common':
+            channels = COMMON_CHANNELS
+        else:
+            # For individual datasets, we'll determine channels within the function
+            channels = COMMON_CHANNELS  # Default for combined datasets
+        
+        all_accuracies = {}
+
+        if use_combined_datasets:
+            # Configuration: Combined datasets + pooled training
+            log_section_header(logger, "Processing Combined P3 and AVO Datasets")
             results = run_experiment(
-                datasets=['P3'],
-                training_mode='separate',
-                channels=p3_channels,
+                datasets=['P3', 'AVO'],
+                training_mode='pooled', 
+                channels=channels,
                 logger=logger,
-                p3_dir=data_dir,
+                p3_dir=P3_DATA_DIR,
+                avo_dir=AVO_DATA_DIR,
                 classifier=classifier,
                 seeds=seeds
             )
-        else:
-            # Configuration: P3 dataset + pooled training
-            results = run_experiment(
-                datasets=['P3'],
-                training_mode='pooled',
-                channels=p3_channels, 
-                logger=logger,
-                p3_dir=data_dir,
-                classifier=classifier,
-                seeds=seeds
-            )
-        
-        # Handle variable return values (5 for separate, 6 for pooled)
-        if len(results) == 6:
-            p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions, _ = results
-        else:
-            p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions = results
-        
-        if p3_accuracies:
-            # Detailed output is already handled in experiment.py
-            stats = calculate_statistics(p3_accuracies)
-            model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
-            print_statistics(stats, f"P3 {model_type}", logger, p3_prediction_details)
-            all_accuracies['P3'] = stats
+            # Handle variable return values (5 for separate, 6 for pooled)
+            if len(results) == 6:
+                combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions, _ = results
+            else:
+                combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
             
-            # Metrics will be logged by run_experiment
+            if combined_accuracies:
+                # Detailed output is already handled in experiment.py
+                stats_overall = calculate_statistics(combined_accuracies)
+                print_statistics(stats_overall, "Combined Model (All Subjects)", logger, combined_prediction_details)
+                
+                # Analyze P3 and AVO subset performance
+                p3_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('P3_')}
+                avo_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('AVO_')}
+                p3_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('P3_')}
+                avo_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('AVO_')}
+                if p3_subset:
+                    print_statistics(calculate_statistics(p3_subset), "Combined Model – P3 Subjects", logger, p3_details_subset)
+                if avo_subset:
+                    print_statistics(calculate_statistics(avo_subset), "Combined Model – AVO Subjects", logger, avo_details_subset)
+                all_accuracies['Combined'] = stats_overall
+                
+                # Metrics will be logged by run_experiment
 
-    elif 'ds005863' in dataset:
-        log_section_header(logger, "Processing Active Visual Oddball Dataset")
-        avo_channels = AVO_CHANNELS if current_electrode_list == 'all' else COMMON_CHANNELS
-        
-        if current_separate_subject_classification:
-            # Configuration: AVO dataset + individual training
-            results = run_experiment(
-                datasets=['AVO'],
-                training_mode='separate',
-                channels=avo_channels,
-                logger=logger,
-                avo_dir=data_dir,
-                classifier=classifier,
-                seeds=seeds
-            )
-        else:
-            # Configuration: AVO dataset + pooled training
-            results = run_experiment(
-                datasets=['AVO'],
-                training_mode='pooled',
-                channels=avo_channels,
-                logger=logger,
-                avo_dir=data_dir,
-                classifier=classifier,
-                seeds=seeds
-            )
-        
-        # Handle variable return values (5 for separate, 6 for pooled)
-        if len(results) == 6:
-            avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions, _ = results
-        else:
-            avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions = results
-        
-        if avo_accuracies:
-            # Detailed output is already handled in experiment.py
-            stats = calculate_statistics(avo_accuracies)
-            model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
-            print_statistics(stats, f"AVO {model_type}", logger, avo_prediction_details)
-            all_accuracies['AVO'] = stats
+        elif 'P3' in dataset:
+            log_section_header(logger, "Processing P3 Dataset")
+            p3_channels = P3_CHANNELS if current_electrode_list == 'all' else COMMON_CHANNELS
             
-            # Metrics will be logged by run_experiment
+            if current_separate_subject_classification:
+                # Configuration: P3 dataset + individual training
+                results = run_experiment(
+                    datasets=['P3'],
+                    training_mode='separate',
+                    channels=p3_channels,
+                    logger=logger,
+                    p3_dir=data_dir,
+                    classifier=classifier,
+                    seeds=seeds
+                )
+            else:
+                # Configuration: P3 dataset + pooled training
+                results = run_experiment(
+                    datasets=['P3'],
+                    training_mode='pooled',
+                    channels=p3_channels, 
+                    logger=logger,
+                    p3_dir=data_dir,
+                    classifier=classifier,
+                    seeds=seeds
+                )
+            
+            # Handle variable return values (5 for separate, 6 for pooled)
+            if len(results) == 6:
+                p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions, _ = results
+            else:
+                p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions = results
+            
+            if p3_accuracies:
+                # Detailed output is already handled in experiment.py
+                stats = calculate_statistics(p3_accuracies)
+                model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
+                print_statistics(stats, f"P3 {model_type}", logger, p3_prediction_details)
+                all_accuracies['P3'] = stats
+                
+                # Metrics will be logged by run_experiment
 
-    print("\n--- Experiment Run Complete ---")
+        elif 'ds005863' in dataset:
+            log_section_header(logger, "Processing Active Visual Oddball Dataset")
+            avo_channels = AVO_CHANNELS if current_electrode_list == 'all' else COMMON_CHANNELS
+            
+            if current_separate_subject_classification:
+                # Configuration: AVO dataset + individual training
+                results = run_experiment(
+                    datasets=['AVO'],
+                    training_mode='separate',
+                    channels=avo_channels,
+                    logger=logger,
+                    avo_dir=data_dir,
+                    classifier=classifier,
+                    seeds=seeds
+                )
+            else:
+                # Configuration: AVO dataset + pooled training
+                results = run_experiment(
+                    datasets=['AVO'],
+                    training_mode='pooled',
+                    channels=avo_channels,
+                    logger=logger,
+                    avo_dir=data_dir,
+                    classifier=classifier,
+                    seeds=seeds
+                )
+            
+            # Handle variable return values (5 for separate, 6 for pooled)
+            if len(results) == 6:
+                avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions, _ = results
+            else:
+                avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions = results
+            
+            if avo_accuracies:
+                # Detailed output is already handled in experiment.py
+                stats = calculate_statistics(avo_accuracies)
+                model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
+                print_statistics(stats, f"AVO {model_type}", logger, avo_prediction_details)
+                all_accuracies['AVO'] = stats
+                
+                # Metrics will be logged by run_experiment
+
+        print("\n--- Experiment Run Complete ---")
+        
+    except Exception as e:
+        print(f"\n--- Experiment Failed: {e} ---")
+        if logger:
+            cleanup_failed_log(logger)
+        raise  # Re-raise the exception to maintain proper exit code
+    except KeyboardInterrupt:
+        print("\n--- Experiment Interrupted by User ---")
+        if logger:
+            cleanup_failed_log(logger)
+        raise
 
 
 if __name__ == "__main__":

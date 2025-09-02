@@ -1,0 +1,56 @@
+2025-09-02 10:06:27 - 
+Experiment Configuration:
+2025-09-02 10:06:27 - --------------------------------------------------
+2025-09-02 10:06:27 - dataset: use_combined_datasets
+2025-09-02 10:06:27 - use_combined_datasets: True
+2025-09-02 10:06:27 - electrode_list: common
+2025-09-02 10:06:27 - classifier: ShallowFBCSPNet
+2025-09-02 10:06:27 - separate_subject_classification: False
+2025-09-02 10:06:27 - use_subject_layer: True
+2025-09-02 10:06:27 - seeds: [1]
+2025-09-02 10:06:27 - --------------------------------------------------
+2025-09-02 10:06:27 - 
+==================================================
+2025-09-02 10:06:27 - Processing Combined P3 and AVO Datasets
+2025-09-02 10:06:27 - ==================================================
+2025-09-02 10:17:03 - 
+Overall Experiment Metrics:
+2025-09-02 10:17:03 - --------------------------------------------------
+2025-09-02 10:17:03 - Accuracy: 0.8113
+2025-09-02 10:17:03 - Precision: 0.2174
+2025-09-02 10:17:03 - Recall: 0.2547
+2025-09-02 10:17:03 - F1 Score: 0.2346
+2025-09-02 10:17:03 - AUC: 0.5000
+2025-09-02 10:17:03 - 
+Confusion Matrix Plot: ./log_0901\P3_AVO_clf-ShallowFBCSPNet_sep-False_el-FP1_Fz_F3_F7_C3_P3_P7_O1_Oz_Pz_O2_P4_P8_C4_F4_F8_confusion_matrix_20250902_101702.png
+2025-09-02 10:17:03 - --------------------------------------------------
+2025-09-02 10:17:03 - 
+Combined Model (All Subjects) Statistics:
+2025-09-02 10:17:03 - Mean Accuracy: 0.811
+2025-09-02 10:17:03 - 95% Confidence Interval: [0.797, 0.826]
+2025-09-02 10:17:03 - Best Subject: AVO_015 (0.950)
+2025-09-02 10:17:03 - Worst Subject: P3_sub-006 (0.543)
+2025-09-02 10:17:03 - Mean Precision: 0.180
+2025-09-02 10:17:03 - Mean Recall: 0.223
+2025-09-02 10:17:03 - Mean F1-Score: 0.178
+2025-09-02 10:17:03 - Mean AUC: 0.597
+2025-09-02 10:17:03 - 
+Combined Model ¨C P3 Subjects Statistics:
+2025-09-02 10:17:03 - Mean Accuracy: 0.727
+2025-09-02 10:17:03 - 95% Confidence Interval: [0.698, 0.756]
+2025-09-02 10:17:03 - Best Subject: P3_sub-037 (0.889)
+2025-09-02 10:17:03 - Worst Subject: P3_sub-006 (0.543)
+2025-09-02 10:17:03 - Mean Precision: 0.346
+2025-09-02 10:17:03 - Mean Recall: 0.429
+2025-09-02 10:17:03 - Mean F1-Score: 0.361
+2025-09-02 10:17:03 - Mean AUC: 0.684
+2025-09-02 10:17:03 - 
+Combined Model ¨C AVO Subjects Statistics:
+2025-09-02 10:17:03 - Mean Accuracy: 0.847
+2025-09-02 10:17:03 - 95% Confidence Interval: [0.835, 0.858]
+2025-09-02 10:17:03 - Best Subject: AVO_015 (0.950)
+2025-09-02 10:17:03 - Worst Subject: AVO_007 (0.688)
+2025-09-02 10:17:03 - Mean Precision: 0.111
+2025-09-02 10:17:03 - Mean Recall: 0.137
+2025-09-02 10:17:03 - Mean F1-Score: 0.101
+2025-09-02 10:17:03 - Mean AUC: 0.560

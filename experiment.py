@@ -39,7 +39,7 @@ from experiment_logger import (
     log_error, log_individual_results, log_section_header, 
     log_detailed_results, log_overall_metrics
 )
-from visualization import plot_confusion_matrix
+# Confusion matrix plotting removed
 
 
 def get_dataset_subjects(dataset_type, dataset_obj):
@@ -154,30 +154,7 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
         accuracies, trial_counts, prediction_details, true_labels, predictions = results
         overall_probabilities = None
     
-    # Get experiment identifier components
-    dataset_name = '_'.join(datasets)
-    training_mode_display = 'separate' if training_mode == 'separate' else 'pooled'
-    electrode_str = '_'.join(channels) if isinstance(channels, list) else channels
-    
-    # Generate save path for confusion matrix
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    log_dir = LOG_DIR
-    os.makedirs(log_dir, exist_ok=True)
-    cm_filename = f"{dataset_name}_clf-{exp_classifier}_sep-{training_mode=='separate'}_el-{electrode_str}_confusion_matrix_{timestamp}.png"
-    cm_path = os.path.join(log_dir, cm_filename)
-    
-    # Plot and save confusion matrix
-    if true_labels and predictions:
-        # Plot confusion matrix with metrics
-        metrics = plot_confusion_matrix(
-            np.array(true_labels),
-            np.array(predictions),
-            y_proba=overall_probabilities,
-            save_path=cm_path
-        )
-        
-        # Log overall experiment metrics
-        log_overall_metrics(logger, metrics, cm_path)
+    # Confusion matrix plotting removed as requested
     
     return results
 
@@ -308,7 +285,10 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             avg_precision = np.mean([d['precision'] for d in subject_details_seed])
             avg_recall = np.mean([d['recall'] for d in subject_details_seed])
             avg_f1 = np.mean([d['f1_score'] for d in subject_details_seed])
-            avg_auc = np.mean([d.get('auc', 0.5) for d in subject_details_seed])
+            auc_values = [d.get('auc', 0.5) for d in subject_details_seed]
+            # Filter out nan values and calculate mean
+            valid_auc_values = [auc for auc in auc_values if not np.isnan(auc)]
+            avg_auc = np.mean(valid_auc_values) if valid_auc_values else 0.5
             
             # Print detailed metrics for each subject immediately
             print(f"Subject {final_key} Results:")
@@ -532,9 +512,24 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 recall = recall_score(y_subj, predictions, average='binary', zero_division=0)
                 f1 = f1_score(y_subj, predictions, average='binary', zero_division=0)
                 try:
-                    auc = roc_auc_score(y_subj, y_proba)
-                except:
-                    auc = 0.5  # Default AUC if calculation fails
+                    # Check if we have both classes in the true labels
+                    unique_labels = np.unique(y_subj)
+                    if len(unique_labels) < 2:
+                        print(f"Warning: Subject {subject_id} has only one class in test set: {unique_labels}. Setting AUC to 0.5.")
+                        auc = 0.5
+                    else:
+                        # Check for problematic probability values
+                        if np.any(np.isnan(y_proba)) or np.any(np.isinf(y_proba)):
+                            print(f"Warning: Subject {subject_id} has NaN or infinite values in probabilities. Setting AUC to 0.5.")
+                            auc = 0.5
+                        else:
+                            auc = roc_auc_score(y_subj, y_proba)
+                            if np.isnan(auc):
+                                print(f"Warning: Subject {subject_id} AUC calculation returned NaN. Setting to 0.5.")
+                                auc = 0.5
+                except Exception as e:
+                    print(f"Warning: Subject {subject_id} AUC calculation failed: {e}. Setting to 0.5.")
+                    auc = 0.5
                 
                 details = {
                     'accuracy': acc,
@@ -623,7 +618,10 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             avg_precision = np.mean([d.get('precision', 0) for d in details_list])
             avg_recall = np.mean([d.get('recall', 0) for d in details_list])
             avg_f1 = np.mean([d.get('f1_score', 0) for d in details_list])
-            avg_auc = np.mean([d.get('auc', 0.5) for d in details_list])
+            auc_values = [d.get('auc', 0.5) for d in details_list]
+            # Filter out nan values and calculate mean
+            valid_auc_values = [auc for auc in auc_values if not np.isnan(auc)]
+            avg_auc = np.mean(valid_auc_values) if valid_auc_values else 0.5
             
             prediction_details[subject_id] = {
                 'correct_count': int(round(avg_correct)),

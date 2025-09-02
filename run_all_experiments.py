@@ -18,7 +18,7 @@ from datetime import datetime
 try:
     from config import P3_DATA_DIR, AVO_DATA_DIR
 except Exception:
-    P3_DATA_DIR, AVO_DATA_DIR = '../P3_Raw_Data _BIDS-Compatible', '../ds005863/ds005863'
+    P3_DATA_DIR, AVO_DATA_DIR = '../P3_Raw_Data_BIDS-Compatible', '../ds005863/ds005863'
 
 
 def ensure_log_dir(log_dir: str) -> None:
@@ -97,7 +97,8 @@ def make_configs() -> list[dict]:
                     use_subject_layer=False,
                 )
 
-    # Combined: 4 (1 electrode × 2 classifier × 1 separate_subject + 2 additional configs)
+    # Combined: 6 configurations
+    # Combined + pooled training (separate_subject=False) for both classifiers
     for classifier in classifiers:
         add_cfg(
             dataset='use_combined_datasets',  # informational only
@@ -109,17 +110,17 @@ def make_configs() -> list[dict]:
             use_subject_layer=False,
         )
     
-    # Additional combined configs
-    # Combined + LDA + pooled (separate_subject=True)
-    add_cfg(
-        dataset='use_combined_datasets',
-        data_dir=P3_DATA_DIR,
-        use_combined=True,
-        electrode='common',
-        classifier='lda',
-        separate_subject=True,
-        use_subject_layer=False,
-    )
+    # Combined + separate training (separate_subject=True) for both classifiers
+    for classifier in classifiers:
+        add_cfg(
+            dataset='use_combined_datasets',
+            data_dir=P3_DATA_DIR,
+            use_combined=True,
+            electrode='common',
+            classifier=classifier,
+            separate_subject=True,
+            use_subject_layer=False,
+        )
     
     # Combined + ShallowFBCSPNet + use_subject_layer=True + common
     add_cfg(
@@ -157,7 +158,7 @@ def make_configs() -> list[dict]:
             use_subject_layer=True,
         )
 
-    assert len(configs) == 24, f"Expected 24 configs, got {len(configs)}"
+    assert len(configs) == 26, f"Expected 26 configs, got {len(configs)}"
     return configs
 
 
@@ -172,9 +173,23 @@ def run_single_experiment(env: dict) -> int:
     else:
         env_proc['CUDA_VISIBLE_DEVICES'] = ''   # Use CPU for LDA
 
-    # Use current Python interpreter to ensure correct environment
+    # Use conda activate eegtemp environment
+    # On Windows, we need to use the conda python executable
+    conda_python = None
+    try:
+        # Try to find conda python in eegtemp environment
+        import shutil
+        conda_python = shutil.which('python')
+        if conda_python and 'eegtemp' in conda_python:
+            python_cmd = conda_python
+        else:
+            # Fallback to current python
+            python_cmd = sys.executable
+    except:
+        python_cmd = sys.executable
+
     proc = subprocess.Popen(
-        [sys.executable, 'main.py'],
+        [python_cmd, 'main.py'],
         env=env_proc,
         cwd=os.path.dirname(os.path.abspath(__file__)),
     )
