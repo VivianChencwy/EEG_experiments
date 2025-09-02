@@ -295,9 +295,6 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
             all_accuracies[final_key] = np.mean(subject_accuracies_seed)
             
-            # Print accuracy regardless of separate_subject_classification setting
-            print(f"Subject {final_key} accuracy: {all_accuracies[final_key]:.3%}")
-            
             # Average the prediction details across seeds
             avg_correct = np.mean([d['correct_count'] for d in subject_details_seed])
             avg_incorrect = np.mean([d['incorrect_count'] for d in subject_details_seed])
@@ -305,6 +302,17 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             avg_precision = np.mean([d['precision'] for d in subject_details_seed])
             avg_recall = np.mean([d['recall'] for d in subject_details_seed])
             avg_f1 = np.mean([d['f1_score'] for d in subject_details_seed])
+            avg_auc = np.mean([d.get('auc', 0.5) for d in subject_details_seed])
+            
+            # Print detailed metrics for each subject immediately
+            print(f"Subject {final_key} Results:")
+            print(f"  Accuracy: {all_accuracies[final_key]:.3%}")
+            print(f"  Precision: {avg_precision:.3f}")
+            print(f"  Recall: {avg_recall:.3f}")
+            print(f"  F1-Score: {avg_f1:.3f}")
+            print(f"  AUC: {avg_auc:.3f}")
+            print(f"  Correct/Total: {int(avg_correct)}/{int(avg_total)}")
+            print("-" * 50)
             
             prediction_details[final_key] = {
                 'correct_count': int(round(avg_correct)),

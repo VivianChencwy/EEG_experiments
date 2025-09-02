@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import pandas as pd
 from mne.io import read_raw_eeglab, read_raw_brainvision
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset, WeightedRandomSampler
 from sklearn.model_selection import train_test_split
 from scipy import stats
 
@@ -243,7 +243,7 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
 
 def create_data_loaders(data, labels, batch_size=BATCH_SIZE, 
                        train_size=TRAIN_SIZE, val_size=VAL_SIZE, test_size=TEST_SIZE,
-                       return_indices=False):
+                       return_indices=False, use_weighted_sampling=True):
     """Create train, validation, and test data loaders.
     
     Parameters
@@ -262,6 +262,8 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         Proportion of data for testing
     return_indices : bool, default False
         If True, also return the indices for each split
+    use_weighted_sampling : bool, default True
+        If True, use weighted random sampling for training set
         
     Returns
     -------
@@ -281,9 +283,31 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
     )
     
+    # Create weighted sampler for training set to handle class imbalance
+    train_sampler = None
+    if use_weighted_sampling:
+        # Calculate class weights
+        class_counts = np.bincount(y_train)
+        total_samples = len(y_train)
+        class_weights = total_samples / (len(class_counts) * class_counts)
+        
+        # Assign weights to each sample
+        sample_weights = np.array([class_weights[label] for label in y_train])
+        sample_weights = torch.from_numpy(sample_weights).double()
+        
+        train_sampler = WeightedRandomSampler(
+            weights=sample_weights,
+            num_samples=len(sample_weights),
+            replacement=True
+        )
+        print(f"Using weighted sampling - Class distribution: {class_counts.tolist()}, "
+              f"Class weights: {class_weights.tolist()}")
+    
     train_loader = DataLoader(
         TensorDataset(torch.FloatTensor(X_train), torch.LongTensor(y_train)), 
-        batch_size=batch_size, shuffle=True
+        batch_size=batch_size, 
+        sampler=train_sampler,
+        shuffle=(train_sampler is None)  # Don't shuffle if using sampler
     )
     val_loader = DataLoader(
         TensorDataset(torch.FloatTensor(X_val), torch.LongTensor(y_val)), 

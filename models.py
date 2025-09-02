@@ -12,9 +12,71 @@ from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_sco
 
 from config import (
     INPUT_WINDOW_SAMPLES, use_subject_layer, EARLY_STOPPING_PATIENCE,
-    LEARNING_RATE, WEIGHT_DECAY, GAMMA, MAX_EPOCHS, N_CLASSES
+    LEARNING_RATE, WEIGHT_DECAY, GAMMA, MAX_EPOCHS, N_CLASSES,
+    USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING, DROPOUT_RATE
 )
 from constants import NORMALIZATION_EPSILON
+
+
+class FocalLoss(nn.Module):
+    """Focal Loss for addressing class imbalance."""
+    def __init__(self, alpha=1, gamma=2, weight=None, reduction='mean'):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.weight = weight
+        self.reduction = reduction
+
+    def forward(self, inputs, targets):
+        ce_loss = F.cross_entropy(inputs, targets, weight=self.weight, reduction='none')
+        pt = torch.exp(-ce_loss)
+        focal_loss = self.alpha * (1-pt)**self.gamma * ce_loss
+
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        else:
+            return focal_loss
+
+
+def augment_data(x, training=True):
+    """Apply data augmentation to EEG data."""
+    if not training or not USE_DATA_AUGMENTATION:
+        return x
+    
+    batch_size, n_channels, n_timepoints = x.shape
+    augmented_x = x.clone()
+    
+    # Add Gaussian noise
+    if NOISE_STD > 0:
+        noise = torch.randn_like(augmented_x) * NOISE_STD
+        augmented_x = augmented_x + noise
+    
+    # Time shifting
+    if TIME_SHIFT_RANGE > 0:
+        for i in range(batch_size):
+            shift = np.random.randint(-TIME_SHIFT_RANGE, TIME_SHIFT_RANGE + 1)
+            if shift != 0:
+                if shift > 0:
+                    augmented_x[i, :, shift:] = x[i, :, :-shift]
+                    augmented_x[i, :, :shift] = x[i, :, -shift:]
+                else:
+                    augmented_x[i, :, :shift] = x[i, :, -shift:]
+                    augmented_x[i, :, shift:] = x[i, :, :-shift]
+    
+    return augmented_x
+
+
+def label_smoothing_loss(pred, target, smoothing=LABEL_SMOOTHING):
+    """Compute label smoothing loss."""
+    if smoothing == 0.0:
+        return F.cross_entropy(pred, target)
+    
+    n_classes = pred.size(-1)
+    one_hot = torch.zeros_like(pred).scatter(1, target.unsqueeze(1), 1)
+    smooth_one_hot = one_hot * (1 - smoothing) + smoothing / n_classes
+    return -(smooth_one_hot * F.log_softmax(pred, dim=1)).sum(dim=1).mean()
 
 
 class SubjectInputLayer(nn.Module):
@@ -252,11 +314,11 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
     
     # Neural Network training
     optimizer = torch.optim.Adamax(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
-    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=GAMMA)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
     # Maintain state for early stopping using the helper function defined above
     es_state = {}
 
-    # Compute class weights from training data (to address class imbalance)
+    # Compute effective class weights using effective number of samples
     class_weights = None
     try:
         if hasattr(train_loader.dataset, 'tensors'):
@@ -270,15 +332,21 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             import numpy as np
             num_classes = int(y_np.max()) + 1
             counts = np.bincount(y_np, minlength=num_classes)
-            total = counts.sum()
-            weights_np = np.zeros_like(counts, dtype=np.float32)
-            for c in range(num_classes):
-                weights_np[c] = total / (num_classes * max(counts[c], 1))
+            
+            # Use effective number of samples for better class weighting
+            beta = 0.9999
+            effective_num = 1.0 - np.power(beta, counts)
+            weights_np = (1.0 - beta) / np.array(effective_num)
+            weights_np = weights_np / np.sum(weights_np) * num_classes
+            
             class_weights = torch.tensor(weights_np, dtype=torch.float32, device=device)
-            print(f"Training class distribution: {counts.tolist()} | class weights: {weights_np.tolist()}")
+            print(f"Training class distribution: {counts.tolist()} | effective class weights: {weights_np.tolist()}")
     except Exception as e:
         print(f"Warning: failed to compute class weights: {e}")
         class_weights = None
+
+    # Initialize focal loss
+    focal_loss = FocalLoss(alpha=1, gamma=2, weight=class_weights)
 
     for epoch in range(max_epochs):
         model.train()
@@ -290,6 +358,8 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
                 x, y = batch_data
                 subject_indices = None
             
+            # Apply data augmentation
+            x = augment_data(x, training=True)
             x = normalize_data(x).to(device)
             y = y.to(device)
             
@@ -309,13 +379,16 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             if scores.ndim > 2:
                 scores = scores.view(scores.size(0), -1)
             
-            if class_weights is not None:
-                loss = F.cross_entropy(scores, y, weight=class_weights)
+            # Use focal loss with label smoothing
+            if LABEL_SMOOTHING > 0:
+                loss = label_smoothing_loss(scores, y, LABEL_SMOOTHING)
             else:
-                loss = F.cross_entropy(scores, y)
+                loss = focal_loss(scores, y)
+            
             loss.backward()
             optimizer.step()
-            scheduler.step()
+        
+        scheduler.step()
         
         # Validation phase
         val_acc = evaluate(model, val_loader, device)
