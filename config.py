@@ -40,8 +40,8 @@ use_combined_datasets = False
 electrode_list = 'all'
 
 # Model Configuration
-classifier = 'ShallowFBCSPNet'
-#classifier = 'lda'
+#classifier = 'ShallowFBCSPNet'
+classifier = 'lda'
 
 # Training Configuration
 separate_subject_classification = True

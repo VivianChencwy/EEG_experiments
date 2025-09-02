@@ -99,31 +99,19 @@ def main():
         )
         
         if combined_accuracies:
-            for subj_id, acc in combined_accuracies.items():
-                # Log detailed metrics to file
-                if subj_id in combined_prediction_details:
-                    pred_details = combined_prediction_details[subj_id]
-                    pred_details['accuracy'] = acc  # Add accuracy to details
-                    log_detailed_results(logger, "Combined", subj_id, pred_details)
-                
-                # Print to console
-                if subj_id in combined_trial_counts:
-                    counts = combined_trial_counts[subj_id]
-                    print(f"Number of trials for {subj_id}: Train={counts['train']}, Val={counts['val']}, Test={counts['test']}")
-                if subj_id in combined_prediction_details:
-                    pred_details = combined_prediction_details[subj_id]
-                    print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
-                    print(f"Precision: {pred_details['precision']:.3f}, Recall: {pred_details['recall']:.3f}, F1 Score: {pred_details['f1_score']:.3f}, AUC: {pred_details.get('auc', 0):.3f}")
+            # Detailed output is already handled in experiment.py
             stats_overall = calculate_statistics(combined_accuracies)
-            print_statistics(stats_overall, "Combined Model (All Subjects)", logger)
+            print_statistics(stats_overall, "Combined Model (All Subjects)", logger, combined_prediction_details)
             
             # Analyze P3 and AVO subset performance
             p3_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('P3_')}
             avo_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('AVO_')}
+            p3_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('P3_')}
+            avo_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('AVO_')}
             if p3_subset:
-                print_statistics(calculate_statistics(p3_subset), "Combined Model – P3 Subjects", logger)
+                print_statistics(calculate_statistics(p3_subset), "Combined Model – P3 Subjects", logger, p3_details_subset)
             if avo_subset:
-                print_statistics(calculate_statistics(avo_subset), "Combined Model – AVO Subjects", logger)
+                print_statistics(calculate_statistics(avo_subset), "Combined Model – AVO Subjects", logger, avo_details_subset)
             all_accuracies['Combined'] = stats_overall
             
             # Metrics will be logged by run_experiment
@@ -156,25 +144,10 @@ def main():
             )
         
         if p3_accuracies:
-            for subj_id, acc in p3_accuracies.items():
-                mode = "Individual" if current_separate_subject_classification else "Pooled"
-                # Log detailed metrics to file
-                if subj_id in p3_prediction_details:
-                    pred_details = p3_prediction_details[subj_id]
-                    pred_details['accuracy'] = acc  # Add accuracy to details
-                    log_detailed_results(logger, f"P3-{mode}", subj_id, pred_details)
-                
-                # Print to console
-                if subj_id in p3_trial_counts:
-                    counts = p3_trial_counts[subj_id]
-                    print(f"Number of trials for {subj_id}: Train={counts['train']}, Val={counts['val']}, Test={counts['test']}")
-                if subj_id in p3_prediction_details:
-                    pred_details = p3_prediction_details[subj_id]
-                    print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
-                    print(f"Precision: {pred_details['precision']:.3f}, Recall: {pred_details['recall']:.3f}, F1 Score: {pred_details['f1_score']:.3f}, AUC: {pred_details.get('auc', 0):.3f}")
+            # Detailed output is already handled in experiment.py
             stats = calculate_statistics(p3_accuracies)
             model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
-            print_statistics(stats, f"P3 {model_type}", logger)
+            print_statistics(stats, f"P3 {model_type}", logger, p3_prediction_details)
             all_accuracies['P3'] = stats
             
             # Metrics will be logged by run_experiment
@@ -207,25 +180,10 @@ def main():
             )
         
         if avo_accuracies:
-            for subj_id, acc in avo_accuracies.items():
-                mode = "Individual" if current_separate_subject_classification else "Pooled"
-                # Log detailed metrics to file
-                if subj_id in avo_prediction_details:
-                    pred_details = avo_prediction_details[subj_id]
-                    pred_details['accuracy'] = acc  # Add accuracy to details
-                    log_detailed_results(logger, f"AVO-{mode}", subj_id, pred_details)
-                
-                # Print to console
-                if subj_id in avo_trial_counts:
-                    counts = avo_trial_counts[subj_id]
-                    print(f"Number of trials for {subj_id}: Train={counts['train']}, Val={counts['val']}, Test={counts['test']}")
-                if subj_id in avo_prediction_details:
-                    pred_details = avo_prediction_details[subj_id]
-                    print(f"Test predictions for {subj_id}: Correct={pred_details['correct_count']}, Incorrect={pred_details['incorrect_count']}")
-                    print(f"Precision: {pred_details['precision']:.3f}, Recall: {pred_details['recall']:.3f}, F1 Score: {pred_details['f1_score']:.3f}, AUC: {pred_details.get('auc', 0):.3f}")
+            # Detailed output is already handled in experiment.py
             stats = calculate_statistics(avo_accuracies)
             model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
-            print_statistics(stats, f"AVO {model_type}", logger)
+            print_statistics(stats, f"AVO {model_type}", logger, avo_prediction_details)
             all_accuracies['AVO'] = stats
             
             # Metrics will be logged by run_experiment

@@ -320,7 +320,8 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
                 'total_count': int(round(avg_total)),
                 'precision': avg_precision,
                 'recall': avg_recall,
-                'f1_score': avg_f1
+                'f1_score': avg_f1,
+                'auc': avg_auc
             }
             
             # Add to global lists for confusion matrix (use only first seed's predictions)

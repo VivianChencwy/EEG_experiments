@@ -157,7 +157,7 @@ def calculate_statistics(accuracies):
     }
 
 
-def print_statistics(stats, dataset_name, logger=None):
+def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
     """
     Print and optionally log statistics in a formatted way.
     """
@@ -168,6 +168,21 @@ def print_statistics(stats, dataset_name, logger=None):
         f"Best Subject: {stats['best_subject'][0]} ({stats['best_subject'][1]:.3f})",
         f"Worst Subject: {stats['worst_subject'][0]} ({stats['worst_subject'][1]:.3f})",
     ]
+    
+    # Calculate overall precision, recall, f1 score if prediction details are provided
+    if prediction_details:
+        total_precision = np.mean([details['precision'] for details in prediction_details.values() if 'precision' in details])
+        total_recall = np.mean([details['recall'] for details in prediction_details.values() if 'recall' in details])
+        total_f1 = np.mean([details['f1_score'] for details in prediction_details.values() if 'f1_score' in details])
+        total_auc = np.mean([details.get('auc', 0.5) for details in prediction_details.values()])
+        
+        out_lines.extend([
+            f"Mean Precision: {total_precision:.3f}",
+            f"Mean Recall: {total_recall:.3f}",
+            f"Mean F1-Score: {total_f1:.3f}",
+            f"Mean AUC: {total_auc:.3f}",
+        ])
+    
     for line in out_lines:
         print(line)
         if logger is not None:

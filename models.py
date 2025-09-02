@@ -329,7 +329,6 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             y_all = None
         if y_all is not None:
             y_np = y_all.detach().cpu().numpy()
-            import numpy as np
             num_classes = int(y_np.max()) + 1
             counts = np.bincount(y_np, minlength=num_classes)
             
