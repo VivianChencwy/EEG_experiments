@@ -155,7 +155,7 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
     
     # Generate save path for confusion matrix
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    log_dir = './log_0829'
+    log_dir = './log_0830'  # Keeping consistent with experiment_logger.py
     os.makedirs(log_dir, exist_ok=True)
     cm_filename = f"{dataset_name}_clf-{exp_classifier}_sep-{training_mode=='separate'}_el-{electrode_str}_confusion_matrix_{timestamp}.png"
     cm_path = os.path.join(log_dir, cm_filename)
@@ -293,6 +293,9 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             # Store average accuracy and aggregate prediction details
             final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
             all_accuracies[final_key] = np.mean(subject_accuracies_seed)
+            
+            # Print accuracy regardless of separate_subject_classification setting
+            print(f"Subject {final_key} accuracy: {all_accuracies[final_key]:.3%}")
             
             # Average the prediction details across seeds
             avg_correct = np.mean([d['correct_count'] for d in subject_details_seed])
