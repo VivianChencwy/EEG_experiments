@@ -256,6 +256,30 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
     # Maintain state for early stopping using the helper function defined above
     es_state = {}
 
+    # Compute class weights from training data (to address class imbalance)
+    class_weights = None
+    try:
+        if hasattr(train_loader.dataset, 'tensors'):
+            y_all = train_loader.dataset.tensors[1]
+        elif hasattr(train_loader.dataset, 'labels'):
+            y_all = train_loader.dataset.labels
+        else:
+            y_all = None
+        if y_all is not None:
+            y_np = y_all.detach().cpu().numpy()
+            import numpy as np
+            num_classes = int(y_np.max()) + 1
+            counts = np.bincount(y_np, minlength=num_classes)
+            total = counts.sum()
+            weights_np = np.zeros_like(counts, dtype=np.float32)
+            for c in range(num_classes):
+                weights_np[c] = total / (num_classes * max(counts[c], 1))
+            class_weights = torch.tensor(weights_np, dtype=torch.float32, device=device)
+            print(f"Training class distribution: {counts.tolist()} | class weights: {weights_np.tolist()}")
+    except Exception as e:
+        print(f"Warning: failed to compute class weights: {e}")
+        class_weights = None
+
     for epoch in range(max_epochs):
         model.train()
         for batch_data in train_loader:
@@ -285,7 +309,10 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             if scores.ndim > 2:
                 scores = scores.view(scores.size(0), -1)
             
-            loss = F.cross_entropy(scores, y)
+            if class_weights is not None:
+                loss = F.cross_entropy(scores, y, weight=class_weights)
+            else:
+                loss = F.cross_entropy(scores, y)
             loss.backward()
             optimizer.step()
             scheduler.step()

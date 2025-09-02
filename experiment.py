@@ -183,6 +183,7 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
     # Collect data for confusion matrix
     all_true_labels = []
     all_predictions = []
+    all_probabilities = []
     
     for dataset_type in datasets:
         if dataset_type == 'P3':
