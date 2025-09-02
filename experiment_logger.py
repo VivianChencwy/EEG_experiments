@@ -5,13 +5,14 @@ import logging
 from datetime import datetime
 import numpy as np
 import os
+from config import LOG_DIR
 
 def setup_logger(experiment_type, classifier=None, separate_subject_classification=None, electrode_list=None):
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     
     # Create log directory if it doesn't exist
-    log_dir = './log_0830'
+    log_dir = LOG_DIR
     os.makedirs(log_dir, exist_ok=True)
     
     # Create descriptive filename with configuration parameters

@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader, TensorDataset, Dataset
 from sklearn.model_selection import train_test_split
 from eegdash.data_utils import EEGBIDSDataset
 from datetime import datetime
+from config import LOG_DIR
 
 
 class SubjectDataset(Dataset):
@@ -155,7 +156,7 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
     
     # Generate save path for confusion matrix
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    log_dir = './log_0830'  # Keeping consistent with experiment_logger.py
+    log_dir = LOG_DIR
     os.makedirs(log_dir, exist_ok=True)
     cm_filename = f"{dataset_name}_clf-{exp_classifier}_sep-{training_mode=='separate'}_el-{electrode_str}_confusion_matrix_{timestamp}.png"
     cm_path = os.path.join(log_dir, cm_filename)
