@@ -97,7 +97,7 @@ def make_configs() -> list[dict]:
                     use_subject_layer=False,
                 )
 
-    # Combined: 6 configurations
+    # Combined: 5 configurations
     # Combined + pooled training (separate_subject=False) for both classifiers
     for classifier in classifiers:
         add_cfg(
@@ -133,7 +133,7 @@ def make_configs() -> list[dict]:
         use_subject_layer=True,
     )
 
-    # use_subject_layer = True: 4 (2 electrode × 1 classifier × 1 separate_subject + 2 electrode × 1 classifier × 1 separate_subject)
+    # use_subject_layer = True: 5 (1 Combined + 2 P3 + 2 AVO)
     # P3 only + ShallowFBCSPNet + separate_subject_classification=False × 2 electrode
     for electrode in electrodes:
         add_cfg(
@@ -158,7 +158,7 @@ def make_configs() -> list[dict]:
             use_subject_layer=True,
         )
 
-    assert len(configs) == 26, f"Expected 26 configs, got {len(configs)}"
+    assert len(configs) == 25, f"Expected 25 configs, got {len(configs)}"
     return configs
 
 

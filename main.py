@@ -28,7 +28,6 @@ from experiment_logger import (
     log_individual_results, log_detailed_results, log_overall_metrics,
     cleanup_failed_log
 )
-from visualization import plot_confusion_matrix
 
 # Setup logging and warnings
 mne.set_log_level('ERROR')
