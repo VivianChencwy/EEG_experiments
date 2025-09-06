@@ -62,7 +62,7 @@ def log_individual_results(logger, experiment_type, subject_id, accuracy):
 
 
 def log_detailed_results(logger, experiment_type, subject_id, metrics):
-    """Log detailed metrics including accuracy, precision, recall, f1 score and AUC."""
+    """Log detailed metrics including accuracy, precision, recall, f1 score, AUC and confusion matrix stats."""
     logger.info(f"Subject: {subject_id}")
     logger.info(f"  Accuracy: {metrics.get('accuracy', 0):.3%}")
     logger.info(f"  Precision: {metrics.get('precision', 0):.3f}")
@@ -70,6 +70,9 @@ def log_detailed_results(logger, experiment_type, subject_id, metrics):
     logger.info(f"  F1 Score: {metrics.get('f1_score', 0):.3f}")
     logger.info(f"  AUC: {metrics.get('auc', 0):.3f}")
     logger.info(f"  Correct/Total: {metrics.get('correct_count', 0)}/{metrics.get('total_count', 0)}")
+    logger.info(f"  Confusion Matrix Stats:")
+    logger.info(f"    TP: {metrics.get('tp', 0)}, TN: {metrics.get('tn', 0)}")
+    logger.info(f"    FP: {metrics.get('fp', 0)}, FN: {metrics.get('fn', 0)}")
 
 def log_error(logger, experiment_type, subject_id, error_msg):
     logger.error(f"\nError in {experiment_type} - Subject {subject_id}:")

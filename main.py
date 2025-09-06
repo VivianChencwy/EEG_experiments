@@ -106,7 +106,12 @@ def main():
                 combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
             
             if combined_accuracies:
-                # Detailed output is already handled in experiment.py
+                # Log individual subject results first
+                log_section_header(logger, "Individual Subject Results - Combined Model")
+                for subject_id in sorted(combined_prediction_details.keys()):
+                    log_detailed_results(logger, dataset_name, subject_id, combined_prediction_details[subject_id])
+                
+                # Print aggregate statistics
                 stats_overall = calculate_statistics(combined_accuracies)
                 print_statistics(stats_overall, "Combined Model (All Subjects)", logger, combined_prediction_details)
                 
@@ -157,7 +162,12 @@ def main():
                 p3_accuracies, p3_trial_counts, p3_prediction_details, p3_true_labels, p3_predictions = results
             
             if p3_accuracies:
-                # Detailed output is already handled in experiment.py
+                # Log individual subject results first
+                log_section_header(logger, "Individual Subject Results - P3")
+                for subject_id in sorted(p3_prediction_details.keys()):
+                    log_detailed_results(logger, dataset_name, subject_id, p3_prediction_details[subject_id])
+                
+                # Print aggregate statistics
                 stats = calculate_statistics(p3_accuracies)
                 model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
                 print_statistics(stats, f"P3 {model_type}", logger, p3_prediction_details)
@@ -199,7 +209,12 @@ def main():
                 avo_accuracies, avo_trial_counts, avo_prediction_details, avo_true_labels, avo_predictions = results
             
             if avo_accuracies:
-                # Detailed output is already handled in experiment.py
+                # Log individual subject results first
+                log_section_header(logger, "Individual Subject Results - AVO")
+                for subject_id in sorted(avo_prediction_details.keys()):
+                    log_detailed_results(logger, dataset_name, subject_id, avo_prediction_details[subject_id])
+                
+                # Print aggregate statistics
                 stats = calculate_statistics(avo_accuracies)
                 model_type = "Individual Models" if current_separate_subject_classification else "Pooled Model"
                 print_statistics(stats, f"AVO {model_type}", logger, avo_prediction_details)

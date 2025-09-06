@@ -169,13 +169,21 @@ def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
         f"Worst Subject: {stats['worst_subject'][0]} ({stats['worst_subject'][1]:.3f})",
     ]
     
-    # Calculate overall precision, recall, f1 score if prediction details are provided
+    # Calculate overall metrics if prediction details are provided
     if prediction_details:
-        total_precision = np.mean([details['precision'] for details in prediction_details.values() if 'precision' in details])
-        total_recall = np.mean([details['recall'] for details in prediction_details.values() if 'recall' in details])
-        total_f1 = np.mean([details['f1_score'] for details in prediction_details.values() if 'f1_score' in details])
+        # Calculate mean confusion matrix metrics
+        avg_tp = np.mean([details.get('tp', 0) for details in prediction_details.values()])
+        avg_tn = np.mean([details.get('tn', 0) for details in prediction_details.values()])
+        avg_fp = np.mean([details.get('fp', 0) for details in prediction_details.values()])
+        avg_fn = np.mean([details.get('fn', 0) for details in prediction_details.values()])
+        
+        # Calculate precision, recall, f1 from confusion matrix metrics
+        total_precision = avg_tp / (avg_tp + avg_fp) if (avg_tp + avg_fp) > 0 else 0
+        total_recall = avg_tp / (avg_tp + avg_fn) if (avg_tp + avg_fn) > 0 else 0
+        total_f1 = 2 * (total_precision * total_recall) / (total_precision + total_recall) if (total_precision + total_recall) > 0 else 0
+        
+        # Calculate AUC (using provided values)
         auc_values = [details.get('auc', 0.5) for details in prediction_details.values()]
-        # Filter out nan values and calculate mean
         valid_auc_values = [auc for auc in auc_values if not np.isnan(auc)]
         total_auc = np.mean(valid_auc_values) if valid_auc_values else 0.5
         
@@ -184,6 +192,9 @@ def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
             f"Mean Recall: {total_recall:.3f}",
             f"Mean F1-Score: {total_f1:.3f}",
             f"Mean AUC: {total_auc:.3f}",
+            f"Mean Confusion Matrix:",
+            f"  TP: {int(round(avg_tp))}, TN: {int(round(avg_tn))}",
+            f"  FP: {int(round(avg_fp))}, FN: {int(round(avg_fn))}"
         ])
     
     for line in out_lines:

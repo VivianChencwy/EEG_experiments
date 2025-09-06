@@ -8,6 +8,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset, Dataset
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_auc_score
 from eegdash.data_utils import EEGBIDSDataset
 from datetime import datetime
 from config import LOG_DIR
@@ -293,13 +294,23 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             # Print detailed metrics for each subject immediately
             print(f"Subject {final_key} Results:")
             print(f"  Accuracy: {all_accuracies[final_key]:.3%}")
-            print(f"  Precision: {avg_precision:.3f}")
-            print(f"  Recall: {avg_recall:.3f}")
-            print(f"  F1-Score: {avg_f1:.3f}")
+            # print(f"  Precision: {avg_precision:.3f}")
+            # print(f"  Recall: {avg_recall:.3f}")
+            # print(f"  F1-Score: {avg_f1:.3f}")
             print(f"  AUC: {avg_auc:.3f}")
             print(f"  Correct/Total: {int(avg_correct)}/{int(avg_total)}")
             print("-" * 50)
             
+            # Calculate confusion matrix metrics for first seed's predictions
+            if subject_true_labels_all and subject_predictions_all:
+                n_test_samples = len(subject_true_labels_all) // len(exp_seeds)
+                tn, fp, fn, tp = confusion_matrix(
+                    subject_true_labels_all[:n_test_samples],
+                    subject_predictions_all[:n_test_samples]
+                ).ravel()
+            else:
+                tp, tn, fp, fn = 0, 0, 0, 0
+
             prediction_details[final_key] = {
                 'correct_count': int(round(avg_correct)),
                 'incorrect_count': int(round(avg_incorrect)),
@@ -307,7 +318,11 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
                 'precision': avg_precision,
                 'recall': avg_recall,
                 'f1_score': avg_f1,
-                'auc': avg_auc
+                'auc': avg_auc,
+                'tp': int(tp),
+                'tn': int(tn),
+                'fp': int(fp),
+                'fn': int(fn)
             }
             
             # Add to global lists for confusion matrix (use only first seed's predictions)
@@ -501,16 +516,19 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 acc = correct_count / total_count
                 
                 # Calculate detailed metrics for LDA
-                from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
                 try:
                     # Get probability estimates for AUC calculation
                     y_proba = model.predict_proba(X_subj)[:, 1]  # Probability of positive class
                 except:
                     y_proba = predictions  # Fallback to binary predictions if probabilities not available
                 
-                precision = precision_score(y_subj, predictions, average='binary', zero_division=0)
-                recall = recall_score(y_subj, predictions, average='binary', zero_division=0)
-                f1 = f1_score(y_subj, predictions, average='binary', zero_division=0)
+                # Calculate confusion matrix metrics first
+                tn, fp, fn, tp = confusion_matrix(y_subj, predictions).ravel()
+                
+                # Calculate precision, recall, f1 from confusion matrix
+                precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+                recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+                f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
                 try:
                     # Check if we have both classes in the true labels
                     unique_labels = np.unique(y_subj)
@@ -539,7 +557,11 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                     'precision': precision,
                     'recall': recall,
                     'f1_score': f1,
-                    'auc': auc
+                    'auc': auc,
+                    'tp': int(tp),
+                    'tn': int(tn),
+                    'fp': int(fp),
+                    'fn': int(fn)
                 }
                 # Collect data for confusion matrix (only for first seed)
                 if seed == exp_seeds[0]:
@@ -561,6 +583,57 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 with torch.no_grad():
                     details = evaluate(model, subj_loader, device, return_details=True)
                     acc = details['accuracy']
+                
+                # Calculate confusion matrix metrics for deep learning model
+                y_true = []
+                y_pred = []
+                model.eval()
+                with torch.no_grad():
+                    for batch_data in subj_loader:
+                        if len(batch_data) == 3:
+                            x, y, subject_indices_batch = batch_data
+                            subject_indices_batch = subject_indices_batch.to(device)
+                        else:
+                            x, y = batch_data
+                            subject_indices_batch = None
+                        
+                        x = normalize_data(x).to(device)
+                        y = y.to(device)
+                        
+                        if y.ndim > 1:
+                            y = torch.argmax(y, dim=1)
+                        
+                        if hasattr(model, 'subject_layer') and subject_indices_batch is not None:
+                            scores = model(x, subject_indices_batch)
+                        else:
+                            scores = model(x)
+                        
+                        if scores.ndim > 2:
+                            scores = scores.view(scores.size(0), -1)
+                        
+                        _, predicted = scores.max(1)
+                        y_true.extend(y.cpu().numpy())
+                        y_pred.extend(predicted.cpu().numpy())
+                
+                # Calculate confusion matrix metrics first
+                tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+                
+                # Calculate precision, recall, f1 from confusion matrix
+                precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+                recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+                f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+                
+                # Update metrics in details
+                details.update({
+                    'accuracy': acc,
+                    'precision': precision,
+                    'recall': recall,
+                    'f1_score': f1,
+                    'tp': int(tp),
+                    'tn': int(tn),
+                    'fp': int(fp),
+                    'fn': int(fn)
+                })
                 
                 # Collect predictions for confusion matrix (only for first seed)
                 if seed == exp_seeds[0]:
@@ -623,6 +696,12 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             valid_auc_values = [auc for auc in auc_values if not np.isnan(auc)]
             avg_auc = np.mean(valid_auc_values) if valid_auc_values else 0.5
             
+            # Average confusion matrix metrics
+            avg_tp = np.mean([d.get('tp', 0) for d in details_list])
+            avg_tn = np.mean([d.get('tn', 0) for d in details_list])
+            avg_fp = np.mean([d.get('fp', 0) for d in details_list])
+            avg_fn = np.mean([d.get('fn', 0) for d in details_list])
+
             prediction_details[subject_id] = {
                 'correct_count': int(round(avg_correct)),
                 'incorrect_count': int(round(avg_incorrect)),
@@ -630,7 +709,11 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 'precision': avg_precision,
                 'recall': avg_recall,
                 'f1_score': avg_f1,
-                'auc': avg_auc
+                'auc': avg_auc,
+                'tp': int(round(avg_tp)),
+                'tn': int(round(avg_tn)),
+                'fp': int(round(avg_fp)),
+                'fn': int(round(avg_fn))
             }
             
         # Calculate trial counts for each subject
