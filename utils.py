@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import pandas as pd
 from mne.io import read_raw_eeglab, read_raw_brainvision
-from torch.utils.data import DataLoader, TensorDataset, WeightedRandomSampler
+from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 from scipy import stats
 
@@ -32,9 +32,9 @@ def load_raw(file_path, dataset_type):
         Raw EEG data object
     """
     if dataset_type == 'P3': 
-        return read_raw_eeglab(file_path, preload=False)
+        return read_raw_eeglab(file_path, preload=True)
     else: 
-        return read_raw_brainvision(file_path, preload=False)
+        return read_raw_brainvision(file_path, preload=True)
 
 
 def load_events_tsv(subject_id, dataset_dir):
@@ -272,7 +272,7 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
 
 def create_data_loaders(data, labels, batch_size=BATCH_SIZE, 
                        train_size=TRAIN_SIZE, val_size=VAL_SIZE, test_size=TEST_SIZE,
-                       return_indices=False, use_weighted_sampling=True):
+                       return_indices=False):
     """Create train, validation, and test data loaders.
     
     Parameters
@@ -291,8 +291,6 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         Proportion of data for testing
     return_indices : bool, default False
         If True, also return the indices for each split
-    use_weighted_sampling : bool, default True
-        If True, use weighted random sampling for training set
         
     Returns
     -------
@@ -312,31 +310,11 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
     )
     
-    # Create weighted sampler for training set to handle class imbalance
-    train_sampler = None
-    if use_weighted_sampling:
-        # Calculate class weights
-        class_counts = np.bincount(y_train)
-        total_samples = len(y_train)
-        class_weights = total_samples / (len(class_counts) * class_counts)
-        
-        # Assign weights to each sample
-        sample_weights = np.array([class_weights[label] for label in y_train])
-        sample_weights = torch.from_numpy(sample_weights).double()
-        
-        train_sampler = WeightedRandomSampler(
-            weights=sample_weights,
-            num_samples=len(sample_weights),
-            replacement=True
-        )
-        print(f"Using weighted sampling - Class distribution: {class_counts.tolist()}, "
-              f"Class weights: {class_weights.tolist()}")
-    
+    # Since dataset is now balanced at source, no need for weighted sampling
     train_loader = DataLoader(
         TensorDataset(torch.FloatTensor(X_train), torch.LongTensor(y_train)), 
         batch_size=batch_size, 
-        sampler=train_sampler,
-        shuffle=(train_sampler is None)  # Don't shuffle if using sampler
+        shuffle=True
     )
     val_loader = DataLoader(
         TensorDataset(torch.FloatTensor(X_val), torch.LongTensor(y_val)), 
@@ -407,7 +385,21 @@ def process_subject_data(subject_id_or_dir, dataset_dir_or_obj, preprocessor, lo
                 f'{subject_id_or_dir}_task-P3_eeg.set'
             )
             raw = load_raw(eeg_file, dataset_type)
-            raw.load_data()
+            
+            # Debug: Check raw data immediately after loading
+            print(f"Loaded file: {eeg_file}")
+            print(f"Raw object info - channels: {len(raw.ch_names)}, samples: {raw.n_times}")
+            print(f"Sampling frequency: {raw.info['sfreq']}")
+            raw_data_loaded = raw.get_data()
+            print(f"Raw data shape after loading: {raw_data_loaded.shape}")
+            print(f"Raw data range after loading: [{np.min(raw_data_loaded):.6f}, {np.max(raw_data_loaded):.6f}]")
+            print(f"Raw data std after loading: {np.std(raw_data_loaded):.6f}")
+            
+            # Check if data is all zeros
+            if np.all(raw_data_loaded == 0):
+                print("WARNING: All data values are zero!")
+            elif np.std(raw_data_loaded) < 1e-10:
+                print("WARNING: Data has extremely low variance!")
         elif dataset_type == 'AVO':
             import mne
             all_files = [str(f) for f in dataset_dir_or_obj.get_files()]

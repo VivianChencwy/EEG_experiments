@@ -1,5 +1,5 @@
 """
-Configuration file for AVO (Active Visual Oddball) EEG experiments
+Configuration file for P3 EEG experiments
 """
 
 import os
@@ -41,8 +41,8 @@ use_combined_datasets = False
 electrode_list = 'all'
 
 # Model Configuration
-classifier = 'ShallowFBCSPNet'
-#classifier = 'lda'
+#classifier = 'ShallowFBCSPNet'
+classifier = 'lda'
 
 # Training Configuration
 separate_subject_classification = True
@@ -78,24 +78,3 @@ TEST_SIZE = 0.2
 
 # Random seeds for reproducibility
 seeds = [42, 123, 456, 789, 321]
-
-#######################
-# Model Configuration Details
-#######################
-
-# Input/Output dimensions
-INPUT_WINDOW_SAMPLES = int(1.0 * 128)  # 1 second at 128 Hz
-N_CLASSES = 2
-
-# Training hyperparameters
-LEARNING_RATE = 0.001
-WEIGHT_DECAY = 1e-4
-GAMMA = 0.5  # Learning rate decay factor
-EARLY_STOPPING_PATIENCE = 20
-DROPOUT_RATE = 0.5
-
-# Data augmentation
-USE_DATA_AUGMENTATION = False
-NOISE_STD = 0.01
-TIME_SHIFT_RANGE = 0.1
-LABEL_SMOOTHING = 0.1

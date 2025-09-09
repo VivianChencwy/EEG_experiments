@@ -7,7 +7,7 @@ import mne
 import numpy as np
 import warnings
 import logging
-from eegdash.data_utils import EEGBIDSDataset
+from data_utils import EEGBIDSDataset
 
 # Import configuration and modules
 from config import (
@@ -61,7 +61,7 @@ def main():
             dataset_name = "ConfigurableExperiments"
         
         # Results will be saved in the log directory
-        log_dir = './log_0829'
+        log_dir = './log_0908'
         
         # Setup logger with configuration parameters
         logger = setup_logger(dataset_name, classifier, current_separate_subject_classification, current_electrode_list)

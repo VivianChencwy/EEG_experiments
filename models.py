@@ -149,9 +149,29 @@ def normalize_data(x):
     """
     Normalize data by z-score normalization across time dimension.
     """
+    # Debug: Check input data
+    if torch.all(x == 0):
+        print("WARNING: All input data to normalize_data is zero!")
+        return x
+    
     mean = x.mean(dim=2, keepdim=True)
-    std = x.std(dim=2, keepdim=True) + NORMALIZATION_EPSILON
-    return (x - mean) / std
+    std = x.std(dim=2, keepdim=True)
+    
+    # Check for zero standard deviation
+    if torch.any(std == 0):
+        print("WARNING: Some channels have zero standard deviation!")
+        # For channels with zero std, set std to 1 to avoid division by zero
+        std = torch.where(std == 0, torch.ones_like(std), std)
+    
+    std = std + NORMALIZATION_EPSILON
+    normalized = (x - mean) / std
+    
+    # Final check
+    if torch.any(torch.isnan(normalized)) or torch.any(torch.isinf(normalized)):
+        print("WARNING: NaN or Inf values after normalization!")
+        normalized = torch.nan_to_num(normalized, nan=0.0, posinf=1.0, neginf=-1.0)
+    
+    return normalized
 
 
 def early_stopping(val_acc, model, state, patience = EARLY_STOPPING_PATIENCE):
@@ -348,8 +368,7 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
     # Maintain state for early stopping using the helper function defined above
     es_state = {}
 
-    # Compute effective class weights using effective number of samples
-    class_weights = None
+    # Since dataset is now balanced at source, no need for class weights
     try:
         if hasattr(train_loader.dataset, 'tensors'):
             y_all = train_loader.dataset.tensors[1]
@@ -359,23 +378,13 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             y_all = None
         if y_all is not None:
             y_np = y_all.detach().cpu().numpy()
-            num_classes = int(y_np.max()) + 1
-            counts = np.bincount(y_np, minlength=num_classes)
-            
-            # Use effective number of samples for better class weighting
-            beta = 0.9999
-            effective_num = 1.0 - np.power(beta, counts)
-            weights_np = (1.0 - beta) / np.array(effective_num)
-            weights_np = weights_np / np.sum(weights_np) * num_classes
-            
-            class_weights = torch.tensor(weights_np, dtype=torch.float32, device=device)
-            print(f"Training class distribution: {counts.tolist()} | effective class weights: {weights_np.tolist()}")
+            counts = np.bincount(y_np)
+            print(f"Training class distribution: {counts.tolist()}")
     except Exception as e:
-        print(f"Warning: failed to compute class weights: {e}")
-        class_weights = None
+        print(f"Warning: failed to get class distribution: {e}")
 
-    # Initialize focal loss
-    focal_loss = FocalLoss(alpha=1, gamma=2, weight=class_weights)
+    # Initialize focal loss without class weights since dataset is balanced
+    focal_loss = FocalLoss(alpha=1, gamma=2, weight=None)
 
     for epoch in range(max_epochs):
         model.train()

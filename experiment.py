@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset, Dataset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_auc_score
-from eegdash.data_utils import EEGBIDSDataset
+from data_utils import EEGBIDSDataset
 from datetime import datetime
 from config import LOG_DIR
 
@@ -424,27 +424,12 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
         val_dataset = TensorDataset(torch.FloatTensor(all_data[val_indices]), torch.LongTensor(all_labels[val_indices]))
         test_dataset = TensorDataset(torch.FloatTensor(all_data[test_indices]), torch.LongTensor(all_labels[test_indices]))
     
-    # Create weighted sampler for training set to handle class imbalance
-    train_sampler = None
+    # Since dataset is now balanced at source, no need for weighted sampling  
     train_labels = all_labels[train_indices]
     class_counts = np.bincount(train_labels)
-    total_samples = len(train_labels)
-    class_weights = total_samples / (len(class_counts) * class_counts)
+    print(f"Pooled training - Class distribution: {class_counts.tolist()}")
     
-    # Assign weights to each sample
-    sample_weights = np.array([class_weights[label] for label in train_labels])
-    sample_weights = torch.from_numpy(sample_weights).double()
-    
-    from torch.utils.data import WeightedRandomSampler
-    train_sampler = WeightedRandomSampler(
-        weights=sample_weights,
-        num_samples=len(sample_weights),
-        replacement=True
-    )
-    print(f"Pooled training - Class distribution: {class_counts.tolist()}, "
-          f"Class weights: {class_weights.tolist()}")
-    
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, sampler=train_sampler)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     
