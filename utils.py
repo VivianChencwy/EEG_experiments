@@ -386,20 +386,10 @@ def process_subject_data(subject_id_or_dir, dataset_dir_or_obj, preprocessor, lo
             )
             raw = load_raw(eeg_file, dataset_type)
             
-            # Debug: Check raw data immediately after loading
-            print(f"Loaded file: {eeg_file}")
-            print(f"Raw object info - channels: {len(raw.ch_names)}, samples: {raw.n_times}")
-            print(f"Sampling frequency: {raw.info['sfreq']}")
+            # Basic data validation
             raw_data_loaded = raw.get_data()
-            print(f"Raw data shape after loading: {raw_data_loaded.shape}")
-            print(f"Raw data range after loading: [{np.min(raw_data_loaded):.6f}, {np.max(raw_data_loaded):.6f}]")
-            print(f"Raw data std after loading: {np.std(raw_data_loaded):.6f}")
-            
-            # Check if data is all zeros
-            if np.all(raw_data_loaded == 0):
-                print("WARNING: All data values are zero!")
-            elif np.std(raw_data_loaded) < 1e-10:
-                print("WARNING: Data has extremely low variance!")
+            if np.all(raw_data_loaded == 0) or np.std(raw_data_loaded) < 1e-10:
+                raise ValueError(f"Invalid data for {subject_id_or_dir}: data is constant or zero")
         elif dataset_type == 'AVO':
             import mne
             all_files = [str(f) for f in dataset_dir_or_obj.get_files()]

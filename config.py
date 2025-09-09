@@ -18,14 +18,14 @@ LOG_DIR = './log_0909'
 #######################
 
 # Option 1: P3 dataset only 
-data_dir = P3_DATA_DIR
-dataset = 'P3 Raw Data BIDS-Compatible'
-use_combined_datasets = False
+# data_dir = P3_DATA_DIR
+# dataset = 'P3 Raw Data BIDS-Compatible'
+# use_combined_datasets = False
 
 # Option 2: ds005863 only
-# data_dir = AVO_DATA_DIR
-# dataset = 'ds005863'
-# use_combined_datasets = False
+data_dir = AVO_DATA_DIR
+dataset = 'ds005863'
+use_combined_datasets = False
 
 # Option 3: Both datasets combined
 # use_combined_datasets = True
@@ -41,11 +41,11 @@ use_combined_datasets = False
 electrode_list = 'all'
 
 # Model Configuration
-classifier = 'ShallowFBCSPNet'
-#classifier = 'lda'
+#classifier = 'ShallowFBCSPNet'
+classifier = 'lda'
 
 # Training Configuration
-separate_subject_classification = True
+separate_subject_classification = False
 
 # Subject Layer Configuration (only applies to ShallowFBCSPNet + pooled training)
 use_subject_layer = False
@@ -72,12 +72,12 @@ BATCH_SIZE = 32
 MAX_EPOCHS = 200
 
 # Dataset split ratios (must sum to ≤ 1.0)
-TRAIN_SIZE = 0.6
-VAL_SIZE = 0.2
+TRAIN_SIZE = 0.7
+VAL_SIZE = 0.1
 TEST_SIZE = 0.2
 
 # Random seeds for reproducibility
-seeds = [42, 123, 456, 789, 321]
+seeds = [42]#, 123, 456, 789, 321]
 
 #######################
 # Model Configuration Details

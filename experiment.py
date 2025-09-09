@@ -48,7 +48,9 @@ def get_dataset_subjects(dataset_type, dataset_obj):
         return sorted([d for d in os.listdir(dataset_obj) if d.startswith('sub-')])
     elif dataset_type == 'AVO':
         all_files = [str(f) for f in dataset_obj.get_files()]
-        return sorted(list(set([f.split('sub-')[1][:3] for f in all_files if 'sub-' in f])))
+        all_subjects = sorted(list(set([f.split('sub-')[1][:3] for f in all_files if 'sub-' in f])))
+        # Limit AVO dataset to first 40 subjects
+        return all_subjects[:40]
     else:
         raise ValueError(f"Unknown dataset_type: {dataset_type}")
 
@@ -62,7 +64,7 @@ def process_dataset_subjects(dataset_info, dataset_type, prefix, channels, logge
     preprocessor = OddballPreprocessor(channels)
     
     for subject_id in subject_list:
-        print(f"Loading {dataset_type} subject {subject_id} ...", flush=True)
+        # Processing subject silently
         data, labels = process_subject_data(subject_id, dataset_obj, preprocessor, logger, dataset_type=dataset_type)
         
         if data is not None and labels is not None:
@@ -92,7 +94,7 @@ def process_dataset_subjects_with_indices(dataset_info, dataset_type, prefix, ch
     preprocessor = OddballPreprocessor(channels)
     
     for subject_id in subject_list:
-        print(f"Loading {dataset_type} subject {subject_id} ...", flush=True)
+        # Processing subject silently
         data, labels = process_subject_data(subject_id, dataset_obj, preprocessor, logger, dataset_type=dataset_type)
         
         if data is not None and labels is not None:
@@ -291,15 +293,8 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             valid_auc_values = [auc for auc in auc_values if not np.isnan(auc)]
             avg_auc = np.mean(valid_auc_values) if valid_auc_values else 0.5
             
-            # Print detailed metrics for each subject immediately
-            print(f"Subject {final_key} Results:")
-            print(f"  Accuracy: {all_accuracies[final_key]:.3%}")
-            # print(f"  Precision: {avg_precision:.3f}")
-            # print(f"  Recall: {avg_recall:.3f}")
-            # print(f"  F1-Score: {avg_f1:.3f}")
-            print(f"  AUC: {avg_auc:.3f}")
-            print(f"  Correct/Total: {int(avg_correct)}/{int(avg_total)}")
-            print("-" * 50)
+            # Print results for each subject
+            print(f"Subject {final_key}: Acc {all_accuracies[final_key]:.1%}, AUC {avg_auc:.2f}")
             
             # Calculate confusion matrix metrics for first seed's predictions
             if subject_true_labels_all and subject_predictions_all:
@@ -518,20 +513,20 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                     # Check if we have both classes in the true labels
                     unique_labels = np.unique(y_subj)
                     if len(unique_labels) < 2:
-                        print(f"Warning: Subject {subject_id} has only one class in test set: {unique_labels}. Setting AUC to 0.5.")
+                        print(f"Warning: Subject {subject_ids[subject_idx]} has only one class in test set: {unique_labels}. Setting AUC to 0.5.")
                         auc = 0.5
                     else:
                         # Check for problematic probability values
                         if np.any(np.isnan(y_proba)) or np.any(np.isinf(y_proba)):
-                            print(f"Warning: Subject {subject_id} has NaN or infinite values in probabilities. Setting AUC to 0.5.")
+                            print(f"Warning: Subject {subject_ids[subject_idx]} has NaN or infinite values in probabilities. Setting AUC to 0.5.")
                             auc = 0.5
                         else:
                             auc = roc_auc_score(y_subj, y_proba)
                             if np.isnan(auc):
-                                print(f"Warning: Subject {subject_id} AUC calculation returned NaN. Setting to 0.5.")
+                                print(f"Warning: Subject {subject_ids[subject_idx]} AUC calculation returned NaN. Setting to 0.5.")
                                 auc = 0.5
                 except Exception as e:
-                    print(f"Warning: Subject {subject_id} AUC calculation failed: {e}. Setting to 0.5.")
+                    print(f"Warning: Subject {subject_ids[subject_idx]} AUC calculation failed: {e}. Setting to 0.5.")
                     auc = 0.5
                 
                 details = {
@@ -601,12 +596,32 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                         y_pred.extend(predicted.cpu().numpy())
                 
                 # Calculate confusion matrix metrics first
-                tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+                cm = confusion_matrix(y_true, y_pred)
                 
-                # Calculate precision, recall, f1 from confusion matrix
-                precision = tp / (tp + fp) if (tp + fp) > 0 else 0
-                recall = tp / (tp + fn) if (tp + fn) > 0 else 0
-                f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+                # Handle different confusion matrix shapes
+                if cm.size == 1:
+                    # Only one class present - all predictions are the same
+                    if len(set(y_true)) == 1 and len(set(y_pred)) == 1:
+                        # Both true and predicted have same single class
+                        tn, fp, fn, tp = 0, 0, 0, cm[0, 0]
+                    else:
+                        # Different single classes
+                        tn, fp, fn, tp = 0, 0, cm[0, 0], 0
+                elif cm.size == 4:
+                    # Standard 2x2 matrix
+                    tn, fp, fn, tp = cm.ravel()
+                else:
+                    # Unexpected shape - use sklearn functions directly
+                    precision = precision_score(y_true, y_pred, average='binary', zero_division=0)
+                    recall = recall_score(y_true, y_pred, average='binary', zero_division=0)
+                    f1 = f1_score(y_true, y_pred, average='binary', zero_division=0)
+                    tn = fp = fn = tp = 0
+                
+                # Calculate precision, recall, f1 from confusion matrix if we have the values
+                if cm.size <= 4:
+                    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+                    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+                    f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
                 
                 # Update metrics in details
                 details.update({

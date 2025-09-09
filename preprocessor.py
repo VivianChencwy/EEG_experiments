@@ -59,44 +59,28 @@ class OddballPreprocessor(Preprocessor):
         # This can help if data appears to have zero values due to referencing issues
         try:
             raw.set_eeg_reference('average', projection=True)
-            print("Set average reference")
-        except Exception as e:
-            print(f"Warning: Could not set average reference: {e}")
-            # Try setting to specific channels if available
+        except Exception:
+            # Fallback reference setting
             try:
                 if 'cz' in [ch.lower() for ch in raw.ch_names]:
                     raw.set_eeg_reference(['Cz'])
-                    print("Set reference to Cz")
-                else:
-                    print("No reference set - using original reference")
-            except Exception as e2:
-                print(f"Warning: Could not set any reference: {e2}")
+            except Exception:
+                pass  # Use original reference
 
-        # Debug: Check raw data before filtering
+        # Check and convert data units if needed
         raw_data_before = raw.get_data()
-        print(f"Raw data shape before filtering: {raw_data_before.shape}")
-        print(f"Raw data range before filtering: [{np.min(raw_data_before):.6f}, {np.max(raw_data_before):.6f}]")
-        print(f"Raw data std before filtering: {np.std(raw_data_before):.6f}")
-        
-        # Check if data might be in the wrong units (too small values suggest V instead of μV)
         if np.std(raw_data_before) < 1e-6 and np.std(raw_data_before) > 0:
-            print("Data appears to be in Volts, converting to microvolts...")
             raw._data *= 1e6  # Convert V to μV
-            raw_data_before = raw.get_data()
-            print(f"After unit conversion - range: [{np.min(raw_data_before):.6f}, {np.max(raw_data_before):.6f}]")
-            print(f"After unit conversion - std: {np.std(raw_data_before):.6f}")
         elif np.std(raw_data_before) == 0:
-            print("ERROR: All data values are zero or constant!")
+            raise ValueError("Data is constant or zero")
         
         # Apply filtering and resampling
         raw.filter(l_freq=LOW_FREQ, h_freq=HIGH_FREQ)
         raw.resample(RESAMPLE_FREQ)
         
-        # Debug: Check raw data after filtering
-        raw_data_after = raw.get_data()
-        print(f"Raw data shape after filtering: {raw_data_after.shape}")
-        print(f"Raw data range after filtering: [{np.min(raw_data_after):.6f}, {np.max(raw_data_after):.6f}]")
-        print(f"Raw data std after filtering: {np.std(raw_data_after):.6f}")
+        # Apply filtering and resampling
+        raw.filter(l_freq=LOW_FREQ, h_freq=HIGH_FREQ)
+        raw.resample(RESAMPLE_FREQ)
 
         # Extract events
         events, _ = mne.events_from_annotations(raw)
@@ -139,8 +123,8 @@ class OddballPreprocessor(Preprocessor):
             standard_indices = np.random.choice(n_standard, size=n_oddball, replace=False)
             selected_standard_events = standard_events[standard_indices]
         else:
-            # Not enough standard events - use all and warn
-            print(f"Warning: Only {n_standard} standard events available, but {n_oddball} oddball events. Using all standard events.")
+            # Not enough standard events - use all available
+            pass  # Use all available standard events
             selected_standard_events = standard_events.copy()
         
         # Combine selected events and create labels
@@ -154,15 +138,8 @@ class OddballPreprocessor(Preprocessor):
             np.zeros(n_selected_standard, dtype=int)  # standard = 0
         ])
         
-        print(f"Balanced dataset: {n_selected_oddball} oddball events, {n_selected_standard} standard events")
-        
-        # Debug: Check that events are properly distributed
-        print(f"Original distribution - Oddball: {n_oddball}, Standard: {n_standard}")
-        print(f"Selected oddball indices: {np.sort(selected_oddball_events[:, 0])[:5]} ... (showing first 5)")
-        if n_standard >= n_oddball:
-            print(f"Selected standard indices: {np.sort(selected_standard_events[:, 0])[:5]} ... (showing first 5)")
-        print(f"Event codes in selected oddball: {np.unique(selected_oddball_events[:, 2])}")
-        print(f"Event codes in selected standard: {np.unique(selected_standard_events[:, 2])}")
+        # Log balanced dataset info
+        print(f"Balanced dataset: {n_selected_oddball} oddball, {n_selected_standard} standard events")
 
         # Manual window extraction to ensure one window per event
         raw_data = raw.get_data()  # Shape: (n_channels, n_timepoints)
@@ -192,16 +169,11 @@ class OddballPreprocessor(Preprocessor):
         windows_data = np.array(windows_data)  # Shape: (n_windows, n_channels, window_size)
         windows_labels = np.array(windows_labels)  # Shape: (n_windows,)
         
-        # Data quality checks
-        print(f"Final dataset shape: {windows_data.shape}")
-        print(f"Final labels shape: {windows_labels.shape}")
-        print(f"Final label distribution: {np.bincount(windows_labels)}")
-        print(f"Data range: [{np.min(windows_data):.6f}, {np.max(windows_data):.6f}]")
-        print(f"Data std: {np.std(windows_data):.6f}")
-        
-        # Check for any NaN or infinite values
+        # Basic data validation
         if np.any(np.isnan(windows_data)) or np.any(np.isinf(windows_data)):
-            print("WARNING: NaN or infinite values found in data!")
+            raise ValueError("Data contains NaN or infinite values")
+        
+        print(f"Extracted {len(windows_data)} windows ({np.sum(windows_labels)} oddball, {len(windows_data)-np.sum(windows_labels)} standard)")
         
         # Return custom dataset
         return ManualWindowsDataset(windows_data, windows_labels)
