@@ -12,6 +12,7 @@ from config import (
     TRIAL_START_OFFSET_SAMPLES, TRIAL_STOP_OFFSET_SAMPLES,
     LOW_FREQ, HIGH_FREQ, RESAMPLE_FREQ
 )
+from data_cache import EEGDataCache
 
 
 class ManualWindowsDataset:
@@ -34,15 +35,38 @@ class OddballPreprocessor(Preprocessor):
     def __init__(self, eeg_channels, 
                  trial_start_offset_samples=TRIAL_START_OFFSET_SAMPLES,
                  trial_stop_offset_samples=TRIAL_STOP_OFFSET_SAMPLES,
-                 random_seed=42):
+                 random_seed=42,
+                 use_cache=True):
         super().__init__(fn=self.transform, apply_on_array=False)
         self.eeg_channels = [ch.lower() for ch in eeg_channels]
         self.trial_start_offset_samples = trial_start_offset_samples
         self.trial_stop_offset_samples = trial_stop_offset_samples
         self.random_seed = random_seed
+        self.use_cache = use_cache
+        self.cache = EEGDataCache() if use_cache else None
 
     def transform(self, raw):
         """Transform raw EEG data into windowed dataset."""
+        # Check cache first if enabled
+        if self.use_cache and self.cache is not None:
+            # Try to get raw file path from the raw object
+            raw_file = getattr(raw, 'filenames', ['unknown'])[0] if hasattr(raw, 'filenames') else 'unknown'
+            
+            # Check for cached data
+            cached_result = self.cache.get_cached_data(
+                raw_file=raw_file,
+                channels=self.eeg_channels,
+                trial_start_offset=self.trial_start_offset_samples,
+                trial_stop_offset=self.trial_stop_offset_samples,
+                low_freq=LOW_FREQ,
+                high_freq=HIGH_FREQ,
+                resample_freq=RESAMPLE_FREQ
+            )
+            
+            if cached_result is not None:
+                windows_data, windows_labels = cached_result
+                return ManualWindowsDataset(windows_data, windows_labels)
+        
         # Standardise channel names to lower-case
         raw.rename_channels({ch: ch.lower() for ch in raw.ch_names})
 
@@ -174,6 +198,21 @@ class OddballPreprocessor(Preprocessor):
             raise ValueError("Data contains NaN or infinite values")
         
         print(f"Extracted {len(windows_data)} windows ({np.sum(windows_labels)} oddball, {len(windows_data)-np.sum(windows_labels)} standard)")
+        
+        # Cache the processed data if enabled
+        if self.use_cache and self.cache is not None:
+            raw_file = getattr(raw, 'filenames', ['unknown'])[0] if hasattr(raw, 'filenames') else 'unknown'
+            self.cache.cache_data(
+                raw_file=raw_file,
+                channels=self.eeg_channels,
+                trial_start_offset=self.trial_start_offset_samples,
+                trial_stop_offset=self.trial_stop_offset_samples,
+                low_freq=LOW_FREQ,
+                high_freq=HIGH_FREQ,
+                windows_data=windows_data,
+                windows_labels=windows_labels,
+                resample_freq=RESAMPLE_FREQ
+            )
         
         # Return custom dataset
         return ManualWindowsDataset(windows_data, windows_labels)

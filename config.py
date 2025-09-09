@@ -99,3 +99,25 @@ USE_DATA_AUGMENTATION = False
 NOISE_STD = 0.01
 TIME_SHIFT_RANGE = 0.1
 LABEL_SMOOTHING = 0.1
+
+#######################
+# Performance Optimization Configuration
+#######################
+
+# Data caching options
+USE_DATA_CACHE = True
+CACHE_DIR = './cache'
+
+# Parallel processing options  
+ENABLE_PARALLEL_PROCESSING = True
+N_WORKERS = None  # None = use all available CPU cores
+USE_THREADS = False  # Use ProcessPoolExecutor by default
+
+# Memory optimization options
+ENABLE_MEMORY_OPTIMIZATION = True
+MAX_MEMORY_MB = 2000  # Maximum memory usage in MB
+CHUNK_SIZE = 50  # Number of windows to process at once
+OPTIMIZE_DTYPES = True  # Convert float64 to float32 where possible
+
+# Verbose output
+VERBOSE_PROCESSING = True
