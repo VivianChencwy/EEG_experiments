@@ -61,7 +61,7 @@ def process_dataset_subjects(dataset_info, dataset_type, prefix, channels, logge
     Process subjects from a single dataset.
     """
     dataset_obj, subject_list = dataset_info
-    preprocessor = OddballPreprocessor(channels)
+    preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type)
     
     for subject_id in subject_list:
         # Processing subject silently
@@ -91,7 +91,7 @@ def process_dataset_subjects_with_indices(dataset_info, dataset_type, prefix, ch
     Process subjects from a single dataset with subject indices for subject layer.
     """
     dataset_obj, subject_list = dataset_info
-    preprocessor = OddballPreprocessor(channels)
+    preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type)
     
     for subject_id in subject_list:
         # Processing subject silently
@@ -181,7 +181,7 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             avo_dataset = EEGBIDSDataset(data_dir=avo_dir, dataset='ds005863')
             subject_list = get_dataset_subjects('AVO', avo_dataset)
         
-        preprocessor = OddballPreprocessor(channels)
+        preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type)
         
         for i, subject in enumerate(subject_list):
             if dataset_type == 'P3':

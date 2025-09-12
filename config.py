@@ -69,7 +69,7 @@ TRIAL_STOP_OFFSET_SAMPLES = int(1.0 * 128)  # 1 second at 128 Hz
 
 # Model and training hyperparameters
 BATCH_SIZE = 32
-MAX_EPOCHS = 200
+MAX_EPOCHS = 500
 
 # Dataset split ratios (must sum to ≤ 1.0)
 TRAIN_SIZE = 0.7
@@ -77,7 +77,7 @@ VAL_SIZE = 0.1
 TEST_SIZE = 0.2
 
 # Random seeds for reproducibility
-seeds = [42]#, 123, 456, 789, 321]
+seeds = [42, 123, 456, 789, 321]
 
 #######################
 # Model Configuration Details

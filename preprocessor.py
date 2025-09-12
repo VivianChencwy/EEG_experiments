@@ -8,6 +8,7 @@ from braindecode.preprocessing import Preprocessor
 from braindecode.datasets import BaseConcatDataset, BaseDataset
 
 from constants import RESPONSE_EVENTS, ODDBALL_EVENTS, EVENT_MAPPING
+from constants_avo import RESPONSE_EVENTS_AVO, ODDBALL_EVENTS_AVO
 from config import (
     TRIAL_START_OFFSET_SAMPLES, TRIAL_STOP_OFFSET_SAMPLES,
     LOW_FREQ, HIGH_FREQ, RESAMPLE_FREQ
@@ -36,14 +37,24 @@ class OddballPreprocessor(Preprocessor):
                  trial_start_offset_samples=TRIAL_START_OFFSET_SAMPLES,
                  trial_stop_offset_samples=TRIAL_STOP_OFFSET_SAMPLES,
                  random_seed=42,
-                 use_cache=True):
+                 use_cache=True,
+                 dataset_type='P3'):
         super().__init__(fn=self.transform, apply_on_array=False)
         self.eeg_channels = [ch.lower() for ch in eeg_channels]
         self.trial_start_offset_samples = trial_start_offset_samples
         self.trial_stop_offset_samples = trial_stop_offset_samples
         self.random_seed = random_seed
         self.use_cache = use_cache
+        self.dataset_type = dataset_type
         self.cache = EEGDataCache() if use_cache else None
+        
+        # Set event codes based on dataset type
+        if dataset_type == 'AVO':
+            self.response_events = RESPONSE_EVENTS_AVO
+            self.oddball_events = ODDBALL_EVENTS_AVO
+        else:  # P3 or default
+            self.response_events = RESPONSE_EVENTS
+            self.oddball_events = ODDBALL_EVENTS
 
     def transform(self, raw):
         """Transform raw EEG data into windowed dataset."""
@@ -101,10 +112,6 @@ class OddballPreprocessor(Preprocessor):
         # Apply filtering and resampling
         raw.filter(l_freq=LOW_FREQ, h_freq=HIGH_FREQ)
         raw.resample(RESAMPLE_FREQ)
-        
-        # Apply filtering and resampling
-        raw.filter(l_freq=LOW_FREQ, h_freq=HIGH_FREQ)
-        raw.resample(RESAMPLE_FREQ)
 
         # Extract events
         events, _ = mne.events_from_annotations(raw)
@@ -112,7 +119,7 @@ class OddballPreprocessor(Preprocessor):
             raise ValueError("No events found after reading annotations.")
 
         # Drop response events first
-        response_mask = np.isin(events[:, 2], RESPONSE_EVENTS)
+        response_mask = np.isin(events[:, 2], self.response_events)
         events = events[~response_mask]
         if len(events) == 0:
             raise ValueError("No non-response events found after filtering.")
@@ -122,7 +129,7 @@ class OddballPreprocessor(Preprocessor):
         
 
         # Separate oddball and standard events for balanced sampling
-        oddball_mask = np.isin(events[:, 2], ODDBALL_EVENTS)
+        oddball_mask = np.isin(events[:, 2], self.oddball_events)
         oddball_events = events[oddball_mask]
         standard_events = events[~oddball_mask]
         
