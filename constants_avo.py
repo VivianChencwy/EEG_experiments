@@ -32,7 +32,7 @@ AVO_CHANNELS = [
 RESPONSE_EVENTS_AVO = [6, 7, 201, 202]  # MNE-mapped: [6, 7], Original: [201, 202]
 
 # Oddball event codes for AVO dataset (these are the correct codes for ds005863)
-ODDBALL_EVENTS_AVO = [1, 9, 15, 21, 27]  # MNE-mapped codes for AVO dataset
+ODDBALL_EVENTS_AVO = [11, 22, 33, 44, 55]  # Original oddball event codes for AVO dataset
 
 # Event mapping
 EVENT_MAPPING = {0: "standard", 1: "oddball"}

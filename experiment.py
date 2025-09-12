@@ -307,6 +307,7 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
                 tp, tn, fp, fn = 0, 0, 0, 0
 
             prediction_details[final_key] = {
+                'accuracy': avg_correct / avg_total if avg_total > 0 else 0,
                 'correct_count': int(round(avg_correct)),
                 'incorrect_count': int(round(avg_incorrect)),
                 'total_count': int(round(avg_total)),
@@ -703,6 +704,7 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
             avg_fn = np.mean([d.get('fn', 0) for d in details_list])
 
             prediction_details[subject_id] = {
+                'accuracy': avg_correct / avg_total if avg_total > 0 else 0,
                 'correct_count': int(round(avg_correct)),
                 'incorrect_count': int(round(avg_incorrect)),
                 'total_count': int(round(avg_total)),
