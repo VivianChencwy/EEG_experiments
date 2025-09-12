@@ -272,7 +272,7 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
 
 def create_data_loaders(data, labels, batch_size=BATCH_SIZE, 
                        train_size=TRAIN_SIZE, val_size=VAL_SIZE, test_size=TEST_SIZE,
-                       return_indices=False):
+                       return_indices=False, preprocessor=None):
     """Create train, validation, and test data loaders.
     
     Parameters
@@ -298,17 +298,54 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         (train_loader, val_loader, test_loader) or
         (train_loader, val_loader, test_loader, train_indices, val_indices, test_indices)
     """
-    temp_size = val_size + test_size
-    indices = np.arange(len(data))
-    
-    train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
-        indices, data, labels, test_size=temp_size, stratify=labels
-    )
-    
-    test_ratio = test_size / temp_size  
-    val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
-        temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
-    )
+    # Check if we should use fixed split from preprocessor
+    if preprocessor is not None and hasattr(preprocessor, 'use_fixed_split') and preprocessor.use_fixed_split:
+        # Use fixed split indices from preprocessor
+        train_indices = preprocessor.train_indices
+        val_indices = preprocessor.val_indices
+        test_indices = preprocessor.test_indices
+        
+        X_train = data[train_indices]
+        X_val = data[val_indices]
+        X_test = data[test_indices]
+        y_train = labels[train_indices]
+        y_val = labels[val_indices]
+        y_test = labels[test_indices]
+        
+        print(f"Using fixed split: Train({len(X_train)}), Val({len(X_val)}), Test({len(X_test)})")
+        
+    else:
+        # Original logic with stratification check
+        temp_size = val_size + test_size
+        indices = np.arange(len(data))
+        
+        # Check if we have enough samples for stratification
+        unique_labels, counts = np.unique(labels, return_counts=True)
+        min_class_count = np.min(counts)
+        
+        # If we have very few samples, use random split instead of stratified
+        use_stratify = min_class_count >= 5  # Need at least 5 samples per class for stratification
+        
+        if use_stratify:
+            train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
+                indices, data, labels, test_size=temp_size, stratify=labels
+            )
+            
+            test_ratio = test_size / temp_size  
+            val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
+                temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
+            )
+        else:
+            # Use random split for small datasets
+            print(f"Warning: Dataset too small for stratification (min class count: {min_class_count}). Using random split.")
+            train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
+                indices, data, labels, test_size=temp_size, random_state=42
+            )
+            
+            test_ratio = test_size / temp_size  
+            val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
+                temp_indices, X_temp, y_temp, test_size=test_ratio, random_state=42
+            )
     
     # Since dataset is now balanced at source, no need for weighted sampling
     train_loader = DataLoader(

@@ -75,7 +75,8 @@ class ImprovedExperimentRunner:
             from preprocessor import OddballPreprocessor
             return OddballPreprocessor(
                 eeg_channels=channels,
-                use_cache=config.USE_DATA_CACHE
+                use_cache=config.USE_DATA_CACHE,
+                fixed_trials_per_class=config.FIXED_TRIALS_PER_CLASS
             )
     
     def prepare_dataset(self, data_dir, channels, max_subjects=None):

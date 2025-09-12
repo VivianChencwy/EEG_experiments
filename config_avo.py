@@ -63,6 +63,14 @@ RESAMPLE_FREQ = 128
 TRIAL_START_OFFSET_SAMPLES = 0
 TRIAL_STOP_OFFSET_SAMPLES = int(1.0 * 128)  # 1 second at 128 Hz
 
+# Fixed number of trials per class (can be adjusted)
+FIXED_TRIALS_PER_CLASS = 20
+
+# Fixed data split for each subject (train/val/test)
+TRAIN_TRIALS_PER_CLASS = 10  # 10 standard + 10 oddball for training
+VAL_TRIALS_PER_CLASS = 5     # 5 standard + 5 oddball for validation  
+TEST_TRIALS_PER_CLASS = 5    # 5 standard + 5 oddball for testing
+
 #######################
 # Training Configuration
 #######################

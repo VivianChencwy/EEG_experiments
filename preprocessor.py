@@ -11,7 +11,8 @@ from constants import RESPONSE_EVENTS, ODDBALL_EVENTS, EVENT_MAPPING
 from constants_avo import RESPONSE_EVENTS_AVO, ODDBALL_EVENTS_AVO
 from config import (
     TRIAL_START_OFFSET_SAMPLES, TRIAL_STOP_OFFSET_SAMPLES,
-    LOW_FREQ, HIGH_FREQ, RESAMPLE_FREQ
+    LOW_FREQ, HIGH_FREQ, RESAMPLE_FREQ, FIXED_TRIALS_PER_CLASS,
+    TRAIN_TRIALS_PER_CLASS, VAL_TRIALS_PER_CLASS, TEST_TRIALS_PER_CLASS
 )
 from data_cache import EEGDataCache
 
@@ -38,7 +39,9 @@ class OddballPreprocessor(Preprocessor):
                  trial_stop_offset_samples=TRIAL_STOP_OFFSET_SAMPLES,
                  random_seed=42,
                  use_cache=True,
-                 dataset_type='P3'):
+                 dataset_type='P3',
+                 fixed_trials_per_class=FIXED_TRIALS_PER_CLASS,
+                 use_fixed_split=True):
         super().__init__(fn=self.transform, apply_on_array=False)
         self.eeg_channels = [ch.lower() for ch in eeg_channels]
         self.trial_start_offset_samples = trial_start_offset_samples
@@ -46,6 +49,8 @@ class OddballPreprocessor(Preprocessor):
         self.random_seed = random_seed
         self.use_cache = use_cache
         self.dataset_type = dataset_type
+        self.fixed_trials_per_class = fixed_trials_per_class
+        self.use_fixed_split = use_fixed_split
         self.cache = EEGDataCache() if use_cache else None
         
         # Set event codes based on dataset type
@@ -133,7 +138,7 @@ class OddballPreprocessor(Preprocessor):
         oddball_events = events[oddball_mask]
         standard_events = events[~oddball_mask]
         
-        # Balance the dataset by using all oddball events and randomly sampling standard events
+        # Use fixed number of trials per class
         n_oddball = len(oddball_events)
         n_standard = len(standard_events)
         
@@ -142,35 +147,122 @@ class OddballPreprocessor(Preprocessor):
         if n_standard == 0:
             raise ValueError("No standard events found in the data.")
         
-        # Use all oddball events
-        selected_oddball_events = oddball_events.copy()
-        
         # Set random seed for reproducible sampling
         np.random.seed(self.random_seed)
         
-        # Randomly sample standard events to match oddball count
-        if n_standard >= n_oddball:
-            # Enough standard events - randomly sample without replacement
-            standard_indices = np.random.choice(n_standard, size=n_oddball, replace=False)
-            selected_standard_events = standard_events[standard_indices]
+        if self.use_fixed_split:
+            # Use fixed split: 10+10 train, 5+5 val, 5+5 test
+            train_oddball = TRAIN_TRIALS_PER_CLASS
+            val_oddball = VAL_TRIALS_PER_CLASS
+            test_oddball = TEST_TRIALS_PER_CLASS
+            train_standard = TRAIN_TRIALS_PER_CLASS
+            val_standard = VAL_TRIALS_PER_CLASS
+            test_standard = TEST_TRIALS_PER_CLASS
+            
+            total_needed_oddball = train_oddball + val_oddball + test_oddball
+            total_needed_standard = train_standard + val_standard + test_standard
+            
+            # Check if we have enough events
+            if n_oddball < total_needed_oddball:
+                print(f"Warning: Only {n_oddball} oddball events available, need {total_needed_oddball}")
+                # Adjust proportions
+                train_oddball = min(train_oddball, n_oddball // 3)
+                val_oddball = min(val_oddball, (n_oddball - train_oddball) // 2)
+                test_oddball = n_oddball - train_oddball - val_oddball
+            
+            if n_standard < total_needed_standard:
+                print(f"Warning: Only {n_standard} standard events available, need {total_needed_standard}")
+                # Adjust proportions
+                train_standard = min(train_standard, n_standard // 3)
+                val_standard = min(val_standard, (n_standard - train_standard) // 2)
+                test_standard = n_standard - train_standard - val_standard
+            
+            # Sample events for each split
+            oddball_indices = np.random.choice(n_oddball, size=n_oddball, replace=False)
+            standard_indices = np.random.choice(n_standard, size=n_standard, replace=False)
+            
+            # Split oddball events
+            oddball_train = oddball_events[oddball_indices[:train_oddball]]
+            oddball_val = oddball_events[oddball_indices[train_oddball:train_oddball+val_oddball]]
+            oddball_test = oddball_events[oddball_indices[train_oddball+val_oddball:train_oddball+val_oddball+test_oddball]]
+            
+            # Split standard events
+            standard_train = standard_events[standard_indices[:train_standard]]
+            standard_val = standard_events[standard_indices[train_standard:train_standard+val_standard]]
+            standard_test = standard_events[standard_indices[train_standard+val_standard:train_standard+val_standard+test_standard]]
+            
+            # Combine all events and create labels
+            all_events = np.vstack([
+                oddball_train, standard_train,  # train: 0-19
+                oddball_val, standard_val,      # val: 20-29
+                oddball_test, standard_test     # test: 30-39
+            ])
+            
+            # Create labels with split information
+            train_labels = np.concatenate([
+                np.ones(train_oddball, dtype=int),   # oddball = 1
+                np.zeros(train_standard, dtype=int)  # standard = 0
+            ])
+            val_labels = np.concatenate([
+                np.ones(val_oddball, dtype=int),     # oddball = 1
+                np.zeros(val_standard, dtype=int)    # standard = 0
+            ])
+            test_labels = np.concatenate([
+                np.ones(test_oddball, dtype=int),    # oddball = 1
+                np.zeros(test_standard, dtype=int)   # standard = 0
+            ])
+            
+            labels = np.concatenate([train_labels, val_labels, test_labels])
+            
+            # Create split indices
+            train_end = len(train_labels)
+            val_end = train_end + len(val_labels)
+            test_end = val_end + len(test_labels)
+            
+            # Store split information
+            self.train_indices = np.arange(0, train_end)
+            self.val_indices = np.arange(train_end, val_end)
+            self.test_indices = np.arange(val_end, test_end)
+            
+            selected_events = all_events
+            
+            print(f"Fixed split dataset: Train({train_oddball}+{train_standard}), Val({val_oddball}+{val_standard}), Test({test_oddball}+{test_standard})")
+            
         else:
-            # Not enough standard events - use all available
-            pass  # Use all available standard events
-            selected_standard_events = standard_events.copy()
-        
-        # Combine selected events and create labels
-        selected_events = np.vstack([selected_oddball_events, selected_standard_events])
-        
-        # Create balanced labels (1 for oddball, 0 for standard)
-        n_selected_oddball = len(selected_oddball_events)
-        n_selected_standard = len(selected_standard_events)
-        labels = np.concatenate([
-            np.ones(n_selected_oddball, dtype=int),  # oddball = 1
-            np.zeros(n_selected_standard, dtype=int)  # standard = 0
-        ])
-        
-        # Log balanced dataset info
-        print(f"Balanced dataset: {n_selected_oddball} oddball, {n_selected_standard} standard events")
+            # Original logic: use fixed number of trials per class
+            target_trials = self.fixed_trials_per_class
+            
+            # Sample oddball events
+            if n_oddball >= target_trials:
+                oddball_indices = np.random.choice(n_oddball, size=target_trials, replace=False)
+                selected_oddball_events = oddball_events[oddball_indices]
+            else:
+                # Not enough oddball events - use all available
+                selected_oddball_events = oddball_events.copy()
+                print(f"Warning: Only {n_oddball} oddball events available, using all of them")
+            
+            # Sample standard events
+            if n_standard >= target_trials:
+                standard_indices = np.random.choice(n_standard, size=target_trials, replace=False)
+                selected_standard_events = standard_events[standard_indices]
+            else:
+                # Not enough standard events - use all available
+                selected_standard_events = standard_events.copy()
+                print(f"Warning: Only {n_standard} standard events available, using all of them")
+            
+            # Combine selected events and create labels
+            selected_events = np.vstack([selected_oddball_events, selected_standard_events])
+            
+            # Create balanced labels (1 for oddball, 0 for standard)
+            n_selected_oddball = len(selected_oddball_events)
+            n_selected_standard = len(selected_standard_events)
+            labels = np.concatenate([
+                np.ones(n_selected_oddball, dtype=int),  # oddball = 1
+                np.zeros(n_selected_standard, dtype=int)  # standard = 0
+            ])
+            
+            # Log balanced dataset info
+            print(f"Fixed trials dataset: {n_selected_oddball} oddball, {n_selected_standard} standard events (target: {target_trials} each)")
 
         # Manual window extraction to ensure one window per event
         raw_data = raw.get_data()  # Shape: (n_channels, n_timepoints)

@@ -30,7 +30,8 @@ class SubjectDataset(Dataset):
 from config import (
     P3_DATA_DIR, AVO_DATA_DIR, BATCH_SIZE, seeds, 
     use_combined_datasets, separate_subject_classification, 
-    electrode_list, classifier, VAL_SIZE, TEST_SIZE, use_subject_layer
+    electrode_list, classifier, VAL_SIZE, TEST_SIZE, use_subject_layer,
+    FIXED_TRIALS_PER_CLASS, TRAIN_TRIALS_PER_CLASS, VAL_TRIALS_PER_CLASS, TEST_TRIALS_PER_CLASS
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
@@ -61,7 +62,7 @@ def process_dataset_subjects(dataset_info, dataset_type, prefix, channels, logge
     Process subjects from a single dataset.
     """
     dataset_obj, subject_list = dataset_info
-    preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type)
+    preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type, fixed_trials_per_class=FIXED_TRIALS_PER_CLASS)
     
     for subject_id in subject_list:
         # Processing subject silently
@@ -91,7 +92,7 @@ def process_dataset_subjects_with_indices(dataset_info, dataset_type, prefix, ch
     Process subjects from a single dataset with subject indices for subject layer.
     """
     dataset_obj, subject_list = dataset_info
-    preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type)
+    preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type, fixed_trials_per_class=FIXED_TRIALS_PER_CLASS)
     
     for subject_id in subject_list:
         # Processing subject silently
@@ -181,7 +182,7 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             avo_dataset = EEGBIDSDataset(data_dir=avo_dir, dataset='ds005863')
             subject_list = get_dataset_subjects('AVO', avo_dataset)
         
-        preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type)
+        preprocessor = OddballPreprocessor(channels, dataset_type=dataset_type, fixed_trials_per_class=FIXED_TRIALS_PER_CLASS)
         
         for i, subject in enumerate(subject_list):
             if dataset_type == 'P3':
@@ -198,10 +199,10 @@ def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, 
             # Check if this is sub-001 to get indices for event printing
             if subject_key == 'sub-001' and dataset_type == 'P3':
                 train_loader, val_loader, test_loader, train_indices, val_indices, test_indices = create_data_loaders(
-                    data, labels, return_indices=True
+                    data, labels, return_indices=True, preprocessor=preprocessor
                 )
             else:
-                train_loader, val_loader, test_loader = create_data_loaders(data, labels)
+                train_loader, val_loader, test_loader = create_data_loaders(data, labels, preprocessor=preprocessor)
             
             # Track trial counts for this subject
             final_key = f"{dataset_type}_{subject_key}" if len(datasets) > 1 else subject_key
@@ -379,13 +380,30 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
     
     # Create data splits
     temp_size = VAL_SIZE + TEST_SIZE
-    train_indices, temp_indices = train_test_split(
-        range(len(all_data)), test_size=temp_size, stratify=all_labels
-    )
-    test_ratio = TEST_SIZE / temp_size
-    val_indices, test_indices = train_test_split(
-        temp_indices, test_size=test_ratio, stratify=all_labels[temp_indices]
-    )
+    
+    # Check if we have enough samples for stratification
+    unique_labels, counts = np.unique(all_labels, return_counts=True)
+    min_class_count = np.min(counts)
+    use_stratify = min_class_count >= 5  # Need at least 5 samples per class for stratification
+    
+    if use_stratify:
+        train_indices, temp_indices = train_test_split(
+            range(len(all_data)), test_size=temp_size, stratify=all_labels
+        )
+        test_ratio = TEST_SIZE / temp_size
+        val_indices, test_indices = train_test_split(
+            temp_indices, test_size=test_ratio, stratify=all_labels[temp_indices]
+        )
+    else:
+        # Use random split for small datasets
+        print(f"Warning: Pooled dataset too small for stratification (min class count: {min_class_count}). Using random split.")
+        train_indices, temp_indices = train_test_split(
+            range(len(all_data)), test_size=temp_size, random_state=42
+        )
+        test_ratio = TEST_SIZE / temp_size
+        val_indices, test_indices = train_test_split(
+            temp_indices, test_size=test_ratio, random_state=42
+        )
     
     train_indices = np.array(train_indices)
     val_indices = np.array(val_indices)
