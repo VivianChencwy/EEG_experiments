@@ -18,9 +18,9 @@ LOG_DIR = './log_0909'
 #######################
 
 # Option 1: P3 dataset only 
-# data_dir = P3_DATA_DIR
-# dataset = 'P3 Raw Data BIDS-Compatible'
-# use_combined_datasets = False
+data_dir = P3_DATA_DIR
+dataset = 'P3 Raw Data BIDS-Compatible'
+use_combined_datasets = False
 
 # Option 2: ds005863 only
 # data_dir = AVO_DATA_DIR
@@ -28,9 +28,9 @@ LOG_DIR = './log_0909'
 # use_combined_datasets = False
 
 # Option 3: Both datasets combined
-use_combined_datasets = True
-data_dir = P3_DATA_DIR
-dataset = 'use_combined_datasets'
+# use_combined_datasets = True
+# data_dir = P3_DATA_DIR
+# dataset = 'use_combined_datasets'
 
 #######################
 # Experiment Configuration
@@ -50,10 +50,10 @@ electrode_list = 'common'
 # - 'EEGChannelNet': CNN with channel-wise attention mechanism
 
 #classifier = 'EEGNet'
-classifier = 'EEGConformer'
+#classifier = 'EEGConformer'
 #classifier = 'ShallowFBCSPNet'
 #classifier = 'DeepConvNet' #problem
-#classifier = 'EEGChannelNet'
+classifier = 'EEGChannelNet'
 #classifier = 'lda'
 
 # Training Configuration

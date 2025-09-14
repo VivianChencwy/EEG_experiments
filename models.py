@@ -925,11 +925,6 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             epoch_total += y.size(0)
             batch_count += 1
             
-            # Print batch progress every 10 batches
-            if (batch_idx + 1) % 10 == 0:
-                batch_acc = 100. * (predicted == y).sum().item() / y.size(0)
-                print(f"  Epoch {epoch+1:3d}/{max_epochs} | Batch {batch_idx+1:3d}/{len(train_loader)} | "
-                      f"Loss: {loss.item():.4f} | Batch Acc: {batch_acc:.2f}%")
         
         # Calculate epoch statistics
         avg_loss = epoch_loss / batch_count
@@ -953,15 +948,15 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             is_best = True
             
         if early_stopping(val_acc, model, es_state, patience = EARLY_STOPPING_PATIENCE):
-            print(f"  🛑 Early stopping triggered! No improvement for {EARLY_STOPPING_PATIENCE} epochs")
-            print(f"  🏆 Best validation accuracy: {100. * es_state['best_val_acc']:.2f}%")
+            print(f"Early stopping triggered! No improvement for {EARLY_STOPPING_PATIENCE} epochs")
+            print(f"Best validation accuracy: {100. * es_state['best_val_acc']:.2f}%")
             break
         else:
             if is_best:
-                print(f"  🌟 New best validation accuracy!")
+                print(f"New best validation accuracy!")
             else:
                 remaining_patience = EARLY_STOPPING_PATIENCE - es_state['counter']
-                print(f"  ⏳ Patience remaining: {remaining_patience}/{EARLY_STOPPING_PATIENCE}")
+                print(f"Patience remaining: {remaining_patience}/{EARLY_STOPPING_PATIENCE}")
         
         print(f"  {'-'*50}")
     
