@@ -4,8 +4,16 @@ Preprocessor classes for EEG experiments
 
 import numpy as np
 import mne
-from braindecode.preprocessing import Preprocessor
-from braindecode.datasets import BaseConcatDataset, BaseDataset
+try:
+    from braindecode.preprocessing import Preprocessor
+    from braindecode.datasets import BaseConcatDataset, BaseDataset
+    BRAINDECODE_PREPROCESSOR_AVAILABLE = True
+except (ImportError, AttributeError, Exception):
+    BRAINDECODE_PREPROCESSOR_AVAILABLE = False
+    # Use None placeholders for missing imports
+    Preprocessor = None
+    BaseConcatDataset = None
+    BaseDataset = None
 
 from constants import RESPONSE_EVENTS, ODDBALL_EVENTS, EVENT_MAPPING
 from constants_avo import RESPONSE_EVENTS_AVO, ODDBALL_EVENTS_AVO
@@ -30,7 +38,13 @@ class ManualWindowsDataset:
         return self.data[idx], self.labels[idx]
 
 
-class OddballPreprocessor(Preprocessor):
+class SimplePreprocessorBase:
+    """Simple base preprocessor class when braindecode is not available."""
+    def __init__(self, fn, apply_on_array=False):
+        self.fn = fn
+        self.apply_on_array = apply_on_array
+
+class OddballPreprocessor(Preprocessor if BRAINDECODE_PREPROCESSOR_AVAILABLE else SimplePreprocessorBase):
     """Generic preprocessor for oddball-paradigm EEG data."""
 
     def __init__(self, eeg_channels, 

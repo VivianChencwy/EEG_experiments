@@ -18,9 +18,9 @@ LOG_DIR = './log_0909'
 #######################
 
 # Option 1: P3 dataset only 
-data_dir = P3_DATA_DIR
-dataset = 'P3 Raw Data BIDS-Compatible'
-use_combined_datasets = False
+# data_dir = P3_DATA_DIR
+# dataset = 'P3 Raw Data BIDS-Compatible'
+# use_combined_datasets = False
 
 # Option 2: ds005863 only
 # data_dir = AVO_DATA_DIR
@@ -28,20 +28,32 @@ use_combined_datasets = False
 # use_combined_datasets = False
 
 # Option 3: Both datasets combined
-# use_combined_datasets = True
-# data_dir = P3_DATA_DIR
-# dataset = 'use_combined_datasets'
+use_combined_datasets = True
+data_dir = P3_DATA_DIR
+dataset = 'use_combined_datasets'
 
 #######################
 # Experiment Configuration
 #######################
 
 # Electrode Configuration
-#electrode_list = 'common'
-electrode_list = 'all'
+electrode_list = 'common'
+#electrode_list = 'all'
 
 # Model Configuration
-classifier = 'ShallowFBCSPNet'
+# Available options:
+# - 'lda': Linear Discriminant Analysis
+# - 'ShallowFBCSPNet': Standard shallow CNN for EEG (original baseline)
+# - 'EEGNetv4': Compact CNN specifically designed for EEG 
+# - 'Deep4Net': Deep convolutional network for EEG
+# - 'EEGConformer': CNN-Transformer hybrid for EEG (state-of-the-art)
+# - 'EEGChannelNet': CNN with channel-wise attention mechanism
+
+#classifier = 'EEGNet'
+classifier = 'EEGConformer'
+#classifier = 'ShallowFBCSPNet'
+#classifier = 'DeepConvNet' #problem
+#classifier = 'EEGChannelNet'
 #classifier = 'lda'
 
 # Training Configuration
@@ -77,7 +89,7 @@ VAL_SIZE = 0.1
 TEST_SIZE = 0.2
 
 # Random seeds for reproducibility
-seeds = [42, 123, 456, 789, 321]
+seeds = [42]#, 123, 456, 789, 321]
 
 #######################
 # Model Configuration Details
@@ -88,17 +100,25 @@ INPUT_WINDOW_SAMPLES = int(1.0 * 128)  # 1 second at 128 Hz
 N_CLASSES = 2
 
 # Training hyperparameters
-LEARNING_RATE = 0.001
-WEIGHT_DECAY = 1e-4
+LEARNING_RATE = 0.0005  # Reduced for better convergence
+WEIGHT_DECAY = 1e-5     # Reduced weight decay
 GAMMA = 0.5  # Learning rate decay factor
-EARLY_STOPPING_PATIENCE = 20
-DROPOUT_RATE = 0.5
+EARLY_STOPPING_PATIENCE = 30  # Increased patience for complex models
+DROPOUT_RATE = 0.3      # Reduced dropout for transformer models
 
-# Data augmentation
-USE_DATA_AUGMENTATION = False
-NOISE_STD = 0.01
-TIME_SHIFT_RANGE = 0.1
-LABEL_SMOOTHING = 0.1
+# Data augmentation (enabled for better generalization)
+USE_DATA_AUGMENTATION = True
+NOISE_STD = 0.005       # Reduced noise
+TIME_SHIFT_RANGE = 5    # Small time shifts (in samples)
+LABEL_SMOOTHING = 0.05  # Reduced label smoothing
+
+# EEGConformer specific parameters
+CONFORMER_CONV_SPATIAL_DIM = 40      # Spatial convolution output channels
+CONFORMER_CONV_TEMPORAL_DIM = 25     # Temporal convolution output channels  
+CONFORMER_EMBEDDING_DIM = 40         # Transformer embedding dimension
+CONFORMER_NUM_HEADS = 10             # Number of attention heads
+CONFORMER_NUM_LAYERS = 3             # Number of transformer layers
+CONFORMER_ACTIVATION = 'gelu'        # Transformer activation function
 
 #######################
 # Performance Optimization Configuration

@@ -30,7 +30,9 @@ class SubjectDataset(Dataset):
 from config import (
     P3_DATA_DIR, AVO_DATA_DIR, BATCH_SIZE, seeds, 
     use_combined_datasets, separate_subject_classification, 
-    electrode_list, classifier, VAL_SIZE, TEST_SIZE, use_subject_layer
+    electrode_list, classifier, VAL_SIZE, TEST_SIZE, use_subject_layer,
+    LEARNING_RATE, WEIGHT_DECAY, DROPOUT_RATE, MAX_EPOCHS, EARLY_STOPPING_PATIENCE,
+    USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
@@ -463,19 +465,58 @@ def _run_pooled_training(datasets, channels, logger, device, p3_dir, avo_dir, ex
                 len(channels), 
                 is_lda=False, 
                 n_subjects=n_subjects if should_use_subject_layer else None,
-                enable_subject_layer=should_use_subject_layer
+                enable_subject_layer=should_use_subject_layer,
+                model_name=classifier
             )
             model = model.to(device)
             
             if seed == exp_seeds[0]:
                 print(f"\nModel Architecture Summary (Datasets: {datasets})")
-                print("="*60)
+                print("="*70)
                 print(f"Model type: {type(model).__name__}")
                 print(f"Input channels: {len(channels)}")
                 print(f"Number of subjects: {n_subjects}")
                 print(f"Subject layer enabled: {should_use_subject_layer}")
                 print(f"Input shape: (batch_size, {len(channels)}, 128)")
-                print("="*60 + "\n")
+                
+                # Count model parameters
+                total_params = sum(p.numel() for p in model.parameters())
+                trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+                print(f"Total parameters: {total_params:,}")
+                print(f"Trainable parameters: {trainable_params:,}")
+                
+                # Print model-specific parameters
+                if classifier == 'EEGConformer':
+                    from config import (
+                        CONFORMER_EMBEDDING_DIM, CONFORMER_NUM_HEADS, CONFORMER_NUM_LAYERS,
+                        CONFORMER_CONV_SPATIAL_DIM, CONFORMER_CONV_TEMPORAL_DIM, CONFORMER_ACTIVATION
+                    )
+                    print(f"\nEEGConformer Configuration:")
+                    print(f"  Embedding dim: {CONFORMER_EMBEDDING_DIM}")
+                    print(f"  Attention heads: {CONFORMER_NUM_HEADS}")
+                    print(f"  Transformer layers: {CONFORMER_NUM_LAYERS}")
+                    print(f"  Spatial conv channels: {CONFORMER_CONV_SPATIAL_DIM}")
+                    print(f"  Temporal conv channels: {CONFORMER_CONV_TEMPORAL_DIM}")
+                    print(f"  Activation: {CONFORMER_ACTIVATION}")
+                
+                # Print training configuration
+                print(f"\nTraining Configuration:")
+                print(f"  Learning rate: {LEARNING_RATE}")
+                print(f"  Weight decay: {WEIGHT_DECAY}")
+                print(f"  Dropout rate: {DROPOUT_RATE}")
+                print(f"  Batch size: {BATCH_SIZE}")
+                print(f"  Max epochs: {MAX_EPOCHS}")
+                print(f"  Early stopping patience: {EARLY_STOPPING_PATIENCE}")
+                
+                # Print data augmentation settings
+                print(f"\nData Augmentation:")
+                print(f"  Enabled: {USE_DATA_AUGMENTATION}")
+                if USE_DATA_AUGMENTATION:
+                    print(f"  Noise std: {NOISE_STD}")
+                    print(f"  Time shift range: {TIME_SHIFT_RANGE}")
+                    print(f"  Label smoothing: {LABEL_SMOOTHING}")
+                
+                print("="*70 + "\n")
             
             train_model(model, train_loader, val_loader, test_loader, device, is_lda=False)
         

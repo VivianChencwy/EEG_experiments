@@ -6,9 +6,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from braindecode.models import ShallowFBCSPNet
+try:
+    from braindecode.models import ShallowFBCSPNet
+    BRAINDECODE_AVAILABLE = True
+except (ImportError, AttributeError, Exception):
+    BRAINDECODE_AVAILABLE = False
+    # Define a dummy ShallowFBCSPNet to avoid reference errors
+    ShallowFBCSPNet = None
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+import math
 
 from config import (
     INPUT_WINDOW_SAMPLES, use_subject_layer, EARLY_STOPPING_PATIENCE,
@@ -16,6 +23,222 @@ from config import (
     USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING, DROPOUT_RATE
 )
 from constants import NORMALIZATION_EPSILON
+
+
+class CustomShallowFBCSPNet(nn.Module):
+    """Custom implementation of ShallowFBCSPNet."""
+    def __init__(self, n_chans, n_outputs, n_times, final_conv_length='auto'):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        
+        # Temporal convolution
+        self.temporal_conv = nn.Conv2d(1, 40, (1, 25), padding=(0, 12))
+        
+        # Spatial convolution
+        self.spatial_conv = nn.Conv2d(40, 40, (n_chans, 1), bias=False)
+        self.bn = nn.BatchNorm2d(40)
+        
+        # Pooling
+        self.pool = nn.AvgPool2d((1, 75), (1, 15))
+        
+        # Calculate output size
+        self._calculate_final_conv_length()
+        
+        # Final classification layer
+        self.classifier = nn.Linear(self.final_length, n_outputs)
+        
+    def _calculate_final_conv_length(self):
+        # Calculate the final convolution length
+        with torch.no_grad():
+            x = torch.zeros(1, 1, self.n_chans, self.n_times)
+            x = self.temporal_conv(x)  
+            x = self.spatial_conv(x)   
+            x = self.bn(x)             
+            x = F.elu(x)               
+            x = self.pool(x)           
+            self.final_length = x.numel() // x.size(0)
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        x = self.temporal_conv(x)
+        x = self.spatial_conv(x)
+        x = self.bn(x)
+        x = F.elu(x)
+        x = self.pool(x)
+        
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        
+        return x
+
+
+class EEGNet(nn.Module):
+    """EEGNet implementation for EEG classification."""
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 F1=8, F2=16, D=2, dropout=0.5):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.F1 = F1
+        self.F2 = F2
+        self.D = D
+        
+        # Block 1
+        self.conv1 = nn.Conv2d(1, F1, (1, 64), padding=(0, 32), bias=False)
+        self.bn1 = nn.BatchNorm2d(F1)
+        
+        # Depthwise convolution
+        self.depthwise_conv = nn.Conv2d(F1, F1*D, (n_chans, 1), groups=F1, bias=False)
+        self.bn2 = nn.BatchNorm2d(F1*D)
+        
+        self.pool1 = nn.AvgPool2d((1, 4))
+        self.dropout1 = nn.Dropout(dropout)
+        
+        # Block 2
+        # Separable convolution
+        self.separable_conv = nn.Conv2d(F1*D, F2, (1, 16), padding=(0, 8), bias=False)
+        self.bn3 = nn.BatchNorm2d(F2)
+        
+        self.pool2 = nn.AvgPool2d((1, 8))
+        self.dropout2 = nn.Dropout(dropout)
+        
+        # Calculate final dimensions
+        self._calculate_final_dims(n_times)
+        
+        # Classification
+        self.classifier = nn.Linear(self.final_length, n_outputs)
+        
+    def _calculate_final_dims(self, n_times):
+        with torch.no_grad():
+            x = torch.zeros(1, 1, self.n_chans, n_times)
+            x = self.conv1(x)
+            x = self.bn1(x)
+            x = self.depthwise_conv(x)
+            x = self.bn2(x)
+            x = F.elu(x)
+            x = self.pool1(x)
+            x = self.dropout1(x)
+            
+            x = self.separable_conv(x)
+            x = self.bn3(x)
+            x = F.elu(x)
+            x = self.pool2(x)
+            x = self.dropout2(x)
+            
+            self.final_length = x.numel() // x.size(0)
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        # Block 1
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.depthwise_conv(x)
+        x = self.bn2(x)
+        x = F.elu(x)
+        x = self.pool1(x)
+        x = self.dropout1(x)
+        
+        # Block 2
+        x = self.separable_conv(x)
+        x = self.bn3(x)
+        x = F.elu(x)
+        x = self.pool2(x)
+        x = self.dropout2(x)
+        
+        # Classification
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        
+        return x
+
+
+class DeepConvNet(nn.Module):
+    """Deep Convolutional Network for EEG."""
+    def __init__(self, n_chans, n_outputs, n_times, dropout=0.5):
+        super().__init__()
+        
+        # Block 1
+        self.conv1 = nn.Conv2d(1, 25, (1, 10))
+        self.conv2 = nn.Conv2d(25, 25, (n_chans, 1))
+        self.bn1 = nn.BatchNorm2d(25)
+        self.pool1 = nn.MaxPool2d((1, 3))
+        
+        # Block 2
+        self.conv3 = nn.Conv2d(25, 50, (1, 10))
+        self.bn2 = nn.BatchNorm2d(50)
+        self.pool2 = nn.MaxPool2d((1, 3))
+        
+        # Block 3
+        self.conv4 = nn.Conv2d(50, 100, (1, 10))
+        self.bn3 = nn.BatchNorm2d(100)
+        self.pool3 = nn.MaxPool2d((1, 3))
+        
+        # Block 4
+        self.conv5 = nn.Conv2d(100, 200, (1, 10))
+        self.bn4 = nn.BatchNorm2d(200)
+        self.pool4 = nn.MaxPool2d((1, 3))
+        
+        self.dropout = nn.Dropout(dropout)
+        
+        # Calculate final dimensions
+        self._calculate_final_dims(n_times)
+        
+        # Classification
+        self.classifier = nn.Linear(self.final_length, n_outputs)
+        
+    def _calculate_final_dims(self, n_times):
+        with torch.no_grad():
+            x = torch.zeros(1, 1, self.n_chans, n_times)
+            x = self._forward_features(x)
+            self.final_length = x.numel() // x.size(0)
+    
+    def _forward_features(self, x):
+        # Block 1
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.bn1(x)
+        x = F.elu(x)
+        x = self.pool1(x)
+        x = self.dropout(x)
+        
+        # Block 2
+        x = self.conv3(x)
+        x = self.bn2(x)
+        x = F.elu(x)
+        x = self.pool2(x)
+        x = self.dropout(x)
+        
+        # Block 3
+        x = self.conv4(x)
+        x = self.bn3(x)
+        x = F.elu(x)
+        x = self.pool3(x)
+        x = self.dropout(x)
+        
+        # Block 4
+        x = self.conv5(x)
+        x = self.bn4(x)
+        x = F.elu(x)
+        x = self.pool4(x)
+        x = self.dropout(x)
+        
+        return x
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        x = self._forward_features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        
+        return x
 
 
 class FocalLoss(nn.Module):
@@ -109,7 +332,198 @@ class ShallowFBCSPNetWithSubjectLayer(nn.Module):
         return self.base_model(x)
 
 
-def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None):
+class EEGConformer(nn.Module):
+    """EEGConformer: Combining CNN and Transformer for EEG classification."""
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 conv_spatial_dim=40, conv_temporal_dim=25,
+                 embedding_dim=40, num_heads=10, num_layers=3,
+                 dropout=0.5, activation='gelu'):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        self.embedding_dim = embedding_dim
+        
+        # Temporal convolution
+        self.temporal_conv = nn.Conv2d(1, conv_temporal_dim, (1, 25), padding=(0, 12))
+        self.temporal_bn = nn.BatchNorm2d(conv_temporal_dim)
+        
+        # Spatial convolution  
+        self.spatial_conv = nn.Conv2d(conv_temporal_dim, conv_spatial_dim, (n_chans, 1))
+        self.spatial_bn = nn.BatchNorm2d(conv_spatial_dim)
+        
+        # Pooling and dropout
+        self.avg_pool = nn.AvgPool2d((1, 4), (1, 4))
+        self.dropout = nn.Dropout(dropout)
+        
+        # Calculate sequence length after convolutions
+        seq_length = self._get_sequence_length()
+        
+        # Projection to embedding dimension
+        self.projection = nn.Linear(conv_spatial_dim, embedding_dim)
+        
+        # Positional encoding
+        self.pos_encoding = PositionalEncoding(embedding_dim, max_len=seq_length)
+        
+        # Transformer layers
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=embedding_dim,
+            nhead=num_heads,
+            dim_feedforward=embedding_dim * 4,
+            dropout=dropout,
+            activation=activation,
+            batch_first=True
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        
+        # Classification head
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Flatten(),
+            nn.Linear(embedding_dim, n_outputs)
+        )
+    
+    def _get_sequence_length(self):
+        # Calculate sequence length after convolutions
+        # After temporal conv: n_times (same due to padding)
+        # After avg pool: n_times // 4
+        return self.n_times // 4
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        # Temporal convolution
+        x = self.temporal_conv(x)  # (batch, conv_temporal_dim, n_chans, n_times)
+        x = self.temporal_bn(x)
+        x = F.elu(x)
+        
+        # Spatial convolution
+        x = self.spatial_conv(x)  # (batch, conv_spatial_dim, 1, n_times)
+        x = self.spatial_bn(x)
+        x = F.elu(x)
+        x = self.dropout(x)
+        
+        # Pooling
+        x = self.avg_pool(x)  # (batch, conv_spatial_dim, 1, n_times//4)
+        
+        # Reshape for transformer
+        x = x.squeeze(2).transpose(1, 2)  # (batch, seq_len, conv_spatial_dim)
+        
+        # Project to embedding dimension
+        x = self.projection(x)  # (batch, seq_len, embedding_dim)
+        
+        # Add positional encoding
+        x = self.pos_encoding(x)
+        
+        # Transformer
+        x = self.transformer(x)  # (batch, seq_len, embedding_dim)
+        
+        # Classification
+        x = x.transpose(1, 2)  # (batch, embedding_dim, seq_len)
+        x = self.classifier(x)  # (batch, n_outputs)
+        
+        return x
+
+
+class PositionalEncoding(nn.Module):
+    """Positional encoding for transformer."""
+    def __init__(self, d_model, max_len=5000):
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len).unsqueeze(1).float()
+        
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() *
+                           -(math.log(10000.0) / d_model))
+        
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0)  # (1, max_len, d_model)
+        
+        self.register_buffer('pe', pe)
+    
+    def forward(self, x):
+        return x + self.pe[:, :x.size(1)]
+
+
+class EEGChannelNet(nn.Module):
+    """Advanced EEG model with channel-wise attention."""
+    def __init__(self, n_chans, n_outputs, n_times, dropout=0.5):
+        super().__init__()
+        
+        # Channel-wise convolution
+        self.channel_conv = nn.ModuleList([
+            nn.Conv1d(1, 8, kernel_size=64, padding=32) for _ in range(n_chans)
+        ])
+        
+        # Channel attention
+        self.channel_attention = nn.Sequential(
+            nn.Linear(n_chans * 8, n_chans),
+            nn.Sigmoid()
+        )
+        
+        # Temporal convolution layers
+        self.conv1 = nn.Conv2d(1, 16, (n_chans, 1))
+        self.bn1 = nn.BatchNorm2d(16)
+        self.conv2 = nn.Conv2d(16, 32, (1, 3), padding=(0, 1))
+        self.bn2 = nn.BatchNorm2d(32)
+        self.conv3 = nn.Conv2d(32, 64, (1, 3), padding=(0, 1))
+        self.bn3 = nn.BatchNorm2d(64)
+        
+        self.pool = nn.AdaptiveAvgPool2d((1, 16))
+        self.dropout = nn.Dropout(dropout)
+        
+        # Classification layers
+        self.classifier = nn.Sequential(
+            nn.Linear(64 * 16, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(128, n_outputs)
+        )
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        batch_size = x.size(0)
+        
+        # Channel-wise processing
+        channel_features = []
+        for i, conv in enumerate(self.channel_conv):
+            chan_out = conv(x[:, i:i+1, :])  # (batch, 8, n_times)
+            channel_features.append(chan_out.mean(dim=2))  # (batch, 8)
+        
+        # Channel attention
+        channel_features = torch.stack(channel_features, dim=1)  # (batch, n_chans, 8)
+        channel_features = channel_features.view(batch_size, -1)  # (batch, n_chans*8)
+        attention_weights = self.channel_attention(channel_features)  # (batch, n_chans)
+        
+        # Apply attention to input
+        x = x * attention_weights.unsqueeze(2)  # (batch, n_chans, n_times)
+        
+        # Main processing
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        x = self.conv1(x)  # (batch, 16, 1, n_times)
+        x = self.bn1(x)
+        x = F.elu(x)
+        
+        x = self.conv2(x)  # (batch, 32, 1, n_times)
+        x = self.bn2(x)
+        x = F.elu(x)
+        
+        x = self.conv3(x)  # (batch, 64, 1, n_times)
+        x = self.bn3(x)
+        x = F.elu(x)
+        
+        x = self.pool(x)  # (batch, 64, 1, 16)
+        x = self.dropout(x)
+        
+        x = x.view(x.size(0), -1)  # (batch, 64*16)
+        x = self.classifier(x)
+        
+        return x
+
+
+def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None, model_name='ShallowFBCSPNet'):
     """Create a new model based on configuration.
     
     Parameters
@@ -118,6 +532,8 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
     is_lda : bool, default False
     n_subjects : int, optional
     enable_subject_layer : bool, optional
+    model_name : str, default 'ShallowFBCSPNet'
+        Options: 'ShallowFBCSPNet', 'EEGNetv4', 'Deep4Net', 'EEGConformer', 'EEGChannelNet'
         
     Returns
     -------
@@ -130,15 +546,78 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
         if enable_subject_layer is None:
             enable_subject_layer = use_subject_layer
         
-        base_model = ShallowFBCSPNet(
-            n_chans=n_channels,
-            n_outputs=N_CLASSES,
-            n_times=INPUT_WINDOW_SAMPLES,
-            final_conv_length='auto'  
-        )
+        # Create base model based on model_name
+        if model_name == 'ShallowFBCSPNet':
+            if BRAINDECODE_AVAILABLE:
+                base_model = ShallowFBCSPNet(
+                    n_chans=n_channels,
+                    n_outputs=N_CLASSES,
+                    n_times=INPUT_WINDOW_SAMPLES,
+                    final_conv_length='auto'  
+                )
+            else:
+                base_model = CustomShallowFBCSPNet(
+                    n_chans=n_channels,
+                    n_outputs=N_CLASSES,
+                    n_times=INPUT_WINDOW_SAMPLES
+                )
+        elif model_name == 'EEGNet' or model_name == 'EEGNetv4':
+            base_model = EEGNet(
+                n_chans=n_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                dropout=DROPOUT_RATE
+            )
+        elif model_name == 'DeepConvNet' or model_name == 'Deep4Net':
+            base_model = DeepConvNet(
+                n_chans=n_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                dropout=DROPOUT_RATE
+            )
+        elif model_name == 'EEGConformer':
+            # Get EEGConformer parameters from config if available
+            try:
+                from config import (
+                    CONFORMER_CONV_SPATIAL_DIM, CONFORMER_CONV_TEMPORAL_DIM,
+                    CONFORMER_EMBEDDING_DIM, CONFORMER_NUM_HEADS, 
+                    CONFORMER_NUM_LAYERS, CONFORMER_ACTIVATION
+                )
+            except ImportError:
+                # Default parameters
+                CONFORMER_CONV_SPATIAL_DIM = 40
+                CONFORMER_CONV_TEMPORAL_DIM = 25
+                CONFORMER_EMBEDDING_DIM = 40
+                CONFORMER_NUM_HEADS = 10
+                CONFORMER_NUM_LAYERS = 3
+                CONFORMER_ACTIVATION = 'gelu'
+                
+            base_model = EEGConformer(
+                n_chans=n_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                conv_spatial_dim=CONFORMER_CONV_SPATIAL_DIM,
+                conv_temporal_dim=CONFORMER_CONV_TEMPORAL_DIM,
+                embedding_dim=CONFORMER_EMBEDDING_DIM,
+                num_heads=CONFORMER_NUM_HEADS,
+                num_layers=CONFORMER_NUM_LAYERS,
+                dropout=DROPOUT_RATE,
+                activation=CONFORMER_ACTIVATION
+            )
+        elif model_name == 'EEGChannelNet':
+            base_model = EEGChannelNet(
+                n_chans=n_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                dropout=DROPOUT_RATE
+            )
+        else:
+            raise ValueError(f"Unknown model name: {model_name}")
         
         # Add subject layer if enabled and we have subject information
-        if enable_subject_layer and n_subjects is not None and n_subjects > 1:
+        # Note: Subject layer only works with ShallowFBCSPNet for now
+        if (enable_subject_layer and n_subjects is not None and n_subjects > 1 
+            and model_name == 'ShallowFBCSPNet'):
             subject_layer = SubjectInputLayer(n_subjects, n_channels)
             return ShallowFBCSPNetWithSubjectLayer(subject_layer, base_model)
         else:
@@ -385,10 +864,23 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
 
     # Initialize focal loss without class weights since dataset is balanced
     focal_loss = FocalLoss(alpha=1, gamma=2, weight=None)
+    
+    # Training progress tracking
+    print(f"\n{'='*60}")
+    print(f"Starting Training - Max Epochs: {max_epochs}")
+    print(f"Model: {type(model).__name__}")
+    print(f"Learning Rate: {LEARNING_RATE}, Weight Decay: {WEIGHT_DECAY}")
+    print(f"Dropout: {DROPOUT_RATE}, Early Stopping Patience: {EARLY_STOPPING_PATIENCE}")
+    print(f"{'='*60}")
 
     for epoch in range(max_epochs):
         model.train()
-        for batch_data in train_loader:
+        epoch_loss = 0.0
+        epoch_correct = 0
+        epoch_total = 0
+        batch_count = 0
+        
+        for batch_idx, batch_data in enumerate(train_loader):
             if len(batch_data) == 3:  # (X, y, subject_indices)
                 x, y, subject_indices = batch_data
                 subject_indices = subject_indices.to(device)
@@ -425,15 +917,59 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             
             loss.backward()
             optimizer.step()
+            
+            # Track training statistics
+            epoch_loss += loss.item()
+            _, predicted = scores.max(1)
+            epoch_correct += (predicted == y).sum().item()
+            epoch_total += y.size(0)
+            batch_count += 1
+            
+            # Print batch progress every 10 batches
+            if (batch_idx + 1) % 10 == 0:
+                batch_acc = 100. * (predicted == y).sum().item() / y.size(0)
+                print(f"  Epoch {epoch+1:3d}/{max_epochs} | Batch {batch_idx+1:3d}/{len(train_loader)} | "
+                      f"Loss: {loss.item():.4f} | Batch Acc: {batch_acc:.2f}%")
+        
+        # Calculate epoch statistics
+        avg_loss = epoch_loss / batch_count
+        train_acc = 100. * epoch_correct / epoch_total
+        current_lr = optimizer.param_groups[0]['lr']
         
         scheduler.step()
         
         # Validation phase
         val_acc = evaluate(model, val_loader, device)
+        val_acc_percent = 100. * val_acc
         
-        # Early stopping check
+        # Print epoch summary
+        print(f"\nEpoch {epoch+1:3d}/{max_epochs} Summary:")
+        print(f"  Train Loss: {avg_loss:.4f} | Train Acc: {train_acc:.2f}%")
+        print(f"  Val Acc: {val_acc_percent:.2f}% | LR: {current_lr:.6f}")
+        
+        # Early stopping check with detailed info
+        is_best = False
+        if 'best_val_acc' not in es_state or val_acc > es_state['best_val_acc']:
+            is_best = True
+            
         if early_stopping(val_acc, model, es_state, patience = EARLY_STOPPING_PATIENCE):
+            print(f"  🛑 Early stopping triggered! No improvement for {EARLY_STOPPING_PATIENCE} epochs")
+            print(f"  🏆 Best validation accuracy: {100. * es_state['best_val_acc']:.2f}%")
             break
+        else:
+            if is_best:
+                print(f"  🌟 New best validation accuracy!")
+            else:
+                remaining_patience = EARLY_STOPPING_PATIENCE - es_state['counter']
+                print(f"  ⏳ Patience remaining: {remaining_patience}/{EARLY_STOPPING_PATIENCE}")
+        
+        print(f"  {'-'*50}")
+    
+    print(f"\n{'='*60}")
+    print("Training Complete!")
+    if 'best_val_acc' in es_state:
+        print(f"Best Validation Accuracy: {100. * es_state['best_val_acc']:.2f}%")
+    print(f"{'='*60}")
     
     # Load best model and evaluate on test set
     if 'best_model' in es_state and es_state['best_model'] is not None:
