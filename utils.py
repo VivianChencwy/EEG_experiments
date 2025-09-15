@@ -310,46 +310,20 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         (train_loader, val_loader, test_loader) or
         (train_loader, val_loader, test_loader, train_indices, val_indices, test_indices)
     """
-    # Check if we should use fixed trial counts instead of ratios
-    if max_trials_per_split is not None and all(max_trials_per_split.get(split) is not None for split in ['train', 'val', 'test']):
-        # Use fixed trial counts
-        max_train = max_trials_per_split['train']
-        max_val = max_trials_per_split['val'] 
-        max_test = max_trials_per_split['test']
-        
-        print(f"Using fixed trial counts: Train={max_train}, Val={max_val}, Test={max_test}")
-        
-        # Shuffle data first
-        indices = np.arange(len(data))
-        np.random.seed(42)
-        np.random.shuffle(indices)
-        
-        # Split by fixed counts
-        train_indices = indices[:max_train]
-        val_indices = indices[max_train:max_train + max_val]
-        test_indices = indices[max_train + max_val:max_train + max_val + max_test]
-        
-        # Extract data
-        X_train, y_train = data[train_indices], labels[train_indices]
-        X_val, y_val = data[val_indices], labels[val_indices]
-        X_test, y_test = data[test_indices], labels[test_indices]
-        
-    else:
-        # Use ratio-based splitting (original logic)
-        temp_size = val_size + test_size
-        indices = np.arange(len(data))
-        
-        train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
-            indices, data, labels, test_size=temp_size, stratify=labels
-        )
-        
-        test_ratio = test_size / temp_size  
-        val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
-            temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
-        )
+    temp_size = val_size + test_size
+    indices = np.arange(len(data))
     
-    # Apply trial limits if specified, maintaining class balance (only for ratio-based splitting)
-    if max_trials_per_split is not None and not all(max_trials_per_split.get(split) is not None for split in ['train', 'val', 'test']):
+    train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
+        indices, data, labels, test_size=temp_size, stratify=labels
+    )
+    
+    test_ratio = test_size / temp_size  
+    val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
+        temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
+    )
+    
+    # Apply trial limits if specified, maintaining class balance
+    if max_trials_per_split is not None:
         if 'train' in max_trials_per_split and max_trials_per_split['train'] is not None:
             max_train = max_trials_per_split['train']
             if len(X_train) > max_train:
