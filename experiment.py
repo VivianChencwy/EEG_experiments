@@ -8,6 +8,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset, Dataset
 from sklearn.model_selection import train_test_split
+from typing import List, Dict, Tuple, Optional, Union, Any
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_auc_score
 from data_utils import EEGBIDSDataset
 from datetime import datetime
@@ -34,18 +35,35 @@ from config import (
     LEARNING_RATE, WEIGHT_DECAY, DROPOUT_RATE, MAX_EPOCHS, EARLY_STOPPING_PATIENCE,
     USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING,
     USE_ENHANCED_PREPROCESSING, REMOVE_ARTIFACTS, BASELINE_CORRECT,
-    EXTRACT_FREQUENCY_FEATURES, APPLY_NOTCH_FILTER
+    EXTRACT_FREQUENCY_FEATURES, APPLY_NOTCH_FILTER,
+    ELECTRODE_FUSION_METHOD, DOMAIN_ADAPTATION_METHOD,
+    ENABLE_COMPREHENSIVE_EVALUATION, ENABLE_DOMAIN_ANALYSIS,
+    DEVICE_MODE
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
 from enhanced_preprocessor import EnhancedOddballPreprocessor
-from models import create_model, train_model, evaluate, normalize_data
+from models import create_model, train_model, evaluate, normalize_data, create_fusion_model, train_fusion_model
+from enhanced_preprocessor import FusionDatasetManager
+from evaluation_utils import ComprehensiveEvaluator, CrossDatasetEvaluator, ResultsComparator
 from utils import run_experiment_with_seed, create_data_loaders, calculate_statistics, print_statistics, process_subject_data
 from experiment_logger import (
-    log_error, log_individual_results, log_section_header, 
+    setup_logger, log_error, log_individual_results, log_section_header,
     log_detailed_results, log_overall_metrics
 )
 # Confusion matrix plotting removed
+
+
+def get_device():
+    """根据配置获取设备"""
+    if DEVICE_MODE == 'cpu':
+        return torch.device('cpu')
+    elif DEVICE_MODE == 'cuda':
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA requested but not available")
+        return torch.device('cuda')
+    else:  # 'auto'
+        return torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def create_preprocessor(channels, dataset_type):
@@ -172,7 +190,7 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
     """
     Unified experiment training function with parameter-controlled experiment configurations
     """
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = get_device()
     
     # Get configuration from kwargs
     p3_dir = kwargs.get('p3_dir', P3_DATA_DIR)
@@ -991,9 +1009,279 @@ def run_separate_subject_experiments(dataset_dir, channels, logger, dataset_type
     accuracies, _ = run_experiment(
         datasets=[dataset_type],
         training_mode='separate',
-        channels=channels, 
+        channels=channels,
         logger=logger,
         p3_dir=dataset_dir if dataset_type == 'P3' else P3_DATA_DIR,
         avo_dir=dataset_dir if dataset_type == 'AVO' else AVO_DATA_DIR
     )
     return accuracies
+
+
+# Fusion experiment functions
+def run_fusion_experiment(fusion_method: str, domain_adaptation: str = 'none',
+                         datasets: List[str] = None, channels: List[str] = None,
+                         logger = None):
+    """
+    运行融合实验
+
+    Args:
+        fusion_method: 融合方法 ('graph', 'spatial_attention', 'none')
+        domain_adaptation: 域适应方法 ('ms_mda', 'adversarial', 'none')
+        datasets: 数据集列表
+        channels: 通道列表
+        logger: 日志记录器
+
+    Returns:
+        实验结果字典
+    """
+    from models import create_fusion_model, train_fusion_model, evaluate_fusion_model
+    from evaluation_utils import ComprehensiveEvaluator
+    from enhanced_preprocessor import FusionDatasetManager
+
+    # 设置默认参数
+    if datasets is None:
+        datasets = ['P3', 'AVO']
+    if channels is None:
+        # 融合实验模式：让每个数据集使用自己的完整电极配置
+        # None 表示系统将自动为每个数据集使用其原生电极布局
+        logger.info("融合模式：使用各数据集的原生电极配置")
+        channels = None  # 保持 None，由融合管理器处理
+
+    logger = logger or setup_logger('fusion_experiment', create_file=False)
+
+    try:
+        # 初始化融合数据集管理器
+        fusion_manager = FusionDatasetManager(
+            fusion_method=fusion_method,
+            domain_adaptation=domain_adaptation
+        )
+
+        # 处理和准备数据
+        logger.info(f"Processing datasets: {datasets}")
+        processed_datasets = process_fusion_datasets(fusion_manager, datasets, logger)
+
+        # 创建数据加载器
+        train_loaders, val_loaders, test_loaders = create_fusion_data_loaders(
+            processed_datasets, logger
+        )
+
+        # 创建融合模型
+        from config import classifier
+
+        # 构建数据集信息，使用真实的电极名称
+        from constants import P3_CHANNELS, AVO_CHANNELS
+
+        datasets_info = {}
+        for dataset_name in datasets:
+            n_channels = processed_datasets[dataset_name]['X_train'].shape[1]
+
+            # 使用真实的电极名称
+            if dataset_name == 'P3':
+                # P3数据集有增强的通道（原始30通道 + 120个特征 = 150通道）
+                # 使用原始电极名称，其余用特征名称
+                base_channels = P3_CHANNELS[:min(30, n_channels)]
+                if n_channels > 30:
+                    # 添加时域特征通道
+                    feature_channels = [f'feat_{i}' for i in range(n_channels - len(base_channels))]
+                    channels_list = base_channels + feature_channels
+                else:
+                    channels_list = base_channels[:n_channels]
+            elif dataset_name == 'AVO':
+                # AVO数据集有增强的通道（原始26通道 + 104个特征 = 130通道）
+                base_channels = AVO_CHANNELS[:min(26, n_channels)]
+                if n_channels > 26:
+                    # 添加时域特征通道
+                    feature_channels = [f'feat_{i}' for i in range(n_channels - len(base_channels))]
+                    channels_list = base_channels + feature_channels
+                else:
+                    channels_list = base_channels[:n_channels]
+            else:
+                # 其他数据集使用通用命名
+                channels_list = [f'ch_{i}' for i in range(n_channels)]
+
+            datasets_info[dataset_name] = {
+                'channels': channels_list,
+                'n_channels': n_channels,
+                'n_samples': processed_datasets[dataset_name]['X_train'].shape[2],
+                'n_timepoints': processed_datasets[dataset_name]['X_train'].shape[2],
+                'n_classes': len(np.unique(processed_datasets[dataset_name]['y_train']))
+            }
+
+        model = create_fusion_model(
+            model_name=classifier,
+            datasets_info=datasets_info,
+            fusion_method=fusion_method,
+            domain_adaptation=domain_adaptation,
+            datasets=datasets,
+            input_shape=processed_datasets[datasets[0]]['X_train'].shape[1:],
+            logger=logger
+        )
+
+        # 训练模型
+        import torch
+        device = get_device()
+
+        logger.info(f"Training fusion model: {fusion_method} with domain adaptation: {domain_adaptation}")
+        training_history = train_fusion_model(
+            model=model,
+            train_loaders=train_loaders,
+            val_loaders=val_loaders,
+            test_loaders=test_loaders,
+            device=device,
+            fusion_method=fusion_method,
+            domain_adaptation=domain_adaptation
+        )
+
+        # 评估模型
+        evaluation_results = evaluate_fusion_model(
+            model=model,
+            test_loaders=test_loaders,
+            datasets=datasets,
+            fusion_method=fusion_method,
+            logger=logger
+        )
+
+        # 综合评估
+        evaluator = ComprehensiveEvaluator(datasets=datasets, fusion_method=fusion_method)
+        comprehensive_results = evaluator.evaluate_fusion_performance(
+            model=model,
+            test_data=processed_datasets,
+            predictions=evaluation_results.get('predictions', {}),
+            true_labels=evaluation_results.get('true_labels', {}),
+            logger=logger
+        )
+
+        # 合并结果
+        final_results = {
+            'fusion_method': fusion_method,
+            'domain_adaptation': domain_adaptation,
+            'datasets': datasets,
+            'training_history': training_history,
+            'evaluation_results': evaluation_results,
+            'comprehensive_analysis': comprehensive_results,
+            'model_params': sum(p.numel() for p in model.parameters()),
+        }
+
+        logger.info(f"Fusion experiment completed successfully")
+        logger.info(f"Final accuracy: {evaluation_results.get('overall_accuracy', 'N/A')}")
+
+        return final_results
+
+    except Exception as e:
+        logger.error(f"Error in fusion experiment: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise
+
+
+def process_fusion_datasets(fusion_manager: 'FusionDatasetManager', datasets: List[str], logger):
+    """处理融合数据集"""
+    processed_datasets = {}
+
+    for dataset_name in datasets:
+        logger.info(f"Processing dataset: {dataset_name}")
+
+        if dataset_name == 'P3':
+            data_dir = P3_DATA_DIR
+        elif dataset_name == 'AVO':
+            data_dir = AVO_DATA_DIR
+        else:
+            raise ValueError(f"Unknown dataset: {dataset_name}")
+
+        # 加载和预处理数据
+        processed_data = fusion_manager.load_and_prepare_dataset(
+            dataset_name=dataset_name,
+            data_dir=data_dir
+        )
+
+        processed_datasets[dataset_name] = processed_data
+        logger.info(f"Dataset {dataset_name} processed: {processed_data['X_train'].shape[0]} training samples")
+
+    return processed_datasets
+
+
+def create_fusion_data_loaders(processed_datasets: Dict, logger, batch_size: int = None):
+    """创建融合数据加载器"""
+    import torch
+    from torch.utils.data import DataLoader, TensorDataset
+
+    batch_size = batch_size or BATCH_SIZE
+
+    train_loaders = {}
+    val_loaders = {}
+    test_loaders = {}
+
+    for dataset_name, data in processed_datasets.items():
+        # 转换为torch张量
+        X_train = torch.FloatTensor(data['X_train'])
+        y_train = torch.LongTensor(data['y_train'])
+        X_val = torch.FloatTensor(data['X_val'])
+        y_val = torch.LongTensor(data['y_val'])
+        X_test = torch.FloatTensor(data['X_test'])
+        y_test = torch.LongTensor(data['y_test'])
+
+        # 创建数据集
+        train_dataset = TensorDataset(X_train, y_train)
+        val_dataset = TensorDataset(X_val, y_val)
+        test_dataset = TensorDataset(X_test, y_test)
+
+        # 创建数据加载器
+        train_loaders[dataset_name] = DataLoader(
+            train_dataset, batch_size=batch_size, shuffle=True
+        )
+        val_loaders[dataset_name] = DataLoader(
+            val_dataset, batch_size=batch_size, shuffle=False
+        )
+        test_loaders[dataset_name] = DataLoader(
+            test_dataset, batch_size=batch_size, shuffle=False
+        )
+
+        logger.info(f"Created data loaders for {dataset_name}")
+
+    return train_loaders, val_loaders, test_loaders
+
+
+def run_experiment_with_fusion(datasets: List[str], fusion_method: str = 'none',
+                              domain_adaptation: str = 'none', channels: List[str] = None,
+                              logger = None):
+    """
+    运行带融合功能的实验
+
+    Args:
+        datasets: 数据集列表
+        fusion_method: 融合方法
+        domain_adaptation: 域适应方法
+        channels: 通道列表
+        logger: 日志记录器
+
+    Returns:
+        实验结果
+    """
+    # 如果启用融合方法，运行融合实验
+    if fusion_method != 'none':
+        return run_fusion_experiment(
+            fusion_method=fusion_method,
+            domain_adaptation=domain_adaptation,
+            datasets=datasets,
+            channels=channels,
+            logger=logger
+        )
+    else:
+        # 否则运行标准实验
+        accuracies, trial_counts, prediction_details, _, _, _ = run_experiment(
+            datasets=datasets,
+            training_mode='pooled',
+            channels=channels,
+            logger=logger,
+            p3_dir=P3_DATA_DIR if 'P3' in datasets else None,
+            avo_dir=AVO_DATA_DIR if 'AVO' in datasets else None
+        )
+
+        return {
+            'fusion_method': fusion_method,
+            'domain_adaptation': domain_adaptation,
+            'datasets': datasets,
+            'accuracies': accuracies,
+            'trial_counts': trial_counts,
+            'prediction_details': prediction_details
+        }

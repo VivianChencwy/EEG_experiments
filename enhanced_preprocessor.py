@@ -8,12 +8,17 @@ from scipy import signal
 from sklearn.decomposition import FastICA
 import warnings
 from pathlib import Path
+from typing import List, Dict, Tuple, Optional, Union, Any
+import torch
 from preprocessor import OddballPreprocessor, ManualWindowsDataset
 from enhanced_cache import EnhancedEEGCache
 from config import (
     TRIAL_START_OFFSET_SAMPLES, TRIAL_STOP_OFFSET_SAMPLES,
-    LOW_FREQ, HIGH_FREQ, RESAMPLE_FREQ
+    LOW_FREQ, HIGH_FREQ, RESAMPLE_FREQ,
+    ELECTRODE_FUSION_METHOD, DOMAIN_ADAPTATION_METHOD
 )
+from electrode_utils import get_electrode_positions, ElectrodeGraphBuilder, interpolate_to_common_space
+from fusion_methods import FusionModelFactory
 
 
 class EnhancedOddballPreprocessor(OddballPreprocessor):
@@ -57,6 +62,11 @@ class EnhancedOddballPreprocessor(OddballPreprocessor):
             self.enhanced_cache = EnhancedEEGCache()
         else:
             self.enhanced_cache = None
+
+        # Fusion method support
+        self.fusion_method = ELECTRODE_FUSION_METHOD
+        self.domain_adaptation = DOMAIN_ADAPTATION_METHOD
+        self.graph_builder = ElectrodeGraphBuilder() if self.fusion_method == 'graph_gcn' else None
 
     def remove_eye_artifacts_ica(self, raw):
         """Remove eye movement artifacts using Independent Component Analysis."""
@@ -510,3 +520,370 @@ class EnhancedOddballPreprocessor(OddballPreprocessor):
             )
 
         return ManualWindowsDataset(windows_data, windows_labels)
+
+    def apply_electrode_fusion(self, windows_data: np.ndarray, available_channels: List[str],
+                             target_dataset: str = None) -> np.ndarray:
+        """
+        Apply electrode fusion method to align different electrode layouts
+
+        Args:
+            windows_data: (n_windows, n_channels, n_timepoints)
+            available_channels: List of available channel names
+            target_dataset: Target dataset name for fusion
+
+        Returns:
+            Transformed data for fusion method
+        """
+        if self.fusion_method == 'none':
+            return windows_data
+
+        elif self.fusion_method == 'graph_gcn':
+            # For GCN, we need to prepare data for graph processing
+            # The actual graph processing will be done in the model
+            return windows_data
+
+        elif self.fusion_method == 'spatial_attention':
+            # For spatial attention, we include electrode positions
+            # The actual attention mechanism will be in the model
+            return windows_data
+
+        else:
+            return windows_data
+
+    def get_electrode_info(self, channels: List[str]) -> Dict:
+        """
+        Get electrode information for fusion methods
+
+        Args:
+            channels: List of channel names
+
+        Returns:
+            Dictionary with electrode information
+        """
+        info = {
+            'channels': channels,
+            'n_channels': len(channels),
+            'positions': get_electrode_positions(channels, self.dataset_type),
+            'adjacency_matrix': None
+        }
+
+        if self.fusion_method == 'graph_gcn' and self.graph_builder:
+            info['adjacency_matrix'] = self.graph_builder.build_graph(
+                channels, self.dataset_type
+            )
+
+        return info
+
+    def prepare_domain_labels(self, windows_labels: np.ndarray) -> np.ndarray:
+        """
+        Prepare domain labels for domain adaptation
+
+        Args:
+            windows_labels: Original class labels
+
+        Returns:
+            Domain labels (0 for P3, 1 for AVO, etc.)
+        """
+        if self.domain_adaptation == 'none':
+            return windows_labels
+
+        # Create domain labels based on dataset type
+        domain_mapping = {'P3': 0, 'AVO': 1}
+        domain_label = domain_mapping.get(self.dataset_type, 0)
+
+        domain_labels = np.full(len(windows_labels), domain_label, dtype=np.int64)
+        return domain_labels
+
+
+class FusionDatasetManager:
+    """Manager for handling multi-dataset fusion"""
+
+    def __init__(self, fusion_method: str = 'none', domain_adaptation: str = 'none'):
+        self.fusion_method = fusion_method
+        self.domain_adaptation = domain_adaptation
+        self.datasets_info = {}
+
+    def register_dataset(self, dataset_name: str, channels: List[str],
+                        n_timepoints: int = None):
+        """Register a dataset for fusion"""
+        self.datasets_info[dataset_name] = {
+            'channels': channels,
+            'n_timepoints': n_timepoints or TRIAL_STOP_OFFSET_SAMPLES - TRIAL_START_OFFSET_SAMPLES,
+            'n_channels': len(channels)
+        }
+
+    def get_fusion_info(self) -> Dict:
+        """Get information needed for fusion model creation"""
+        return {
+            'datasets_info': self.datasets_info,
+            'fusion_method': self.fusion_method,
+            'domain_adaptation': self.domain_adaptation,
+            'max_channels': max(info['n_channels'] for info in self.datasets_info.values()) if self.datasets_info else 0
+        }
+
+    def align_datasets(self, data_dict: Dict[str, np.ndarray],
+                      method: str = 'interpolation') -> Dict[str, np.ndarray]:
+        """
+        Align datasets with different electrode layouts
+
+        Args:
+            data_dict: {dataset_name: data_array}
+            method: Alignment method
+
+        Returns:
+            Aligned data dictionary
+        """
+        if self.fusion_method == 'none' or len(self.datasets_info) <= 1:
+            return data_dict
+
+        aligned_data = {}
+
+        if method == 'common_electrodes':
+            # Find common electrodes across all datasets
+            all_channels = [info['channels'] for info in self.datasets_info.values()]
+            common_channels = set(all_channels[0])
+            for channels in all_channels[1:]:
+                common_channels = common_channels.intersection(set(channels))
+            common_channels = list(common_channels)
+
+            if not common_channels:
+                raise ValueError("No common electrodes found across datasets")
+
+            # Extract common channels from each dataset
+            for dataset_name, data in data_dict.items():
+                if dataset_name in self.datasets_info:
+                    dataset_channels = self.datasets_info[dataset_name]['channels']
+                    common_indices = [dataset_channels.index(ch) for ch in common_channels
+                                    if ch in dataset_channels]
+                    aligned_data[dataset_name] = data[:, common_indices, :]
+
+        elif method == 'interpolation':
+            # Interpolate all datasets to a common electrode layout
+            target_channels = max(self.datasets_info.values(),
+                                key=lambda x: x['n_channels'])['channels']
+
+            for dataset_name, data in data_dict.items():
+                if dataset_name in self.datasets_info:
+                    source_channels = self.datasets_info[dataset_name]['channels']
+
+                    if source_channels == target_channels:
+                        aligned_data[dataset_name] = data
+                    else:
+                        # Use interpolation to map to target layout
+                        aligned_data[dataset_name] = interpolate_to_common_space(
+                            data, source_channels, target_channels,
+                            dataset_name, 'standard'
+                        )
+
+        else:
+            # No alignment for fusion methods that handle layout differences
+            aligned_data = data_dict
+
+        return aligned_data
+
+    def load_and_prepare_dataset(self, dataset_name: str, data_dir: str) -> Dict[str, np.ndarray]:
+        """
+        加载和预处理单个数据集用于融合实验
+
+        Args:
+            dataset_name: 数据集名称 ('P3' 或 'AVO')
+            data_dir: 数据目录路径
+
+        Returns:
+            包含训练/验证/测试数据的字典
+        """
+        from data_utils import EEGBIDSDataset
+        from sklearn.model_selection import train_test_split
+
+        # 导入常量
+        from constants import P3_CHANNELS, AVO_CHANNELS, COMMON_CHANNELS
+        from config import (
+            TRAIN_SIZE, VAL_SIZE, TEST_SIZE,
+            MAX_SUBJECTS_P3, MAX_SUBJECTS_AVO,
+            FIXED_TRIALS_PER_SUBJECT_TRAIN, FIXED_TRIALS_PER_SUBJECT_VAL, FIXED_TRIALS_PER_SUBJECT_TEST
+        )
+
+        # 确定数据集的原生电极配置
+        if dataset_name == 'P3':
+            dataset_channels = P3_CHANNELS
+            max_subjects = MAX_SUBJECTS_P3
+        elif dataset_name == 'AVO':
+            dataset_channels = AVO_CHANNELS
+            max_subjects = MAX_SUBJECTS_AVO
+        else:
+            raise ValueError(f"Unknown dataset: {dataset_name}")
+
+        # 注册数据集信息（用于融合）
+        self.register_dataset(
+            dataset_name=dataset_name,
+            channels=dataset_channels
+        )
+
+        # 创建数据集对象
+        dataset = EEGBIDSDataset(data_dir)
+
+        # 创建增强预处理器（使用数据集的原生电极）
+        preprocessor = EnhancedOddballPreprocessor(
+            eeg_channels=dataset_channels,
+            dataset_type=dataset_name
+        )
+
+        # 加载和预处理数据
+        from utils import process_subject_data
+        from experiment import get_dataset_subjects
+        import numpy as np
+
+        # 获取被试列表
+        if dataset_name == 'P3':
+            subject_list = get_dataset_subjects(dataset_name, data_dir)
+        else:  # AVO
+            subject_list = get_dataset_subjects(dataset_name, dataset)
+
+        if max_subjects is not None:
+            subject_list = subject_list[:max_subjects]
+
+        # 处理每个被试的数据
+        all_data = []
+        all_labels = []
+        all_subject_ids = []
+
+        for subject_id in subject_list:
+            # 使用标准的数据处理流程
+            if dataset_name == 'P3':
+                data, labels = process_subject_data(subject_id, data_dir, preprocessor, None, dataset_type='P3')
+            else:  # AVO
+                data, labels = process_subject_data(subject_id, dataset, preprocessor, None, dataset_type='AVO')
+
+            if data is not None and labels is not None:
+                all_data.append(data)
+                all_labels.append(labels)
+                # 为每个试次分配被试ID
+                subject_indices = np.full(len(data), subject_id)
+                all_subject_ids.append(subject_indices)
+
+        if not all_data:
+            raise ValueError(f"No valid data found for dataset {dataset_name}")
+
+        # 合并所有数据
+        data = np.concatenate(all_data, axis=0)
+        labels = np.concatenate(all_labels, axis=0)
+        subject_ids = np.concatenate(all_subject_ids, axis=0)
+
+        # 应用固定试次数配置
+        if (FIXED_TRIALS_PER_SUBJECT_TRAIN is not None and
+            FIXED_TRIALS_PER_SUBJECT_VAL is not None and
+            FIXED_TRIALS_PER_SUBJECT_TEST is not None):
+
+            # 限制每个被试的试次数
+            filtered_data = []
+            filtered_labels = []
+            filtered_subject_ids = []
+
+            unique_subjects = np.unique(subject_ids)
+            for subject in unique_subjects:
+                subject_mask = subject_ids == subject
+                subject_data = data[subject_mask]
+                subject_labels = labels[subject_mask]
+
+                # 计算需要的总试次数
+                total_trials_needed = (FIXED_TRIALS_PER_SUBJECT_TRAIN +
+                                     FIXED_TRIALS_PER_SUBJECT_VAL +
+                                     FIXED_TRIALS_PER_SUBJECT_TEST)
+
+                if len(subject_data) >= total_trials_needed:
+                    # 随机选择指定数量的试次
+                    indices = np.random.choice(len(subject_data), total_trials_needed, replace=False)
+                    filtered_data.append(subject_data[indices])
+                    filtered_labels.append(subject_labels[indices])
+                    filtered_subject_ids.extend([subject] * total_trials_needed)
+
+            if filtered_data:
+                data = np.concatenate(filtered_data, axis=0)
+                labels = np.concatenate(filtered_labels, axis=0)
+                subject_ids = np.array(filtered_subject_ids)
+
+        # 按被试分割数据
+        unique_subjects = np.unique(subject_ids)
+        n_subjects = len(unique_subjects)
+
+        # 计算分割点
+        n_train = int(n_subjects * TRAIN_SIZE)
+        n_val = int(n_subjects * VAL_SIZE)
+        n_test = n_subjects - n_train - n_val
+
+        if n_test < 0:
+            n_test = 0
+            n_val = n_subjects - n_train
+
+        # 随机打乱被试顺序
+        np.random.shuffle(unique_subjects)
+
+        train_subjects = unique_subjects[:n_train]
+        val_subjects = unique_subjects[n_train:n_train + n_val]
+        test_subjects = unique_subjects[n_train + n_val:]
+
+        # 分割数据
+        train_mask = np.isin(subject_ids, train_subjects)
+        val_mask = np.isin(subject_ids, val_subjects)
+        test_mask = np.isin(subject_ids, test_subjects)
+
+        return {
+            'X_train': data[train_mask],
+            'y_train': labels[train_mask],
+            'X_val': data[val_mask],
+            'y_val': labels[val_mask],
+            'X_test': data[test_mask],
+            'y_test': labels[test_mask],
+            'train_subjects': train_subjects,
+            'val_subjects': val_subjects,
+            'test_subjects': test_subjects,
+            'channels': dataset_channels,
+            'dataset_name': dataset_name
+        }
+
+
+class MultiModalDataLoader:
+    """Data loader for multi-modal/multi-dataset scenarios"""
+
+    def __init__(self, datasets: Dict[str, torch.utils.data.Dataset],
+                 batch_size: int, fusion_method: str = 'none'):
+        self.datasets = datasets
+        self.batch_size = batch_size
+        self.fusion_method = fusion_method
+        self.domain_names = list(datasets.keys())
+
+        # Create individual data loaders
+        self.loaders = {}
+        for name, dataset in datasets.items():
+            self.loaders[name] = torch.utils.data.DataLoader(
+                dataset, batch_size=batch_size, shuffle=True
+            )
+
+    def get_mixed_batch(self) -> Tuple[torch.Tensor, torch.Tensor, List[str]]:
+        """Get a mixed batch from all datasets"""
+        all_data = []
+        all_labels = []
+        all_domains = []
+
+        for domain_name in self.domain_names:
+            try:
+                batch_data, batch_labels = next(iter(self.loaders[domain_name]))
+                all_data.append(batch_data)
+                all_labels.append(batch_labels)
+                all_domains.extend([domain_name] * len(batch_data))
+            except StopIteration:
+                continue
+
+        if all_data:
+            mixed_data = torch.cat(all_data, dim=0)
+            mixed_labels = torch.cat(all_labels, dim=0)
+            return mixed_data, mixed_labels, all_domains
+        else:
+            raise StopIteration("No data available from any dataset")
+
+    def get_domain_batch(self, domain_name: str) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Get a batch from specific domain"""
+        if domain_name not in self.loaders:
+            raise ValueError(f"Domain {domain_name} not found")
+
+        return next(iter(self.loaders[domain_name]))

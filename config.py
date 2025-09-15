@@ -50,8 +50,8 @@ electrode_list = 'all'
 # - 'EEGChannelNet': CNN with channel-wise attention mechanism
 
 #classifier = 'EEGNet'
-#classifier = 'EEGConformer'
-classifier = 'ShallowFBCSPNet'
+classifier = 'EEGConformer'
+#classifier = 'ShallowFBCSPNet'
 #classifier = 'DeepConvNet' #problem
 #classifier = 'EEGChannelNet'
 #classifier = 'lda'
@@ -162,6 +162,21 @@ CONFORMER_NUM_LAYERS = 3             # Number of transformer layers
 CONFORMER_ACTIVATION = 'gelu'        # Transformer activation function
 
 #######################
+# Device Configuration
+#######################
+
+# 设备选择配置
+# 'auto': 自动检测 (有GPU用GPU，无GPU用CPU) - 推荐设置
+# 'cpu': 强制使用CPU (即使有GPU也不使用，适合调试或CPU-only环境)
+# 'cuda': 强制使用CUDA (如果无GPU会报错)
+#
+# 使用说明：
+# - 要强制CPU运行，改为 DEVICE_MODE = 'cpu'
+# - 要强制GPU运行，改为 DEVICE_MODE = 'cuda'
+# - 自动选择设备，保持 DEVICE_MODE = 'auto'
+DEVICE_MODE = 'cpu'
+
+#######################
 # Performance Optimization Configuration
 #######################
 
@@ -182,3 +197,65 @@ OPTIMIZE_DTYPES = True  # Convert float64 to float32 where possible
 
 # Verbose output
 VERBOSE_PROCESSING = True
+
+#######################
+# Multi-Dataset Fusion Configuration
+#######################
+
+# 电极分布融合方法选择
+# 'none': 不使用融合方法，保持baseline状态
+# 'graph_gcn': 基于图神经网络的通用特征空间融合
+# 'spatial_attention': 基于空间注意力的端到端协调
+ELECTRODE_FUSION_METHOD = 'graph_gcn'
+
+# 图神经网络配置
+GCN_HIDDEN_DIM = 64            # GCN隐藏层维度
+GCN_NUM_LAYERS = 2             # GCN层数
+GCN_EMBEDDING_DIM = 128        # 图嵌入向量维度
+GCN_DROPOUT = 0.3              # GCN dropout率
+GCN_LEARNING_RATE = 0.001      # GCN专用学习率
+
+# 空间注意力配置
+SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 128  # 虚拟通道数
+SPATIAL_ATTENTION_HIDDEN_DIM = 64         # 注意力层隐藏维度
+SPATIAL_ATTENTION_NUM_HEADS = 8           # 多头注意力头数
+SPATIAL_ATTENTION_HEADS = 8               # 别名，保持向后兼容
+SPATIAL_ATTENTION_DROPOUT = 0.1           # 注意力层dropout
+
+#######################
+# Domain Adaptation Configuration
+#######################
+
+# 领域自适应方法选择
+# 'none': 不使用领域自适应
+# 'ms_mda': 多源边缘分布自适应
+# 'adversarial': 对抗性领域自适应
+DOMAIN_ADAPTATION_METHOD = 'ms_mda'
+
+# MS-MDA配置
+MS_MDA_ADAPTATION_WEIGHT = 0.1         # 适应损失权重
+MS_MDA_ENSEMBLE_METHOD = 'weighted_average'  # 集成方法: 'average', 'weighted_average', 'voting'
+MS_MDA_HIDDEN_DIM = 256                # 适配分支隐藏维度
+MS_MDA_TEMPERATURE = 1.0               # softmax温度参数
+
+# 对抗性领域自适应配置
+ADVERSARIAL_WEIGHT = 0.1               # 对抗损失权重
+DISCRIMINATOR_HIDDEN_DIM = 128         # 判别器隐藏维度
+DISCRIMINATOR_LEARNING_RATE = 0.0001   # 判别器学习率
+GRADIENT_REVERSAL_LAMBDA = 1.0         # 梯度反转强度
+
+#######################
+# Evaluation Configuration
+#######################
+
+# 评估模式配置
+ENABLE_COMPREHENSIVE_EVALUATION = True  # 启用全面评估
+ENABLE_DOMAIN_ANALYSIS = True          # 启用域间分析
+ENABLE_SMALL_SAMPLE_ANALYSIS = False    # 启用小样本分析
+
+# 小样本实验配置 (用于验证低资源效果)
+SMALL_SAMPLE_SIZES = [5, 10, 15, 20]   # 每个subject使用的trial数量
+SMALL_SAMPLE_SUBJECTS = [5, 10, 15]    # 每个数据集使用的subject数量
+
+# 随机种子配置
+RANDOM_SEED = 42

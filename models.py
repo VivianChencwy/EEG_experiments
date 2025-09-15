@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+from typing import Dict, List, Tuple, Optional, Union, Any
 try:
     from braindecode.models import ShallowFBCSPNet
     BRAINDECODE_AVAILABLE = True
@@ -20,7 +21,8 @@ import math
 from config import (
     INPUT_WINDOW_SAMPLES, use_subject_layer, EARLY_STOPPING_PATIENCE,
     LEARNING_RATE, WEIGHT_DECAY, GAMMA, MAX_EPOCHS, N_CLASSES,
-    USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING, DROPOUT_RATE
+    USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING, DROPOUT_RATE,
+    ELECTRODE_FUSION_METHOD, DOMAIN_ADAPTATION_METHOD
 )
 from constants import NORMALIZATION_EPSILON
 
@@ -1094,3 +1096,327 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
     if 'best_model' in es_state and es_state['best_model'] is not None:
         model.load_state_dict(es_state['best_model'])
     return evaluate(model, test_loader, device)
+
+
+def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str = 'none',
+                       domain_adaptation: str = 'none', **kwargs):
+    """
+    Create a model with fusion and domain adaptation capabilities
+
+    Args:
+        model_name: Base model name
+        datasets_info: Information about datasets
+        fusion_method: Fusion method to use
+        domain_adaptation: Domain adaptation method
+        **kwargs: Additional parameters
+
+    Returns:
+        Model instance
+    """
+    # Import fusion methods here to avoid circular imports
+    from fusion_methods import FusionModelFactory
+    from domain_adaptation import DomainAdapterFactory
+
+    if fusion_method == 'none' and domain_adaptation == 'none':
+        # Use existing create_model function for baseline
+        max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
+        return create_model(model_name, max_channels, **kwargs)
+
+    elif fusion_method in ['graph_gcn', 'spatial_attention']:
+        # Create fusion model
+        fusion_model = FusionModelFactory.create_fusion_model(
+            fusion_method, datasets_info,
+            base_model_info={
+                'class': lambda **params: create_model(model_name, **params),
+                'params': kwargs
+            }
+        )
+
+        if domain_adaptation != 'none':
+            # Wrap with domain adaptation
+            feature_dim = 128  # This should be determined from the fusion model
+            domain_adapter = DomainAdapterFactory.create_domain_adapter(
+                domain_adaptation, fusion_model, feature_dim, datasets_info
+            )
+            return domain_adapter
+
+        return fusion_model
+
+    elif domain_adaptation != 'none':
+        # Domain adaptation without fusion
+        max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
+        base_model = create_model(model_name, max_channels, **kwargs)
+
+        feature_dim = 128  # This should be determined from the base model
+        domain_adapter = DomainAdapterFactory.create_domain_adapter(
+            domain_adaptation, base_model, feature_dim, datasets_info
+        )
+        return domain_adapter
+
+    else:
+        raise ValueError(f"Unsupported combination: fusion={fusion_method}, adaptation={domain_adaptation}")
+
+
+def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loaders: Dict,
+                      device, fusion_method: str = 'none', domain_adaptation: str = 'none',
+                      max_epochs: int = MAX_EPOCHS):
+    """
+    Train a fusion model with domain adaptation
+
+    Args:
+        model: Model to train
+        train_loaders: Dictionary of training data loaders
+        val_loaders: Dictionary of validation data loaders
+        test_loaders: Dictionary of test data loaders
+        device: Training device
+        fusion_method: Fusion method being used
+        domain_adaptation: Domain adaptation method
+        max_epochs: Maximum training epochs
+
+    Returns:
+        Test accuracy
+    """
+    from domain_adaptation import DomainAdaptationLoss, DomainAdapterFactory
+    from enhanced_preprocessor import MultiModalDataLoader
+
+    if fusion_method == 'none' and domain_adaptation == 'none':
+        # Use existing training function for baseline
+        train_loader = list(train_loaders.values())[0]
+        val_loader = list(val_loaders.values())[0]
+        test_loader = list(test_loaders.values())[0]
+        return train_model(model, train_loader, val_loader, test_loader, device, max_epochs=max_epochs)
+
+    # For heterogeneous fusion, we'll iterate through each dataset separately
+    # instead of trying to batch them together (which causes dimension mismatch)
+    dataset_names = list(train_loaders.keys())
+    train_iterators = {name: iter(loader) for name, loader in train_loaders.items()}
+
+    # Move model to device
+    model = model.to(device)
+
+    # Setup optimizers based on adaptation method
+    optimizers = DomainAdapterFactory.create_optimizers(model, domain_adaptation)
+
+    # Setup loss function
+    loss_fn = DomainAdaptationLoss(domain_adaptation)
+
+    # Create learning rate schedulers
+    schedulers = {}
+    for name, optimizer in optimizers.items():
+        schedulers[name] = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
+
+    # Early stopping state
+    es_state = {}
+
+    print(f"\n{'='*60}")
+    print(f"Starting Fusion Training - Max Epochs: {max_epochs}")
+    print(f"Fusion Method: {fusion_method}")
+    print(f"Domain Adaptation: {domain_adaptation}")
+    print(f"Model: {type(model).__name__}")
+    print(f"{'='*60}")
+
+    for epoch in range(max_epochs):
+        model.train()
+        epoch_losses = {}
+        epoch_correct = 0
+        epoch_total = 0
+        batch_count = 0
+
+        # Training loop - process each dataset separately
+        for batch_idx in range(50):  # Fixed number of batches per epoch
+            try:
+                # Cycle through datasets
+                dataset_name = dataset_names[batch_idx % len(dataset_names)]
+
+                # Get batch from current dataset
+                try:
+                    data, labels = next(train_iterators[dataset_name])
+                except StopIteration:
+                    # Reset iterator if exhausted
+                    train_iterators[dataset_name] = iter(train_loaders[dataset_name])
+                    data, labels = next(train_iterators[dataset_name])
+
+                data, labels = data.to(device), labels.to(device)
+                domains = [dataset_name] * len(data)  # Set domain for all samples in batch
+
+                # Apply data augmentation and normalization
+                data = augment_data(data, training=True)
+                data = normalize_data(data)
+
+                # Forward pass
+                if domain_adaptation == 'adversarial':
+                    # Adversarial training
+                    alpha = 2.0 / (1.0 + np.exp(-10 * epoch / max_epochs)) - 1.0  # GRL schedule
+                    task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True)
+
+                    # Create domain labels for current dataset
+                    domain_labels = torch.full((len(data),), hash(dataset_name) % len(dataset_names),
+                                             device=device, dtype=torch.long)
+                    predictions = {'task': task_pred, 'domain': domain_pred}
+                    targets = {'task': labels, 'domain': domain_labels}
+
+                elif domain_adaptation == 'ms_mda':
+                    # MS-MDA training - single domain per batch
+                    domain = dataset_name
+                    task_pred, shared_feat, adapted_feat = model(
+                        data, domain=domain, return_features=True
+                    )
+
+                    # Compute adaptation loss (domain features will be accumulated across batches)
+                    adaptation_loss = model.compute_adaptation_loss({domain: shared_feat})
+
+                    predictions = {'task': task_pred, 'adaptation': adaptation_loss}
+                    targets = {'task': labels}
+
+                else:
+                    # No domain adaptation
+                    if hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
+                        task_pred = model(data, dataset_name=domains[0] if domains else 'unknown')
+                    else:
+                        task_pred = model(data)
+                    predictions = {'task': task_pred}
+                    targets = {'task': labels}
+
+                # Compute loss
+                total_loss, loss_components = loss_fn(predictions, targets, model)
+
+                # Backward pass
+                if domain_adaptation == 'adversarial' and 'discriminator' in optimizers:
+                    # Adversarial training: alternate updates
+                    if batch_idx % 2 == 0:
+                        # Update feature extractor
+                        optimizers['feature'].zero_grad()
+                        total_loss.backward()
+                        optimizers['feature'].step()
+                    else:
+                        # Update discriminator
+                        optimizers['discriminator'].zero_grad()
+                        loss_components['domain_loss'].backward()
+                        optimizers['discriminator'].step()
+                else:
+                    # Standard training
+                    optimizer = optimizers.get('main', list(optimizers.values())[0])
+                    optimizer.zero_grad()
+                    total_loss.backward()
+                    optimizer.step()
+
+                # Track statistics
+                for key, value in loss_components.items():
+                    if key not in epoch_losses:
+                        epoch_losses[key] = 0
+                    epoch_losses[key] += value.item() if torch.is_tensor(value) else value
+
+                # Calculate accuracy
+                if torch.is_tensor(predictions['task']):
+                    _, predicted = predictions['task'].max(1)
+                    epoch_correct += (predicted == labels).sum().item()
+                    epoch_total += labels.size(0)
+
+                batch_count += 1
+
+            except StopIteration:
+                # Reset data loader
+                multi_train_loader.reset()
+                break
+            except Exception as e:
+                print(f"Error in batch {batch_idx}: {e}")
+                continue
+
+        # Calculate epoch statistics
+        avg_losses = {key: value / batch_count for key, value in epoch_losses.items()}
+        train_acc = 100. * epoch_correct / epoch_total if epoch_total > 0 else 0.0
+
+        # Update learning rates
+        for scheduler in schedulers.values():
+            scheduler.step()
+
+        # Validation phase
+        val_acc = evaluate_fusion_model(model, val_loaders, device, fusion_method, domain_adaptation)
+        val_acc_percent = 100. * val_acc
+
+        # Print epoch summary
+        print(f"\nEpoch {epoch+1:3d}/{max_epochs} Summary:")
+        print(f"  Train Loss: {avg_losses.get('total_loss', 0.0):.4f} | Train Acc: {train_acc:.2f}%")
+        if 'adaptation_loss' in avg_losses:
+            print(f"  Adaptation Loss: {avg_losses['adaptation_loss']:.4f}")
+        if 'domain_loss' in avg_losses:
+            print(f"  Domain Loss: {avg_losses['domain_loss']:.4f}")
+        print(f"  Val Acc: {val_acc_percent:.2f}%")
+
+        # Early stopping
+        if early_stopping(val_acc, model, es_state, patience=EARLY_STOPPING_PATIENCE):
+            print(f"Early stopping triggered! No improvement for {EARLY_STOPPING_PATIENCE} epochs")
+            break
+
+        print(f"  {'-'*50}")
+
+    print(f"\n{'='*60}")
+    print("Fusion Training Complete!")
+    print(f"{'='*60}")
+
+    # Load best model and evaluate on test set
+    if 'best_model' in es_state and es_state['best_model'] is not None:
+        model.load_state_dict(es_state['best_model'])
+
+    return evaluate_fusion_model(model, test_loaders, device, fusion_method, domain_adaptation)
+
+
+def evaluate_fusion_model(model, test_loaders: Dict, device, fusion_method: str = 'none',
+                         domain_adaptation: str = 'none'):
+    """
+    Evaluate fusion model on test data
+
+    Args:
+        model: Model to evaluate
+        test_loaders: Dictionary of test data loaders
+        device: Evaluation device
+        fusion_method: Fusion method being used
+        domain_adaptation: Domain adaptation method
+
+    Returns:
+        Average test accuracy across all domains
+    """
+    model.eval()
+    domain_accuracies = {}
+
+    with torch.no_grad():
+        for domain_name, test_loader in test_loaders.items():
+            domain_correct = 0
+            domain_total = 0
+
+            for batch_data in test_loader:
+                if len(batch_data) == 3:
+                    data, labels, _ = batch_data
+                else:
+                    data, labels = batch_data
+
+                data, labels = data.to(device), labels.to(device)
+                data = normalize_data(data)
+
+                # Forward pass
+                if hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
+                    outputs = model(data, dataset_name=domain_name)
+                elif domain_adaptation == 'ms_mda':
+                    outputs = model(data, domain=domain_name)
+                else:
+                    outputs = model(data)
+
+                if isinstance(outputs, tuple):
+                    outputs = outputs[0]  # Take task predictions
+
+                _, predicted = outputs.max(1)
+                domain_correct += (predicted == labels).sum().item()
+                domain_total += labels.size(0)
+
+            if domain_total > 0:
+                domain_accuracy = domain_correct / domain_total
+                domain_accuracies[domain_name] = domain_accuracy
+                print(f"Domain {domain_name} accuracy: {domain_accuracy:.4f}")
+
+    # Return average accuracy across domains
+    if domain_accuracies:
+        avg_accuracy = sum(domain_accuracies.values()) / len(domain_accuracies)
+        print(f"Average accuracy across domains: {avg_accuracy:.4f}")
+        return avg_accuracy
+    else:
+        return 0.0

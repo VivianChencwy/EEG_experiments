@@ -1,0 +1,32 @@
+2025-09-15 13:14:51 - 
+Experiment Configuration:
+2025-09-15 13:14:51 - --------------------------------------------------
+2025-09-15 13:14:51 - dataset: use_combined_datasets
+2025-09-15 13:14:51 - use_combined_datasets: True
+2025-09-15 13:14:51 - electrode_list: all
+2025-09-15 13:14:51 - classifier: EEGConformer
+2025-09-15 13:14:51 - separate_subject_classification: False
+2025-09-15 13:14:51 - use_subject_layer: False
+2025-09-15 13:14:51 - seeds: [42]
+2025-09-15 13:14:51 - electrode_fusion_method: graph_gcn
+2025-09-15 13:14:51 - domain_adaptation_method: ms_mda
+2025-09-15 13:14:51 - enable_comprehensive_evaluation: True
+2025-09-15 13:14:51 - enable_domain_analysis: True
+2025-09-15 13:14:51 - enable_small_sample_analysis: False
+2025-09-15 13:14:51 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-15 13:14:51 - small_sample_subjects: [5, 10, 15]
+2025-09-15 13:14:51 - --------------------------------------------------
+2025-09-15 13:14:51 - 
+==================================================
+2025-09-15 13:14:51 - Processing Combined P3 and AVO Datasets
+2025-09-15 13:14:51 - ==================================================
+2025-09-15 13:14:51 - 启用融合方法: graph_gcn, 域适应: ms_mda
+2025-09-15 13:14:51 - 融合模式：使用各数据集的原生电极配置
+2025-09-15 13:14:51 - Processing datasets: ['P3', 'AVO']
+2025-09-15 13:14:51 - Processing dataset: P3
+2025-09-15 13:15:01 - Dataset P3 processed: 840 training samples
+2025-09-15 13:15:01 - Processing dataset: AVO
+2025-09-15 13:15:08 - Dataset AVO processed: 810 training samples
+2025-09-15 13:15:08 - Created data loaders for P3
+2025-09-15 13:15:08 - Created data loaders for AVO
+2025-09-15 13:15:08 - Training fusion model: graph_gcn with domain adaptation: ms_mda
