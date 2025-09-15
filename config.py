@@ -50,8 +50,8 @@ electrode_list = 'all'
 # - 'EEGChannelNet': CNN with channel-wise attention mechanism
 
 #classifier = 'EEGNet'
-classifier = 'EEGConformer'
-#classifier = 'ShallowFBCSPNet'
+#classifier = 'EEGConformer'
+classifier = 'ShallowFBCSPNet'
 #classifier = 'DeepConvNet' #problem
 #classifier = 'EEGChannelNet'
 #classifier = 'lda'
