@@ -14,7 +14,7 @@ except (ImportError, AttributeError, Exception):
     # Define a dummy ShallowFBCSPNet to avoid reference errors
     ShallowFBCSPNet = None
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
 import math
 
 from config import (
@@ -523,7 +523,7 @@ class EEGChannelNet(nn.Module):
         return x
 
 
-def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None, model_name='ShallowFBCSPNet'):
+def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None, model_name='ShallowFBCSPNet', input_channels=None):
     """Create a new model based on configuration.
     
     Parameters
@@ -534,6 +534,8 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
     enable_subject_layer : bool, optional
     model_name : str, default 'ShallowFBCSPNet'
         Options: 'ShallowFBCSPNet', 'EEGNetv4', 'Deep4Net', 'EEGConformer', 'EEGChannelNet'
+    input_channels : int, optional
+        Actual number of input channels (may differ from n_channels if features were added)
         
     Returns
     -------
@@ -545,32 +547,35 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
         # Determine if subject layer should be enabled
         if enable_subject_layer is None:
             enable_subject_layer = use_subject_layer
+
+        # Use input_channels if provided, otherwise use n_channels
+        actual_channels = input_channels if input_channels is not None else n_channels
         
         # Create base model based on model_name
         if model_name == 'ShallowFBCSPNet':
             if BRAINDECODE_AVAILABLE:
                 base_model = ShallowFBCSPNet(
-                    n_chans=n_channels,
+                    n_chans=actual_channels,
                     n_outputs=N_CLASSES,
                     n_times=INPUT_WINDOW_SAMPLES,
-                    final_conv_length='auto'  
+                    final_conv_length='auto'
                 )
             else:
                 base_model = CustomShallowFBCSPNet(
-                    n_chans=n_channels,
+                    n_chans=actual_channels,
                     n_outputs=N_CLASSES,
                     n_times=INPUT_WINDOW_SAMPLES
                 )
         elif model_name == 'EEGNet' or model_name == 'EEGNetv4':
             base_model = EEGNet(
-                n_chans=n_channels,
+                n_chans=actual_channels,
                 n_outputs=N_CLASSES,
                 n_times=INPUT_WINDOW_SAMPLES,
                 dropout=DROPOUT_RATE
             )
         elif model_name == 'DeepConvNet' or model_name == 'Deep4Net':
             base_model = DeepConvNet(
-                n_chans=n_channels,
+                n_chans=actual_channels,
                 n_outputs=N_CLASSES,
                 n_times=INPUT_WINDOW_SAMPLES,
                 dropout=DROPOUT_RATE
@@ -580,7 +585,7 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
             try:
                 from config import (
                     CONFORMER_CONV_SPATIAL_DIM, CONFORMER_CONV_TEMPORAL_DIM,
-                    CONFORMER_EMBEDDING_DIM, CONFORMER_NUM_HEADS, 
+                    CONFORMER_EMBEDDING_DIM, CONFORMER_NUM_HEADS,
                     CONFORMER_NUM_LAYERS, CONFORMER_ACTIVATION
                 )
             except ImportError:
@@ -591,9 +596,9 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
                 CONFORMER_NUM_HEADS = 10
                 CONFORMER_NUM_LAYERS = 3
                 CONFORMER_ACTIVATION = 'gelu'
-                
+
             base_model = EEGConformer(
-                n_chans=n_channels,
+                n_chans=actual_channels,
                 n_outputs=N_CLASSES,
                 n_times=INPUT_WINDOW_SAMPLES,
                 conv_spatial_dim=CONFORMER_CONV_SPATIAL_DIM,
@@ -606,7 +611,7 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
             )
         elif model_name == 'EEGChannelNet':
             base_model = EEGChannelNet(
-                n_chans=n_channels,
+                n_chans=actual_channels,
                 n_outputs=N_CLASSES,
                 n_times=INPUT_WINDOW_SAMPLES,
                 dropout=DROPOUT_RATE
@@ -626,30 +631,43 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
 
 def normalize_data(x):
     """
-    Normalize data by z-score normalization across time dimension.
+    Normalize data with robust handling of constant channels and enhanced features.
+    Normalizes across time dimension (dim=2) for each channel independently.
     """
     # Debug: Check input data
     if torch.all(x == 0):
         print("WARNING: All input data to normalize_data is zero!")
         return x
-    
+
     mean = x.mean(dim=2, keepdim=True)
     std = x.std(dim=2, keepdim=True)
-    
-    # Check for zero standard deviation
-    if torch.any(std == 0):
-        print("WARNING: Some channels have zero standard deviation!")
-        # For channels with zero std, set std to 1 to avoid division by zero
-        std = torch.where(std == 0, torch.ones_like(std), std)
-    
+
+    # More robust handling of zero standard deviation
+    zero_std_mask = (std <= NORMALIZATION_EPSILON)
+    num_zero_std = torch.sum(zero_std_mask).item()
+
+    if num_zero_std > 0:
+        # Only warn once per batch if many channels have zero std
+        # if num_zero_std > x.shape[1] * 0.1:  # More than 10% of channels
+        #     print(f"INFO: {num_zero_std}/{x.shape[1]} channels have near-zero variance (likely constant features)")
+
+        # For constant channels, keep them as-is (subtract mean, but don't divide by std)
+        # This is better than setting std=1 which can create artificial scaling
+        std = torch.where(zero_std_mask, torch.ones_like(std), std)
+
+    # Apply normalization
     std = std + NORMALIZATION_EPSILON
     normalized = (x - mean) / std
-    
-    # Final check
+
+    # For originally constant channels, set them to zero (mean-centered)
+    normalized = torch.where(zero_std_mask.expand_as(normalized),
+                           torch.zeros_like(normalized), normalized)
+
+    # Final check for numerical issues
     if torch.any(torch.isnan(normalized)) or torch.any(torch.isinf(normalized)):
-        print("WARNING: NaN or Inf values after normalization!")
+        print("WARNING: NaN or Inf values after normalization, cleaning...")
         normalized = torch.nan_to_num(normalized, nan=0.0, posinf=1.0, neginf=-1.0)
-    
+
     return normalized
 
 
@@ -685,9 +703,6 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
         X = np.concatenate(X)
         y = np.concatenate(y)
         predictions = model.predict(X)
-        correct_count = np.sum(predictions == y)
-        total_count = len(y)
-        accuracy = correct_count / total_count
         
         if return_details:
             try:
@@ -696,10 +711,29 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             except:
                 y_proba = predictions  # Fallback to binary predictions if probabilities not available
             
-            # Calculate metrics
-            precision = precision_score(y, predictions, average='binary', zero_division=0)
-            recall = recall_score(y, predictions, average='binary', zero_division=0)
-            f1 = f1_score(y, predictions, average='binary', zero_division=0)
+            # Calculate confusion matrix first
+            cm = confusion_matrix(y, predictions)
+            
+            # Handle different confusion matrix shapes
+            if cm.shape == (1, 1):
+                # Only one class present
+                tp = cm[0, 0] if predictions[0] == y[0] else 0
+                tn = fp = fn = 0
+                accuracy = 1.0 if tp > 0 else 0.0
+                precision = recall = f1 = 1.0 if tp > 0 else 0.0
+            elif cm.shape == (2, 2):
+                # Standard 2x2 confusion matrix
+                tn, fp, fn, tp = cm.ravel()
+                accuracy = (tp + tn) / (tp + tn + fp + fn)
+                precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+                recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+                f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+            else:
+                # Fallback: calculate metrics directly
+                correct = np.sum(predictions == y)
+                accuracy = correct / len(y)
+                tp = tn = fp = fn = 0
+                precision = recall = f1 = 0.0
             try:
                 # Check if we have both classes in the true labels
                 unique_labels = np.unique(y)
@@ -722,15 +756,34 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             
             return {
                 'accuracy': accuracy,
-                'correct_count': correct_count,
-                'incorrect_count': total_count - correct_count,
-                'total_count': total_count,
+                'correct_count': tp + tn,
+                'incorrect_count': fp + fn,
+                'total_count': tp + tn + fp + fn,
                 'precision': precision,
                 'recall': recall,
                 'f1_score': f1,
-                'auc': auc
+                'auc': auc,
+                'tp': int(tp),
+                'tn': int(tn),
+                'fp': int(fp),
+                'fn': int(fn)
             }
-        return accuracy
+        # For LDA without details, calculate accuracy from confusion matrix
+        cm = confusion_matrix(y, predictions)
+        
+        # Handle different confusion matrix shapes
+        if cm.shape == (1, 1):
+            # Only one class present
+            return 1.0 if predictions[0] == y[0] else 0.0
+        elif cm.shape == (2, 2):
+            # Standard 2x2 confusion matrix
+            tn, fp, fn, tp = cm.ravel()
+            accuracy = (tp + tn) / (tp + tn + fp + fn)
+            return accuracy
+        else:
+            # Fallback: calculate accuracy directly
+            correct = np.sum(predictions == y)
+            return correct / len(y)
     
     model.eval()
     all_predictions = []
@@ -739,8 +792,16 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
     correct = 0
     total = 0
     
+    # Debug: Check loader
+    loader_size = len(loader.dataset)
+    if loader_size == 0:
+        print(f"Warning: Loader is empty in evaluate function!")
+        return 0.0
+    
     with torch.no_grad():
+        batch_count = 0
         for batch_data in loader:
+            batch_count += 1
             if len(batch_data) == 3:  
                 x, y, subject_indices = batch_data
                 subject_indices = subject_indices.to(device)
@@ -767,24 +828,43 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             correct += (predicted == y).sum().item()
             total += y.size(0)
             
-            # Store predictions and targets for detailed metrics
-            if return_details:
-                all_predictions.extend(predicted.cpu().numpy())
-                all_targets.extend(y.cpu().numpy())
-                # Store probabilities for AUC calculation
-                probabilities = F.softmax(scores, dim=1)[:, 1]  # Probability of positive class
-                all_probabilities.extend(probabilities.cpu().numpy())
+            # Collect predictions and targets for detailed evaluation
+            all_predictions.extend(predicted.cpu().numpy())
+            all_targets.extend(y.cpu().numpy())
+            
+            # Get probabilities for AUC calculation
+            probabilities = torch.softmax(scores, dim=1)
+            all_probabilities.extend(probabilities[:, 1].cpu().numpy())  # Probability of positive class
     
-    accuracy = correct / total
     if return_details:
         # Calculate precision, recall, F1 score and AUC
         all_predictions = np.array(all_predictions)
         all_targets = np.array(all_targets)
         all_probabilities = np.array(all_probabilities)
         
-        precision = precision_score(all_targets, all_predictions, average='binary', zero_division=0)
-        recall = recall_score(all_targets, all_predictions, average='binary', zero_division=0)
-        f1 = f1_score(all_targets, all_predictions, average='binary', zero_division=0)
+        # Calculate confusion matrix first
+        cm = confusion_matrix(all_targets, all_predictions)
+        
+        # Handle different confusion matrix shapes
+        if cm.shape == (1, 1):
+            # Only one class present
+            tp = cm[0, 0] if all_predictions[0] == all_targets[0] else 0
+            tn = fp = fn = 0
+            accuracy = 1.0 if tp > 0 else 0.0
+            precision = recall = f1 = 1.0 if tp > 0 else 0.0
+        elif cm.shape == (2, 2):
+            # Standard 2x2 confusion matrix
+            tn, fp, fn, tp = cm.ravel()
+            accuracy = (tp + tn) / (tp + tn + fp + fn)
+            precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+            recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+            f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        else:
+            # Fallback: calculate metrics directly
+            correct = np.sum(all_predictions == all_targets)
+            accuracy = correct / len(all_targets)
+            tp = tn = fp = fn = 0
+            precision = recall = f1 = 0.0
         
         # Calculate AUC
         try:
@@ -809,15 +889,51 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
         
         return {
             'accuracy': accuracy,
-            'correct_count': correct,
-            'incorrect_count': total - correct,
-            'total_count': total,
+            'correct_count': tp + tn,
+            'incorrect_count': fp + fn,
+            'total_count': tp + tn + fp + fn,
             'precision': precision,
             'recall': recall,
             'f1_score': f1,
-            'auc': auc
+            'auc': auc,
+            'tp': int(tp),
+            'tn': int(tn),
+            'fp': int(fp),
+            'fn': int(fn)
         }
-    return accuracy
+    
+    # For neural network without details, calculate accuracy from confusion matrix
+    all_predictions = np.array(all_predictions)
+    all_targets = np.array(all_targets)
+    
+    # Debug: Print evaluation info
+    print(f"DEBUG: Evaluate function - {len(all_predictions)} predictions, {len(all_targets)} targets")
+    if len(all_predictions) > 0:
+        unique_preds = np.unique(all_predictions)
+        unique_targets = np.unique(all_targets)
+        print(f"DEBUG: Unique predictions: {unique_preds}, Unique targets: {unique_targets}")
+    
+    # Check if we have predictions and targets
+    if len(all_predictions) == 0 or len(all_targets) == 0:
+        print(f"Warning: No predictions or targets in evaluate function!")
+        return 0.0
+    
+    # Calculate confusion matrix
+    cm = confusion_matrix(all_targets, all_predictions)
+    
+    # Handle case where confusion matrix is not 2x2 (single class)
+    if cm.shape == (1, 1):
+        # Only one class present
+        return 1.0 if all_predictions[0] == all_targets[0] else 0.0
+    elif cm.shape == (2, 2):
+        # Standard 2x2 confusion matrix
+        tn, fp, fn, tp = cm.ravel()
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
+        return accuracy
+    else:
+        # Fallback: calculate accuracy directly
+        correct = np.sum(all_predictions == all_targets)
+        return correct / len(all_targets)
 
 
 def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=MAX_EPOCHS):
@@ -934,7 +1050,15 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
         scheduler.step()
         
         # Validation phase
-        val_acc = evaluate(model, val_loader, device)
+        # Debug: Check validation loader
+        val_samples = len(val_loader.dataset)
+        if val_samples == 0:
+            print(f"Warning: Validation loader is empty!")
+            val_acc = 0.0
+        else:
+            val_acc = evaluate(model, val_loader, device)
+            if val_acc == 0.0 and val_samples > 0:
+                print(f"Warning: Validation accuracy is 0.0 with {val_samples} samples")
         val_acc_percent = 100. * val_acc
         
         # Print epoch summary

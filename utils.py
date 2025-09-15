@@ -163,7 +163,6 @@ def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
     """
     out_lines = [
         f"\n{dataset_name} Statistics:",
-        f"Mean Accuracy: {stats['mean']:.3f}",
         f"95% Confidence Interval: [{stats['ci_lower']:.3f}, {stats['ci_upper']:.3f}]",
         f"Best Subject: {stats['best_subject'][0]} ({stats['best_subject'][1]:.3f})",
         f"Worst Subject: {stats['worst_subject'][0]} ({stats['worst_subject'][1]:.3f})",
@@ -177,6 +176,15 @@ def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
         avg_fp = np.mean([details.get('fp', 0) for details in prediction_details.values()])
         avg_fn = np.mean([details.get('fn', 0) for details in prediction_details.values()])
         
+        # Calculate accuracy from confusion matrix
+        total_accuracy = (avg_tp + avg_tn) / (avg_tp + avg_tn + avg_fp + avg_fn) if (avg_tp + avg_tn + avg_fp + avg_fn) > 0 else 0
+        
+        # Debug: Print confusion matrix calculation
+        print(f"DEBUG: Confusion Matrix Calculation:")
+        print(f"  Avg TP: {avg_tp:.1f}, Avg TN: {avg_tn:.1f}")
+        print(f"  Avg FP: {avg_fp:.1f}, Avg FN: {avg_fn:.1f}")
+        print(f"  Total Accuracy: {total_accuracy:.3f}")
+        
         # Calculate precision, recall, f1 from confusion matrix metrics
         total_precision = avg_tp / (avg_tp + avg_fp) if (avg_tp + avg_fp) > 0 else 0
         total_recall = avg_tp / (avg_tp + avg_fn) if (avg_tp + avg_fn) > 0 else 0
@@ -188,6 +196,7 @@ def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
         total_auc = np.mean(valid_auc_values) if valid_auc_values else 0.5
         
         out_lines.extend([
+            f"Mean Accuracy: {total_accuracy:.3f}",
             f"Mean Precision: {total_precision:.3f}",
             f"Mean Recall: {total_recall:.3f}",
             f"Mean F1-Score: {total_f1:.3f}",
@@ -203,8 +212,8 @@ def print_statistics(stats, dataset_name, logger=None, prediction_details=None):
             logger.info(line)
 
 
-def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, device, 
-                           seed, classifier_type, print_model_summary=False, return_details=False):
+def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, device,
+                           seed, classifier_type, print_model_summary=False, return_details=False, input_channels=None):
     """Run a single experiment with a specific random seed.
     
     Parameters
@@ -241,7 +250,7 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
     else:
         np.random.seed(seed)
     
-    model = create_model(n_channels, is_lda)
+    model = create_model(n_channels, is_lda, input_channels=input_channels)
     if not is_lda:
         # Only neural network models need to be moved to device
         if hasattr(model, 'to'):
@@ -272,7 +281,7 @@ def run_experiment_with_seed(train_loader, val_loader, test_loader, n_channels, 
 
 def create_data_loaders(data, labels, batch_size=BATCH_SIZE, 
                        train_size=TRAIN_SIZE, val_size=VAL_SIZE, test_size=TEST_SIZE,
-                       return_indices=False):
+                       return_indices=False, max_trials_per_split=None):
     """Create train, validation, and test data loaders.
     
     Parameters
@@ -291,6 +300,9 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         Proportion of data for testing
     return_indices : bool, default False
         If True, also return the indices for each split
+    max_trials_per_split : dict, optional
+        Dictionary with keys 'train', 'val', 'test' and values being max trial counts
+        e.g., {'train': 100, 'val': 20, 'test': 30}
         
     Returns
     -------
@@ -298,17 +310,75 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         (train_loader, val_loader, test_loader) or
         (train_loader, val_loader, test_loader, train_indices, val_indices, test_indices)
     """
-    temp_size = val_size + test_size
-    indices = np.arange(len(data))
+    # Check if we should use fixed trial counts instead of ratios
+    if max_trials_per_split is not None and all(max_trials_per_split.get(split) is not None for split in ['train', 'val', 'test']):
+        # Use fixed trial counts
+        max_train = max_trials_per_split['train']
+        max_val = max_trials_per_split['val'] 
+        max_test = max_trials_per_split['test']
+        
+        print(f"Using fixed trial counts: Train={max_train}, Val={max_val}, Test={max_test}")
+        
+        # Shuffle data first
+        indices = np.arange(len(data))
+        np.random.seed(42)
+        np.random.shuffle(indices)
+        
+        # Split by fixed counts
+        train_indices = indices[:max_train]
+        val_indices = indices[max_train:max_train + max_val]
+        test_indices = indices[max_train + max_val:max_train + max_val + max_test]
+        
+        # Extract data
+        X_train, y_train = data[train_indices], labels[train_indices]
+        X_val, y_val = data[val_indices], labels[val_indices]
+        X_test, y_test = data[test_indices], labels[test_indices]
+        
+    else:
+        # Use ratio-based splitting (original logic)
+        temp_size = val_size + test_size
+        indices = np.arange(len(data))
+        
+        train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
+            indices, data, labels, test_size=temp_size, stratify=labels
+        )
+        
+        test_ratio = test_size / temp_size  
+        val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
+            temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
+        )
     
-    train_indices, temp_indices, X_train, X_temp, y_train, y_temp = train_test_split(
-        indices, data, labels, test_size=temp_size, stratify=labels
-    )
+    # Apply trial limits if specified, maintaining class balance (only for ratio-based splitting)
+    if max_trials_per_split is not None and not all(max_trials_per_split.get(split) is not None for split in ['train', 'val', 'test']):
+        if 'train' in max_trials_per_split and max_trials_per_split['train'] is not None:
+            max_train = max_trials_per_split['train']
+            if len(X_train) > max_train:
+                # Sample while maintaining class balance
+                X_train, y_train, train_indices = _balanced_sample(
+                    X_train, y_train, train_indices, max_train, seed=42
+                )
+        
+        if 'val' in max_trials_per_split and max_trials_per_split['val'] is not None:
+            max_val = max_trials_per_split['val']
+            if len(X_val) > max_val:
+                # Sample while maintaining class balance
+                X_val, y_val, val_indices = _balanced_sample(
+                    X_val, y_val, val_indices, max_val, seed=42
+                )
+        
+        if 'test' in max_trials_per_split and max_trials_per_split['test'] is not None:
+            max_test = max_trials_per_split['test']
+            if len(X_test) > max_test:
+                # Sample while maintaining class balance
+                X_test, y_test, test_indices = _balanced_sample(
+                    X_test, y_test, test_indices, max_test, seed=42
+                )
     
-    test_ratio = test_size / temp_size  
-    val_indices, test_indices, X_val, X_test, y_val, y_test = train_test_split(
-        temp_indices, X_temp, y_temp, test_size=test_ratio, stratify=y_temp
-    )
+    # Debug: Print final class distributions
+    print(f"DEBUG: Final class distributions:")
+    print(f"  Train: {np.bincount(y_train).tolist()}")
+    print(f"  Val:   {np.bincount(y_val).tolist()}")
+    print(f"  Test:  {np.bincount(y_test).tolist()}")
     
     # Since dataset is now balanced at source, no need for weighted sampling
     train_loader = DataLoader(
@@ -329,6 +399,103 @@ def create_data_loaders(data, labels, batch_size=BATCH_SIZE,
         return train_loader, val_loader, test_loader, train_indices, val_indices, test_indices
     else:
         return train_loader, val_loader, test_loader
+
+
+def _balanced_sample(X, y, indices, max_samples, seed=42):
+    """
+    Sample data while maintaining class balance (1:1 ratio).
+    
+    Parameters
+    ----------
+    X : array-like
+        Input data
+    y : array-like
+        Target labels
+    indices : array-like
+        Original indices
+    max_samples : int
+        Maximum number of samples to return
+    seed : int
+        Random seed for reproducibility
+        
+    Returns
+    -------
+    tuple
+        (sampled_X, sampled_y, sampled_indices)
+    """
+    np.random.seed(seed)
+    
+    # Get unique classes
+    unique_classes = np.unique(y)
+    if len(unique_classes) != 2:
+        print(f"Warning: Expected 2 classes, found {len(unique_classes)}. Using random sampling.")
+        if len(X) > max_samples:
+            sample_indices = np.random.choice(len(X), max_samples, replace=False)
+            return X[sample_indices], y[sample_indices], indices[sample_indices]
+        return X, y, indices
+    
+    # Calculate samples per class (ensure even number for 1:1 ratio)
+    samples_per_class = max_samples // 2
+    
+    # Get indices for each class
+    class_0_indices = np.where(y == unique_classes[0])[0]
+    class_1_indices = np.where(y == unique_classes[1])[0]
+    
+    # Check if we have enough samples for each class
+    if len(class_0_indices) < samples_per_class or len(class_1_indices) < samples_per_class:
+        print(f"Warning: Not enough samples for balanced sampling. Class 0: {len(class_0_indices)}, Class 1: {len(class_1_indices)}, Need: {samples_per_class} each")
+        # Use all available samples if not enough for balanced sampling
+        if len(X) > max_samples:
+            sample_indices = np.random.choice(len(X), max_samples, replace=False)
+            return X[sample_indices], y[sample_indices], indices[sample_indices]
+        return X, y, indices
+    
+    # Sample from each class
+    class_0_sample = np.random.choice(class_0_indices, samples_per_class, replace=False)
+    class_1_sample = np.random.choice(class_1_indices, samples_per_class, replace=False)
+    
+    # Combine samples
+    sample_indices = np.concatenate([class_0_sample, class_1_sample])
+    np.random.shuffle(sample_indices)  # Shuffle to mix classes
+    
+    # Debug: Verify class balance
+    sampled_y = y[sample_indices]
+    class_counts = np.bincount(sampled_y)
+    print(f"DEBUG: Balanced sampling - Class distribution: {class_counts.tolist()}")
+    
+    return X[sample_indices], y[sample_indices], indices[sample_indices]
+
+
+def get_trial_limits_from_config():
+    """Get trial limits from configuration.
+    
+    Returns
+    -------
+    dict or None
+        Dictionary with trial limits or None if no limits are set
+    """
+    from config import (
+        MAX_TRIALS_PER_SUBJECT_TRAIN, MAX_TRIALS_PER_SUBJECT_VAL, MAX_TRIALS_PER_SUBJECT_TEST,
+        FIXED_TRIALS_PER_SUBJECT_TRAIN, FIXED_TRIALS_PER_SUBJECT_VAL, FIXED_TRIALS_PER_SUBJECT_TEST
+    )
+    
+    # Check if fixed trial counts are specified (takes priority)
+    if any(x is not None for x in [FIXED_TRIALS_PER_SUBJECT_TRAIN, FIXED_TRIALS_PER_SUBJECT_VAL, FIXED_TRIALS_PER_SUBJECT_TEST]):
+        return {
+            'train': FIXED_TRIALS_PER_SUBJECT_TRAIN,
+            'val': FIXED_TRIALS_PER_SUBJECT_VAL,
+            'test': FIXED_TRIALS_PER_SUBJECT_TEST
+        }
+    
+    # Check if max trial limits are specified
+    if any(x is not None for x in [MAX_TRIALS_PER_SUBJECT_TRAIN, MAX_TRIALS_PER_SUBJECT_VAL, MAX_TRIALS_PER_SUBJECT_TEST]):
+        return {
+            'train': MAX_TRIALS_PER_SUBJECT_TRAIN,
+            'val': MAX_TRIALS_PER_SUBJECT_VAL,
+            'test': MAX_TRIALS_PER_SUBJECT_TEST
+        }
+    
+    return None
 
 
 def get_channel_list(electrode_list, dataset_type):
