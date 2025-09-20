@@ -12,9 +12,7 @@ import math
 from electrode_utils import ElectrodeGraphBuilder, create_positional_encoding, get_electrode_positions
 from config import (
     GCN_HIDDEN_DIM, GCN_NUM_LAYERS, GCN_EMBEDDING_DIM, GCN_DROPOUT,
-    SPATIAL_ATTENTION_VIRTUAL_CHANNELS, SPATIAL_ATTENTION_HIDDEN_DIM,
-    SPATIAL_ATTENTION_NUM_HEADS, SPATIAL_ATTENTION_DROPOUT,
-    SPATIAL_ATTENTION_TEMPERATURE, SPATIAL_ATTENTION_TOPK,
+    SPATIAL_ATTENTION_VIRTUAL_CHANNELS,
     INPUT_WINDOW_SAMPLES, N_CLASSES
 )
 
@@ -275,88 +273,54 @@ class UniversalFeatureSpace(nn.Module):
 
 
 class SpatialAttentionLayer(nn.Module):
-    """空间注意力层"""
+    """简化的空间注意力层 - 基本的通道加权融合"""
 
     def __init__(self, max_channels: int, virtual_channels: int, hidden_dim: int = None):
         super(SpatialAttentionLayer, self).__init__()
         self.max_channels = max_channels
         self.virtual_channels = virtual_channels
-        self.hidden_dim = hidden_dim or SPATIAL_ATTENTION_HIDDEN_DIM
-        self.temperature = SPATIAL_ATTENTION_TEMPERATURE
-        self.topk = SPATIAL_ATTENTION_TOPK
+        
+        # 简单的线性通道混合 - 直接学习通道间的线性组合
+        # 这相当于学习一个 (virtual_channels, max_channels) 的权重矩阵
+        self.channel_mixer = nn.Linear(max_channels, virtual_channels, bias=False)
+        
+        # 初始化为接近单位映射的权重
+        with torch.no_grad():
+            # 如果虚拟通道数等于真实通道数，初始化为单位矩阵
+            if virtual_channels == max_channels:
+                self.channel_mixer.weight.data = torch.eye(virtual_channels)
+            else:
+                # 否则使用Xavier初始化，但缩放较小以保持稳定性
+                nn.init.xavier_uniform_(self.channel_mixer.weight.data, gain=0.1)
 
-        # 位置编码维度
-        self.pos_encoding_dim = 64
-
-        # 空间位置编码网络
-        self.position_encoder = nn.Sequential(
-            nn.Linear(3, self.pos_encoding_dim),  # 3D坐标输入
-            nn.ReLU(),
-            nn.Linear(self.pos_encoding_dim, self.pos_encoding_dim)
-        )
-
-        # 多头注意力机制
-        self.multihead_attention = nn.MultiheadAttention(
-            embed_dim=self.pos_encoding_dim,
-            num_heads=SPATIAL_ATTENTION_NUM_HEADS,
-            dropout=SPATIAL_ATTENTION_DROPOUT,
-            batch_first=True
-        )
-
-        # 权重生成网络
-        self.weight_generator = nn.Sequential(
-            nn.Linear(self.pos_encoding_dim, self.hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(SPATIAL_ATTENTION_DROPOUT),
-            nn.Linear(self.hidden_dim, virtual_channels)
-        )
-
-        # 虚拟通道的可学习位置
-        self.virtual_positions = nn.Parameter(
-            torch.randn(virtual_channels, 3) * 0.1
-        )
-
-    def forward(self, x: torch.Tensor, electrode_positions: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, electrode_positions: torch.Tensor = None) -> torch.Tensor:
         """
+        简化的前向传播：直接进行通道间的线性组合
         Args:
             x: (batch_size, n_channels, n_timepoints)
-            electrode_positions: (n_channels, 3) - 3D电极位置
+            electrode_positions: 忽略，保持接口兼容性
         Returns:
             output: (batch_size, virtual_channels, n_timepoints)
         """
         batch_size, n_channels, n_timepoints = x.shape
-
-        # 编码电极位置
-        real_pos_encoded = self.position_encoder(electrode_positions)  # (n_channels, pos_encoding_dim)
-        virtual_pos_encoded = self.position_encoder(self.virtual_positions)  # (virtual_channels, pos_encoding_dim)
-
-        # 扩展批次维度
-        real_pos_encoded = real_pos_encoded.unsqueeze(0).expand(batch_size, -1, -1)  # (batch_size, n_channels, pos_encoding_dim)
-        virtual_pos_encoded = virtual_pos_encoded.unsqueeze(0).expand(batch_size, -1, -1)  # (batch_size, virtual_channels, pos_encoding_dim)
-
-        # 计算注意力权重 (虚拟 -> 真实位置)
-        attention_output, attention_weights = self.multihead_attention(
-            query=virtual_pos_encoded,  # (batch_size, V, D)
-            key=real_pos_encoded,      # (batch_size, C, D)
-            value=real_pos_encoded     # (batch_size, C, D)
-        )
-        # 通过温度与Top-K稀疏化增强选择性
-        weights_matrix = attention_weights  # (B, V, C)
-        if self.temperature is not None and self.temperature > 0:
-            weights_matrix = F.softmax(weights_matrix / self.temperature, dim=2)
-        if self.topk is not None and self.topk > 0 and self.topk < weights_matrix.size(2):
-            # 保留每个虚拟通道对真实通道的Top-K权重，其余置零并重新归一化
-            topk_vals, topk_idx = torch.topk(weights_matrix, k=self.topk, dim=2)
-            mask = torch.zeros_like(weights_matrix).scatter_(2, topk_idx, 1.0)
-            weights_matrix = weights_matrix * mask
-            # 避免全零，加入微小epsilon再归一化
-            weights_sum = weights_matrix.sum(dim=2, keepdim=True) + 1e-8
-            weights_matrix = weights_matrix / weights_sum
-
-        # 将实通道信号 x (B, C, T) 线性组合为虚拟通道 (B, V, T)
-        # 使用批处理矩阵乘法: (B, V, C) @ (B, C, T) -> (B, V, T)
-        output = torch.matmul(weights_matrix, x)
-
+        
+        # 确保输入通道数匹配
+        if n_channels != self.max_channels:
+            # 如果输入通道数不足，用零填充
+            if n_channels < self.max_channels:
+                padding = torch.zeros(batch_size, self.max_channels - n_channels, n_timepoints, 
+                                    device=x.device, dtype=x.dtype)
+                x = torch.cat([x, padding], dim=1)
+            else:
+                # 如果输入通道数过多，截取前max_channels个
+                x = x[:, :self.max_channels, :]
+        
+        # 简单的线性通道混合: (B, C, T) -> (B, V, T)
+        # 将时间维度展平，应用线性变换，再恢复形状
+        x_flat = x.transpose(1, 2)  # (B, T, C)
+        x_mixed = self.channel_mixer(x_flat)  # (B, T, V)
+        output = x_mixed.transpose(1, 2)  # (B, V, T)
+        
         return output
 
 
@@ -366,7 +330,8 @@ class SpatialAttentionModel(nn.Module):
     def __init__(self, max_channels: int, base_model_class, base_model_params: Dict, n_classes: int = N_CLASSES):
         super(SpatialAttentionModel, self).__init__()
         self.max_channels = max_channels
-        self.virtual_channels = SPATIAL_ATTENTION_VIRTUAL_CHANNELS
+        # 如果配置为0，则使用与真实通道数相同的虚拟通道数
+        self.virtual_channels = max_channels if SPATIAL_ATTENTION_VIRTUAL_CHANNELS == 0 else SPATIAL_ATTENTION_VIRTUAL_CHANNELS
         self.n_classes = n_classes
 
         # 空间注意力前端

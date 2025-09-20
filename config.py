@@ -206,7 +206,7 @@ VERBOSE_PROCESSING = True
 # 'none': 不使用融合方法，保持baseline状态
 # 'graph_gcn': 基于图神经网络的通用特征空间融合
 # 'spatial_attention': 基于空间注意力的端到端协调
-ELECTRODE_FUSION_METHOD = 'spatial_attention'
+ELECTRODE_FUSION_METHOD = 'none'
 
 # 图神经网络配置
 GCN_HIDDEN_DIM = 64            # GCN隐藏层维度
@@ -215,15 +215,9 @@ GCN_EMBEDDING_DIM = 128        # 图嵌入向量维度
 GCN_DROPOUT = 0.3              # GCN dropout率
 GCN_LEARNING_RATE = 0.001      # GCN专用学习率
 
-# 空间注意力配置
-# 减少虚拟通道数以加速训练（对性能影响较小，显著降低计算量）
-SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 128  # 虚拟通道数
-SPATIAL_ATTENTION_HIDDEN_DIM = 64         # 注意力层隐藏维度
-SPATIAL_ATTENTION_NUM_HEADS = 8           # 多头注意力头数
-SPATIAL_ATTENTION_HEADS = 8               # 别名，保持向后兼容
-SPATIAL_ATTENTION_DROPOUT = 0.1           # 注意力层dropout
-SPATIAL_ATTENTION_TEMPERATURE = 0.7       # 注意力温度（<1更尖锐，>1更平滑）
-SPATIAL_ATTENTION_TOPK = 12               # 每个虚拟通道仅保留Top-K真实通道权重
+# 空间注意力配置（简化版）
+# 设置为0表示使用与真实通道数相同的虚拟通道数
+SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 32    # 0=自动匹配真实通道数，>0=指定虚拟通道数
 
 #######################
 # Domain Adaptation Configuration

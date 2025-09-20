@@ -1149,22 +1149,70 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
             base_params['n_channels'] = base_params.pop('n_chans')
         base_params.setdefault('n_channels', max_channels)
 
-        # Build a factory that calls create_model with proper arguments
-        def base_model_factory(**params):
-            # Merge provided params over defaults
-            merged = {**base_params, **params}
-            if 'n_chans' in merged and 'n_channels' not in merged:
-                merged['n_channels'] = merged.pop('n_chans')
-            n_channels = merged.pop('n_channels', max_channels)
-            # Force the desired base architecture
-            merged['model_name'] = model_name
-            return create_model(n_channels=n_channels, **merged)
+        # 直接获取基础模型类而非工厂函数
+        if model_name == 'EEGConformer':
+            base_model_class = EEGConformer
+        elif model_name == 'EEGNet' or model_name == 'EEGNetv4':
+            base_model_class = EEGNet
+        elif model_name == 'ShallowFBCSPNet':
+            if BRAINDECODE_AVAILABLE:
+                base_model_class = ShallowFBCSPNet
+            else:
+                base_model_class = CustomShallowFBCSPNet
+        elif model_name == 'DeepConvNet' or model_name == 'Deep4Net':
+            base_model_class = DeepConvNet
+        elif model_name == 'EEGChannelNet':
+            base_model_class = EEGChannelNet
+        else:
+            raise ValueError(f"Unknown model name: {model_name}")
+
+        # 为基础模型准备正确的参数
+        base_model_params = {
+            'n_chans': max_channels,  # 将被SpatialAttentionModel修改为virtual_channels
+            'n_outputs': N_CLASSES,
+            'n_times': INPUT_WINDOW_SAMPLES
+        }
+        
+        # 添加模型特定参数
+        if model_name == 'EEGNet' or model_name == 'EEGNetv4':
+            base_model_params['dropout'] = DROPOUT_RATE
+        elif model_name == 'DeepConvNet' or model_name == 'Deep4Net':
+            base_model_params['dropout'] = DROPOUT_RATE
+        elif model_name == 'EEGConformer':
+            try:
+                from config import (
+                    CONFORMER_CONV_SPATIAL_DIM, CONFORMER_CONV_TEMPORAL_DIM,
+                    CONFORMER_EMBEDDING_DIM, CONFORMER_NUM_HEADS,
+                    CONFORMER_NUM_LAYERS, CONFORMER_ACTIVATION
+                )
+                base_model_params.update({
+                    'conv_spatial_dim': CONFORMER_CONV_SPATIAL_DIM,
+                    'conv_temporal_dim': CONFORMER_CONV_TEMPORAL_DIM,
+                    'embedding_dim': CONFORMER_EMBEDDING_DIM,
+                    'num_heads': CONFORMER_NUM_HEADS,
+                    'num_layers': CONFORMER_NUM_LAYERS,
+                    'dropout': DROPOUT_RATE,
+                    'activation': CONFORMER_ACTIVATION
+                })
+            except ImportError:
+                # 使用默认参数
+                base_model_params.update({
+                    'conv_spatial_dim': 40,
+                    'conv_temporal_dim': 25,
+                    'embedding_dim': 40,
+                    'num_heads': 10,
+                    'num_layers': 3,
+                    'dropout': DROPOUT_RATE,
+                    'activation': 'gelu'
+                })
+        elif model_name == 'EEGChannelNet':
+            base_model_params['dropout'] = DROPOUT_RATE
 
         fusion_model = FusionModelFactory.create_fusion_model(
             fusion_method, datasets_info,
             base_model_info={
-                'class': base_model_factory,
-                'params': base_params
+                'class': base_model_class,
+                'params': base_model_params
             }
         )
 
