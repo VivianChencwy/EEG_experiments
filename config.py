@@ -222,6 +222,8 @@ SPATIAL_ATTENTION_HIDDEN_DIM = 64         # 注意力层隐藏维度
 SPATIAL_ATTENTION_NUM_HEADS = 8           # 多头注意力头数
 SPATIAL_ATTENTION_HEADS = 8               # 别名，保持向后兼容
 SPATIAL_ATTENTION_DROPOUT = 0.1           # 注意力层dropout
+SPATIAL_ATTENTION_TEMPERATURE = 0.7       # 注意力温度（<1更尖锐，>1更平滑）
+SPATIAL_ATTENTION_TOPK = 12               # 每个虚拟通道仅保留Top-K真实通道权重
 
 #######################
 # Domain Adaptation Configuration

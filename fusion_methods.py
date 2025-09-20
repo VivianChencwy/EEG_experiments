@@ -14,6 +14,7 @@ from config import (
     GCN_HIDDEN_DIM, GCN_NUM_LAYERS, GCN_EMBEDDING_DIM, GCN_DROPOUT,
     SPATIAL_ATTENTION_VIRTUAL_CHANNELS, SPATIAL_ATTENTION_HIDDEN_DIM,
     SPATIAL_ATTENTION_NUM_HEADS, SPATIAL_ATTENTION_DROPOUT,
+    SPATIAL_ATTENTION_TEMPERATURE, SPATIAL_ATTENTION_TOPK,
     INPUT_WINDOW_SAMPLES, N_CLASSES
 )
 
@@ -281,6 +282,8 @@ class SpatialAttentionLayer(nn.Module):
         self.max_channels = max_channels
         self.virtual_channels = virtual_channels
         self.hidden_dim = hidden_dim or SPATIAL_ATTENTION_HIDDEN_DIM
+        self.temperature = SPATIAL_ATTENTION_TEMPERATURE
+        self.topk = SPATIAL_ATTENTION_TOPK
 
         # 位置编码维度
         self.pos_encoding_dim = 64
@@ -337,9 +340,18 @@ class SpatialAttentionLayer(nn.Module):
             key=real_pos_encoded,      # (batch_size, C, D)
             value=real_pos_encoded     # (batch_size, C, D)
         )
-        # 直接使用注意力权重进行通道融合（注意力权重已沿 key 维度 softmax）
-        # attention_weights: (B, V, C)
-        weights_matrix = attention_weights
+        # 通过温度与Top-K稀疏化增强选择性
+        weights_matrix = attention_weights  # (B, V, C)
+        if self.temperature is not None and self.temperature > 0:
+            weights_matrix = F.softmax(weights_matrix / self.temperature, dim=2)
+        if self.topk is not None and self.topk > 0 and self.topk < weights_matrix.size(2):
+            # 保留每个虚拟通道对真实通道的Top-K权重，其余置零并重新归一化
+            topk_vals, topk_idx = torch.topk(weights_matrix, k=self.topk, dim=2)
+            mask = torch.zeros_like(weights_matrix).scatter_(2, topk_idx, 1.0)
+            weights_matrix = weights_matrix * mask
+            # 避免全零，加入微小epsilon再归一化
+            weights_sum = weights_matrix.sum(dim=2, keepdim=True) + 1e-8
+            weights_matrix = weights_matrix / weights_sum
 
         # 将实通道信号 x (B, C, T) 线性组合为虚拟通道 (B, V, T)
         # 使用批处理矩阵乘法: (B, V, C) @ (B, C, T) -> (B, V, T)
