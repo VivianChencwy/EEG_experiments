@@ -1120,15 +1120,51 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
     if fusion_method == 'none' and domain_adaptation == 'none':
         # Use existing create_model function for baseline
         max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
-        return create_model(model_name, max_channels, **kwargs)
+        # Filter kwargs to only those supported by create_model
+        allowed_keys = {
+            'is_lda', 'random_state', 'n_subjects', 'enable_subject_layer',
+            'model_name', 'input_channels', 'n_channels', 'n_chans'
+        }
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in allowed_keys}
+        # Map legacy key 'n_chans' to 'n_channels' if provided
+        if 'n_chans' in filtered_kwargs and 'n_channels' not in filtered_kwargs:
+            filtered_kwargs['n_channels'] = filtered_kwargs.pop('n_chans')
+        # Ensure n_channels is provided correctly and model_name is set
+        filtered_kwargs.setdefault('n_channels', max_channels)
+        filtered_kwargs['model_name'] = model_name
+        return create_model(n_channels=filtered_kwargs.pop('n_channels'), **filtered_kwargs)
 
     elif fusion_method in ['graph_gcn', 'spatial_attention']:
         # Create fusion model
+        # Determine a reasonable default for channel count from datasets_info
+        max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
+
+        # Filter kwargs to only those supported by create_model and ensure n_channels present
+        allowed_keys = {
+            'is_lda', 'random_state', 'n_subjects', 'enable_subject_layer',
+            'model_name', 'input_channels', 'n_channels', 'n_chans'
+        }
+        base_params = {k: v for k, v in kwargs.items() if k in allowed_keys}
+        if 'n_chans' in base_params and 'n_channels' not in base_params:
+            base_params['n_channels'] = base_params.pop('n_chans')
+        base_params.setdefault('n_channels', max_channels)
+
+        # Build a factory that calls create_model with proper arguments
+        def base_model_factory(**params):
+            # Merge provided params over defaults
+            merged = {**base_params, **params}
+            if 'n_chans' in merged and 'n_channels' not in merged:
+                merged['n_channels'] = merged.pop('n_chans')
+            n_channels = merged.pop('n_channels', max_channels)
+            # Force the desired base architecture
+            merged['model_name'] = model_name
+            return create_model(n_channels=n_channels, **merged)
+
         fusion_model = FusionModelFactory.create_fusion_model(
             fusion_method, datasets_info,
             base_model_info={
-                'class': lambda **params: create_model(model_name, **params),
-                'params': kwargs
+                'class': base_model_factory,
+                'params': base_params
             }
         )
 
@@ -1159,7 +1195,7 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
 
 def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loaders: Dict,
                       device, fusion_method: str = 'none', domain_adaptation: str = 'none',
-                      max_epochs: int = MAX_EPOCHS):
+                      max_epochs: int = MAX_EPOCHS, position_tensors: Dict[str, torch.Tensor] = None):
     """
     Train a fusion model with domain adaptation
 
@@ -1247,7 +1283,11 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
                 if domain_adaptation == 'adversarial':
                     # Adversarial training
                     alpha = 2.0 / (1.0 + np.exp(-10 * epoch / max_epochs)) - 1.0  # GRL schedule
-                    task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True)
+                    if hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
+                        pos = position_tensors[dataset_name].to(device)
+                        task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True, electrode_positions=pos)
+                    else:
+                        task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True)
 
                     # Create domain labels for current dataset
                     domain_labels = torch.full((len(data),), hash(dataset_name) % len(dataset_names),
@@ -1258,9 +1298,15 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
                 elif domain_adaptation == 'ms_mda':
                     # MS-MDA training - single domain per batch
                     domain = dataset_name
-                    task_pred, shared_feat, adapted_feat = model(
-                        data, domain=domain, return_features=True
-                    )
+                    if hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
+                        pos = position_tensors[dataset_name].to(device)
+                        task_pred, shared_feat, adapted_feat = model(
+                            data, domain=domain, return_features=True, electrode_positions=pos
+                        )
+                    else:
+                        task_pred, shared_feat, adapted_feat = model(
+                            data, domain=domain, return_features=True
+                        )
 
                     # Compute adaptation loss (domain features will be accumulated across batches)
                     adaptation_loss = model.compute_adaptation_loss({domain: shared_feat})
@@ -1272,6 +1318,9 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
                     # No domain adaptation
                     if hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
                         task_pred = model(data, dataset_name=domains[0] if domains else 'unknown')
+                    elif hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
+                        pos = position_tensors[dataset_name].to(device)
+                        task_pred = model(data, electrode_positions=pos)
                     else:
                         task_pred = model(data)
                     predictions = {'task': task_pred}
@@ -1315,9 +1364,8 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
                 batch_count += 1
 
             except StopIteration:
-                # Reset data loader
-                multi_train_loader.reset()
-                break
+                # Current dataset exhausted for this epoch; continue with others
+                continue
             except Exception as e:
                 print(f"Error in batch {batch_idx}: {e}")
                 continue
@@ -1331,7 +1379,14 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
             scheduler.step()
 
         # Validation phase
-        val_acc = evaluate_fusion_model(model, val_loaders, device, fusion_method, domain_adaptation)
+        val_acc = evaluate_fusion_model(
+            model,
+            val_loaders,
+            device,
+            fusion_method,
+            domain_adaptation,
+            position_tensors=position_tensors
+        )
         val_acc_percent = 100. * val_acc
 
         # Print epoch summary
@@ -1358,11 +1413,11 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
     if 'best_model' in es_state and es_state['best_model'] is not None:
         model.load_state_dict(es_state['best_model'])
 
-    return evaluate_fusion_model(model, test_loaders, device, fusion_method, domain_adaptation)
+    return evaluate_fusion_model(model, test_loaders, device, fusion_method, domain_adaptation, position_tensors=position_tensors)
 
 
 def evaluate_fusion_model(model, test_loaders: Dict, device, fusion_method: str = 'none',
-                         domain_adaptation: str = 'none'):
+                         domain_adaptation: str = 'none', position_tensors: Dict[str, torch.Tensor] = None):
     """
     Evaluate fusion model on test data
 
@@ -1396,6 +1451,9 @@ def evaluate_fusion_model(model, test_loaders: Dict, device, fusion_method: str 
                 # Forward pass
                 if hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
                     outputs = model(data, dataset_name=domain_name)
+                elif hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
+                    pos = position_tensors[domain_name].to(device)
+                    outputs = model(data, electrode_positions=pos)
                 elif domain_adaptation == 'ms_mda':
                     outputs = model(data, domain=domain_name)
                 else:

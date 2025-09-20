@@ -331,37 +331,27 @@ class SpatialAttentionLayer(nn.Module):
         real_pos_encoded = real_pos_encoded.unsqueeze(0).expand(batch_size, -1, -1)  # (batch_size, n_channels, pos_encoding_dim)
         virtual_pos_encoded = virtual_pos_encoded.unsqueeze(0).expand(batch_size, -1, -1)  # (batch_size, virtual_channels, pos_encoding_dim)
 
-        # 计算注意力权重
+        # 计算注意力权重 (虚拟 -> 真实位置)
         attention_output, attention_weights = self.multihead_attention(
-            query=virtual_pos_encoded,  # (batch_size, virtual_channels, pos_encoding_dim)
-            key=real_pos_encoded,      # (batch_size, n_channels, pos_encoding_dim)
-            value=real_pos_encoded     # (batch_size, n_channels, pos_encoding_dim)
+            query=virtual_pos_encoded,  # (batch_size, V, D)
+            key=real_pos_encoded,      # (batch_size, C, D)
+            value=real_pos_encoded     # (batch_size, C, D)
         )
 
-        # 生成空间权重矩阵
-        spatial_weights = self.weight_generator(attention_output)  # (batch_size, virtual_channels, 1)
-        spatial_weights = F.softmax(spatial_weights, dim=1)
+        # 使用注意力输出生成每个虚拟通道的权重特征（不做维度扩展）
+        spatial_logits = self.weight_generator(attention_output)  # (batch_size, V, V')
 
-        # 应用空间变换
-        # 计算每个虚拟通道对应的权重
-        weights_matrix = torch.zeros(batch_size, self.virtual_channels, n_channels, device=x.device)
+        # 以位置相似度作为真实通道的权重：一次性向量化计算余弦相似度
+        # real_pos_encoded: (B, C, D), virtual_pos_encoded: (B, V, D)
+        real_norm = F.normalize(real_pos_encoded, p=2, dim=-1)
+        virt_norm = F.normalize(virtual_pos_encoded, p=2, dim=-1)
+        # 相似度矩阵: (B, V, C)
+        similarity_matrix = torch.matmul(virt_norm, real_norm.transpose(1, 2))
+        weights_matrix = F.softmax(similarity_matrix, dim=2)  # softmax over real channels
 
-        for b in range(batch_size):
-            for v in range(self.virtual_channels):
-                # 计算虚拟通道v与所有真实通道的相似度
-                virtual_pos = virtual_pos_encoded[b, v:v+1, :]  # (1, pos_encoding_dim)
-                similarities = F.cosine_similarity(
-                    virtual_pos.expand(n_channels, -1),
-                    real_pos_encoded[b, :, :],
-                    dim=1
-                )
-                weights_matrix[b, v, :] = F.softmax(similarities, dim=0)
-
-        # 应用权重进行空间变换
-        x_expanded = x.unsqueeze(1).expand(-1, self.virtual_channels, -1, -1)  # (batch_size, virtual_channels, n_channels, n_timepoints)
-        weights_expanded = weights_matrix.unsqueeze(3).expand(-1, -1, -1, n_timepoints)  # (batch_size, virtual_channels, n_channels, n_timepoints)
-
-        output = torch.sum(x_expanded * weights_expanded, dim=2)  # (batch_size, virtual_channels, n_timepoints)
+        # 将实通道信号 x (B, C, T) 线性组合为虚拟通道 (B, V, T)
+        # 使用批处理矩阵乘法: (B, V, C) @ (B, C, T) -> (B, V, T)
+        output = torch.matmul(weights_matrix, x)
 
         return output
 

@@ -1117,6 +1117,10 @@ def run_fusion_experiment(fusion_method: str, domain_adaptation: str = 'none',
             logger=logger
         )
 
+        # 预计算各数据集的电极位置张量（与通道顺序一致）
+        from fusion_methods import FusionModelFactory
+        position_tensors = FusionModelFactory.get_position_tensors(datasets_info)
+
         # 训练模型
         import torch
         device = get_device()
@@ -1129,27 +1133,29 @@ def run_fusion_experiment(fusion_method: str, domain_adaptation: str = 'none',
             test_loaders=test_loaders,
             device=device,
             fusion_method=fusion_method,
-            domain_adaptation=domain_adaptation
+            domain_adaptation=domain_adaptation,
+            position_tensors=position_tensors
         )
 
-        # 评估模型
-        evaluation_results = evaluate_fusion_model(
+        # 评估模型（返回平均准确率）
+        overall_accuracy = evaluate_fusion_model(
             model=model,
             test_loaders=test_loaders,
-            datasets=datasets,
+            device=device,
             fusion_method=fusion_method,
-            logger=logger
+            domain_adaptation=domain_adaptation,
+            position_tensors=position_tensors
         )
 
+        # 标准化评估结果为字典
+        evaluation_results = {
+            'overall_accuracy': overall_accuracy
+        }
+
         # 综合评估
-        evaluator = ComprehensiveEvaluator(datasets=datasets, fusion_method=fusion_method)
-        comprehensive_results = evaluator.evaluate_fusion_performance(
-            model=model,
-            test_data=processed_datasets,
-            predictions=evaluation_results.get('predictions', {}),
-            true_labels=evaluation_results.get('true_labels', {}),
-            logger=logger
-        )
+        evaluator = ComprehensiveEvaluator(logger=logger)
+        # 由于当前评估函数未返回逐样本预测，这里暂不进行综合分析
+        comprehensive_results = {}
 
         # 合并结果
         final_results = {

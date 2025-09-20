@@ -104,7 +104,7 @@ MAX_TRIALS_PER_SUBJECT_TEST = None     # None = use all available trials
 
 # Alternative: Fixed trial counts (if you want exact numbers instead of ratios)
 # Set these to specific numbers if you want exact trial counts
-FIXED_TRIALS_PER_SUBJECT_TRAIN = 10  # e.g., 100 for exactly 100 train trials per subject
+FIXED_TRIALS_PER_SUBJECT_TRAIN = 20  # e.g., 100 for exactly 100 train trials per subject
 FIXED_TRIALS_PER_SUBJECT_VAL = 10    # e.g., 20 for exactly 20 val trials per subject
 FIXED_TRIALS_PER_SUBJECT_TEST = 10   # e.g., 30 for exactly 30 test trials per subject
 
@@ -174,7 +174,7 @@ CONFORMER_ACTIVATION = 'gelu'        # Transformer activation function
 # - 要强制CPU运行，改为 DEVICE_MODE = 'cpu'
 # - 要强制GPU运行，改为 DEVICE_MODE = 'cuda'
 # - 自动选择设备，保持 DEVICE_MODE = 'auto'
-DEVICE_MODE = 'cpu'
+DEVICE_MODE = 'auto'
 
 #######################
 # Performance Optimization Configuration
@@ -206,7 +206,7 @@ VERBOSE_PROCESSING = True
 # 'none': 不使用融合方法，保持baseline状态
 # 'graph_gcn': 基于图神经网络的通用特征空间融合
 # 'spatial_attention': 基于空间注意力的端到端协调
-ELECTRODE_FUSION_METHOD = 'graph_gcn'
+ELECTRODE_FUSION_METHOD = 'spatial_attention'
 
 # 图神经网络配置
 GCN_HIDDEN_DIM = 64            # GCN隐藏层维度
@@ -216,7 +216,8 @@ GCN_DROPOUT = 0.3              # GCN dropout率
 GCN_LEARNING_RATE = 0.001      # GCN专用学习率
 
 # 空间注意力配置
-SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 128  # 虚拟通道数
+# 减少虚拟通道数以加速训练（对性能影响较小，显著降低计算量）
+SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 64  # 虚拟通道数
 SPATIAL_ATTENTION_HIDDEN_DIM = 64         # 注意力层隐藏维度
 SPATIAL_ATTENTION_NUM_HEADS = 8           # 多头注意力头数
 SPATIAL_ATTENTION_HEADS = 8               # 别名，保持向后兼容
@@ -230,7 +231,7 @@ SPATIAL_ATTENTION_DROPOUT = 0.1           # 注意力层dropout
 # 'none': 不使用领域自适应
 # 'ms_mda': 多源边缘分布自适应
 # 'adversarial': 对抗性领域自适应
-DOMAIN_ADAPTATION_METHOD = 'ms_mda'
+DOMAIN_ADAPTATION_METHOD = 'none'
 
 # MS-MDA配置
 MS_MDA_ADAPTATION_WEIGHT = 0.1         # 适应损失权重
