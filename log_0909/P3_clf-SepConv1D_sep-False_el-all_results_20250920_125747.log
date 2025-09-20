@@ -1,0 +1,42 @@
+2025-09-20 12:57:47 - 
+Experiment Configuration:
+2025-09-20 12:57:47 - --------------------------------------------------
+2025-09-20 12:57:47 - dataset: P3 Raw Data BIDS-Compatible
+2025-09-20 12:57:47 - use_combined_datasets: False
+2025-09-20 12:57:47 - electrode_list: all
+2025-09-20 12:57:47 - classifier: SepConv1D
+2025-09-20 12:57:47 - separate_subject_classification: False
+2025-09-20 12:57:47 - use_subject_layer: False
+2025-09-20 12:57:47 - seeds: [42]
+2025-09-20 12:57:47 - electrode_fusion_method: none
+2025-09-20 12:57:47 - domain_adaptation_method: none
+2025-09-20 12:57:47 - enable_comprehensive_evaluation: True
+2025-09-20 12:57:47 - enable_domain_analysis: True
+2025-09-20 12:57:47 - enable_small_sample_analysis: False
+2025-09-20 12:57:47 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-20 12:57:47 - small_sample_subjects: [5, 10, 15]
+2025-09-20 12:57:47 - --------------------------------------------------
+2025-09-20 12:57:47 - 
+==================================================
+2025-09-20 12:57:47 - Processing P3 Dataset
+2025-09-20 12:57:47 - ==================================================
+2025-09-20 12:57:47 - Using Nested Cross-Validation (politically correct approach)
+2025-09-20 12:57:47 - Configuration: 5-fold outer, 3-fold inner, 10 repeats
+2025-09-20 12:57:47 - ============================================================
+2025-09-20 12:57:47 - NESTED CROSS-VALIDATION CONFIGURATION
+2025-09-20 12:57:47 - ============================================================
+2025-09-20 12:57:47 - Datasets: ['P3']
+2025-09-20 12:57:47 - Outer folds: 5
+2025-09-20 12:57:47 - Inner folds: 3
+2025-09-20 12:57:47 - Repeats: 10
+2025-09-20 12:57:47 - Confidence level: 0.95
+2025-09-20 12:57:47 - ============================================================
+2025-09-20 12:57:53 - Nested CV dataset summary:
+2025-09-20 12:57:53 -   Total subjects: 40
+2025-09-20 12:57:53 -   Total trials: 3188
+2025-09-20 12:57:53 -   Average trials per subject: 79.7
+2025-09-20 12:57:53 - Enhanced preprocessing increased channels from 30 to 150
+2025-09-20 12:57:53 - Starting Nested Cross-Validation for SepConv1D
+2025-09-20 12:57:53 - Configuration: 5-fold outer, 3-fold inner, 10 repeats
+2025-09-20 12:57:53 - Repeat 1/10
+2025-09-20 12:57:53 -   Outer fold 1/5

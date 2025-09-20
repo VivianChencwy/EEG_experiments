@@ -38,7 +38,8 @@ from config import (
     EXTRACT_FREQUENCY_FEATURES, APPLY_NOTCH_FILTER,
     ELECTRODE_FUSION_METHOD, DOMAIN_ADAPTATION_METHOD,
     ENABLE_COMPREHENSIVE_EVALUATION, ENABLE_DOMAIN_ANALYSIS,
-    DEVICE_MODE
+    DEVICE_MODE, USE_NESTED_CV, NESTED_CV_OUTER_FOLDS, NESTED_CV_INNER_FOLDS,
+    NESTED_CV_REPEATS, NESTED_CV_CONFIDENCE_LEVEL
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
 from preprocessor import OddballPreprocessor
@@ -51,6 +52,7 @@ from experiment_logger import (
     setup_logger, log_error, log_individual_results, log_section_header,
     log_detailed_results, log_overall_metrics
 )
+from nested_cv import NestedCrossValidation, run_nested_cv_experiment
 # Confusion matrix plotting removed
 
 
@@ -191,33 +193,177 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
     Unified experiment training function with parameter-controlled experiment configurations
     """
     device = get_device()
-    
+
     # Get configuration from kwargs
     p3_dir = kwargs.get('p3_dir', P3_DATA_DIR)
-    avo_dir = kwargs.get('avo_dir', AVO_DATA_DIR) 
+    avo_dir = kwargs.get('avo_dir', AVO_DATA_DIR)
     exp_classifier = kwargs.get('classifier', classifier)
     exp_seeds = kwargs.get('seeds', seeds)
-    
-    if training_mode == 'separate':
-        # Individual training mode: each subject trains a separate model
-        results = _run_separate_training(datasets, channels, logger, device, 
+
+    # Check if nested CV is enabled
+    if USE_NESTED_CV:
+        logger.info("Using Nested Cross-Validation (politically correct approach)")
+        logger.info(f"Configuration: {NESTED_CV_OUTER_FOLDS}-fold outer, {NESTED_CV_INNER_FOLDS}-fold inner, {NESTED_CV_REPEATS} repeats")
+        return _run_nested_cv_experiment(datasets, channels, logger, device,
                                        p3_dir, avo_dir, exp_classifier, exp_seeds)
     else:
-        # Pooled training mode: all selected datasets' subjects train one combined model
-        results = _run_pooled_training(datasets, channels, logger, device,
-                                     p3_dir, avo_dir, exp_classifier, exp_seeds)
-    
-    # Unpack results - handle both separate and pooled modes
-    if len(results) == 6:  # Pooled mode returns probabilities
-        accuracies, trial_counts, prediction_details, true_labels, predictions, probabilities = results
-        overall_probabilities = np.array(probabilities) if probabilities else None
-    else:  # Separate mode
-        accuracies, trial_counts, prediction_details, true_labels, predictions = results
-        overall_probabilities = None
-    
-    # Confusion matrix plotting removed as requested
-    
-    return results
+        logger.info("Using traditional train/validation/test split")
+        if training_mode == 'separate':
+            # Individual training mode: each subject trains a separate model
+            results = _run_separate_training(datasets, channels, logger, device,
+                                           p3_dir, avo_dir, exp_classifier, exp_seeds)
+        else:
+            # Pooled training mode: all selected datasets' subjects train one combined model
+            results = _run_pooled_training(datasets, channels, logger, device,
+                                         p3_dir, avo_dir, exp_classifier, exp_seeds)
+
+        # Unpack results - handle both separate and pooled modes
+        if len(results) == 6:  # Pooled mode returns probabilities
+            accuracies, trial_counts, prediction_details, true_labels, predictions, probabilities = results
+            overall_probabilities = np.array(probabilities) if probabilities else None
+        else:  # Separate mode
+            accuracies, trial_counts, prediction_details, true_labels, predictions = results
+            overall_probabilities = None
+
+        # Confusion matrix plotting removed as requested
+
+        return results
+
+
+def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
+    """
+    Run nested cross-validation experiment with aggregated data from all specified datasets.
+    """
+    logger.info("="*60)
+    logger.info("NESTED CROSS-VALIDATION CONFIGURATION")
+    logger.info("="*60)
+    logger.info(f"Datasets: {datasets}")
+    logger.info(f"Outer folds: {NESTED_CV_OUTER_FOLDS}")
+    logger.info(f"Inner folds: {NESTED_CV_INNER_FOLDS}")
+    logger.info(f"Repeats: {NESTED_CV_REPEATS}")
+    logger.info(f"Confidence level: {NESTED_CV_CONFIDENCE_LEVEL}")
+    logger.info("="*60)
+
+    # Collect all data from specified datasets
+    all_data = []
+    all_labels = []
+    all_subject_indices = []
+    subject_ranges = []
+    subject_ids = []
+    subject_id_to_index = {}
+    start_idx = 0
+    current_subject_index = 0
+
+    for dataset_type in datasets:
+        if dataset_type == 'P3':
+            subjects = get_dataset_subjects('P3', p3_dir)
+            prefix = 'P3' if len(datasets) > 1 else ''
+            start_idx, current_subject_index = process_dataset_subjects_with_indices(
+                (p3_dir, subjects), dataset_type, prefix,
+                channels, logger, all_data, all_labels, all_subject_indices,
+                subject_ranges, subject_ids, subject_id_to_index, start_idx, current_subject_index
+            )
+        elif dataset_type == 'AVO':
+            from data_utils import EEGBIDSDataset
+            avo_dataset = EEGBIDSDataset(data_dir=avo_dir, dataset='ds005863')
+            subjects = get_dataset_subjects('AVO', avo_dataset)
+            prefix = 'AVO' if len(datasets) > 1 else 'sub'
+            start_idx, current_subject_index = process_dataset_subjects_with_indices(
+                (avo_dataset, subjects), dataset_type, prefix,
+                channels, logger, all_data, all_labels, all_subject_indices,
+                subject_ranges, subject_ids, subject_id_to_index, start_idx, current_subject_index
+            )
+
+    if not all_data:
+        logger.error("No data available for nested CV")
+        return {}, {}, {}, [], []
+
+    # Combine all data
+    all_data = np.concatenate(all_data)
+    all_labels = np.concatenate(all_labels)
+    all_subject_indices = np.concatenate(all_subject_indices)
+
+    logger.info(f"Nested CV dataset summary:")
+    logger.info(f"  Total subjects: {len(subject_ids)}")
+    logger.info(f"  Total trials: {len(all_data)}")
+    logger.info(f"  Average trials per subject: {len(all_data) / len(subject_ids):.1f}")
+
+    # Detect actual input channels
+    actual_input_channels = all_data.shape[1]
+    if actual_input_channels != len(channels):
+        logger.info(f"Enhanced preprocessing increased channels from {len(channels)} to {actual_input_channels}")
+
+    # Run nested cross-validation
+    nested_cv = NestedCrossValidation(
+        outer_cv_folds=NESTED_CV_OUTER_FOLDS,
+        inner_cv_folds=NESTED_CV_INNER_FOLDS,
+        n_repeats=NESTED_CV_REPEATS,
+        random_state=42,
+        logger=logger
+    )
+
+    nested_results = nested_cv.run_nested_cv(
+        data=all_data,
+        labels=all_labels,
+        model_name=exp_classifier,
+        n_channels=len(channels),
+        device=device,
+        subject_indices=all_subject_indices
+    )
+
+    # Convert nested CV results to format compatible with existing code
+    accuracies = {}
+    prediction_details = {}
+    trial_counts = {}
+
+    # Extract per-subject performance from nested CV results
+    # For nested CV, we report overall performance rather than per-subject
+    overall_acc = nested_results['mean_accuracy']
+    overall_ci_lower = nested_results['ci_lower']
+    overall_ci_upper = nested_results['ci_upper']
+
+    # Create summary results for each subject (using overall performance as estimate)
+    for subject_id in subject_ids:
+        accuracies[subject_id] = overall_acc
+        prediction_details[subject_id] = {
+            'accuracy': overall_acc,
+            'confidence_interval': (overall_ci_lower, overall_ci_upper),
+            'nested_cv_results': nested_results,
+            'precision': nested_results['other_metrics'].get('precision', {}).get('mean', 0.0),
+            'recall': nested_results['other_metrics'].get('recall', {}).get('mean', 0.0),
+            'f1_score': nested_results['other_metrics'].get('f1_score', {}).get('mean', 0.0),
+            'auc': nested_results['other_metrics'].get('auc', {}).get('mean', 0.5)
+        }
+
+        # Calculate trial counts for this subject
+        subject_idx = subject_ids.index(subject_id)
+        subject_start, subject_end = subject_ranges[subject_idx]
+        subject_trials = subject_end - subject_start
+
+        trial_counts[subject_id] = {
+            'total': subject_trials,
+            'nested_cv_folds': f"{NESTED_CV_OUTER_FOLDS}x{NESTED_CV_INNER_FOLDS}",
+            'repeats': NESTED_CV_REPEATS
+        }
+
+    # Log nested CV results
+    logger.info("\n" + "="*60)
+    logger.info("NESTED CROSS-VALIDATION RESULTS")
+    logger.info("="*60)
+    logger.info(f"Model: {exp_classifier}")
+    logger.info(f"Overall accuracy: {overall_acc:.4f} ± {nested_results['std_accuracy']:.4f}")
+    logger.info(f"95% Confidence Interval: [{overall_ci_lower:.4f}, {overall_ci_upper:.4f}]")
+    logger.info(f"Statistical significance: {nested_results['statistical_significance']['n_samples']} evaluations")
+
+    # Log other metrics with confidence intervals
+    for metric_name, metric_stats in nested_results['other_metrics'].items():
+        logger.info(f"{metric_name.title()}: {metric_stats['mean']:.4f} "
+                   f"[{metric_stats['ci_lower']:.4f}, {metric_stats['ci_upper']:.4f}]")
+
+    logger.info("="*60)
+
+    # Return in format compatible with existing experiment flow
+    return accuracies, trial_counts, prediction_details, [], []
 
 
 def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):
