@@ -48,12 +48,14 @@ electrode_list = 'all'
 # - 'Deep4Net': Deep convolutional network for EEG
 # - 'EEGConformer': CNN-Transformer hybrid for EEG (state-of-the-art)
 # - 'EEGChannelNet': CNN with channel-wise attention mechanism
+# - 'SepConv1D': Lightweight separable convolution model (good for small datasets)
 
 #classifier = 'EEGNet'
 classifier = 'EEGConformer'
 #classifier = 'ShallowFBCSPNet'
 #classifier = 'DeepConvNet' #problem
 #classifier = 'EEGChannelNet'
+#classifier = 'SepConv1D'
 #classifier = 'lda'
 
 # Training Configuration
@@ -146,6 +148,19 @@ NOISE_STD = 0.005       # Reduced noise
 TIME_SHIFT_RANGE = 5    # Small time shifts (in samples)
 LABEL_SMOOTHING = 0.05  # Reduced label smoothing
 
+# Small Dataset Overfitting Prevention Configuration
+# These settings are automatically applied when using SepConv1D or when detected small sample size
+SMALL_DATASET_THRESHOLD = 1000          # Threshold to consider dataset as "small" (total samples across all subjects)
+ENABLE_SMALL_DATASET_PROTECTIONS = False # Enable automatic overfitting prevention for small datasets
+
+# Small dataset specific settings (applied automatically when conditions are met)
+SMALL_DATASET_DROPOUT_RATE = 0.2       # Lower dropout for small datasets (vs 0.3 default)
+SMALL_DATASET_LEARNING_RATE = 0.001    # Higher initial learning rate
+SMALL_DATASET_WEIGHT_DECAY = 1e-4      # Stronger L2 regularization  
+SMALL_DATASET_EARLY_STOPPING_PATIENCE = 20  # Lower patience to avoid overfitting
+SMALL_DATASET_MAX_EPOCHS = 300          # Fewer max epochs
+SMALL_DATASET_BATCH_SIZE = 16           # Smaller batch size for better gradient estimates
+
 # Enhanced preprocessing options
 USE_ENHANCED_PREPROCESSING = True    # Enable advanced preprocessing features
 REMOVE_ARTIFACTS = True              # Use ICA for artifact removal
@@ -160,6 +175,13 @@ CONFORMER_EMBEDDING_DIM = 40         # Transformer embedding dimension
 CONFORMER_NUM_HEADS = 10             # Number of attention heads
 CONFORMER_NUM_LAYERS = 3             # Number of transformer layers
 CONFORMER_ACTIVATION = 'gelu'        # Transformer activation function
+
+# SepConv1D specific parameters (optimized for small datasets and overfitting prevention)
+SEPCONV1D_FILTERS = 32               # Number of output filters (keep small to reduce overfitting)
+SEPCONV1D_KERNEL_SIZE = 16           # Temporal kernel size for separable convolution
+SEPCONV1D_STRIDE = 8                 # Stride for downsampling (reduces parameters)
+SEPCONV1D_PADDING = 4                # Padding for temporal convolution
+# Note: SepConv1D uses the global DROPOUT_RATE but typically performs better with lighter dropout (0.2-0.3)
 
 #######################
 # Device Configuration

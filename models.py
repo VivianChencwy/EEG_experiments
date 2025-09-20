@@ -24,6 +24,24 @@ from config import (
     USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING, DROPOUT_RATE,
     ELECTRODE_FUSION_METHOD, DOMAIN_ADAPTATION_METHOD
 )
+# Import small dataset protection settings
+try:
+    from config import (
+        SMALL_DATASET_THRESHOLD, ENABLE_SMALL_DATASET_PROTECTIONS,
+        SMALL_DATASET_DROPOUT_RATE, SMALL_DATASET_LEARNING_RATE,
+        SMALL_DATASET_WEIGHT_DECAY, SMALL_DATASET_EARLY_STOPPING_PATIENCE,
+        SMALL_DATASET_MAX_EPOCHS, SMALL_DATASET_BATCH_SIZE
+    )
+except ImportError:
+    # Default values if not defined in config
+    SMALL_DATASET_THRESHOLD = 1000
+    ENABLE_SMALL_DATASET_PROTECTIONS = True
+    SMALL_DATASET_DROPOUT_RATE = 0.2
+    SMALL_DATASET_LEARNING_RATE = 0.001
+    SMALL_DATASET_WEIGHT_DECAY = 1e-4
+    SMALL_DATASET_EARLY_STOPPING_PATIENCE = 20
+    SMALL_DATASET_MAX_EPOCHS = 300
+    SMALL_DATASET_BATCH_SIZE = 16
 from constants import NORMALIZATION_EPSILON
 
 
@@ -525,6 +543,134 @@ class EEGChannelNet(nn.Module):
         return x
 
 
+class SepConv1D(nn.Module):
+    """PyTorch implementation of SepConv1D model from P300-CNNT.
+    
+    A lightweight separable convolution model designed for small datasets
+    to prevent overfitting in EEG P300 classification tasks.
+    
+    Original paper architecture:
+    - Input: (batch, channels, samples) 
+    - Zero padding
+    - Separable 1D convolution with stride
+    - Tanh activation
+    - Global feature extraction
+    - Single dense layer with sigmoid
+    
+    This implementation adapts the original TensorFlow/Keras model to PyTorch
+    while maintaining compatibility with fusion methods and domain adaptation.
+    """
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 filters=32, kernel_size=16, stride=8, padding=4, dropout=0.3):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        
+        # Zero padding layer (equivalent to ZeroPadding1D)
+        self.padding = nn.ConstantPad1d(padding, 0)
+        
+        # Separable 1D convolution - implemented as depthwise + pointwise
+        # Depthwise convolution (equivalent to first part of SeparableConv1D)
+        self.depthwise_conv = nn.Conv1d(
+            in_channels=n_chans, 
+            out_channels=n_chans, 
+            kernel_size=kernel_size, 
+            stride=stride, 
+            padding=0,  # padding handled separately
+            groups=n_chans,  # depthwise convolution
+            bias=True
+        )
+        
+        # Pointwise convolution (equivalent to second part of SeparableConv1D)  
+        self.pointwise_conv = nn.Conv1d(
+            in_channels=n_chans,
+            out_channels=filters,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            bias=True
+        )
+        
+        # Batch normalization for stability
+        self.bn = nn.BatchNorm1d(filters)
+        
+        # Dropout for regularization (important for small datasets)
+        self.dropout = nn.Dropout(dropout)
+        
+        # Calculate output size after convolutions
+        self._calculate_conv_output_size()
+        
+        # Classification layer - using 2 outputs for binary classification
+        # Original model used sigmoid for binary classification, 
+        # but we use softmax for compatibility with cross-entropy loss
+        # Use filters as feature dimension after global average pooling
+        self.classifier = nn.Linear(filters, n_outputs)
+        
+        # Initialize weights with smaller values to prevent overfitting
+        self._init_weights()
+    
+    def _calculate_conv_output_size(self):
+        """Calculate the size of the output after convolution operations."""
+        # After padding: n_times + 2*padding
+        # After depthwise conv: (padded_size - kernel_size) / stride + 1
+        padded_size = self.n_times + 2 * 4  # padding=4 on both sides
+        self.conv_output_size = (padded_size - 16) // 8 + 1  # kernel_size=16, stride=8
+        
+        # Ensure output size is valid
+        if self.conv_output_size <= 0:
+            self.conv_output_size = 1
+    
+    def _init_weights(self):
+        """Initialize weights with smaller values for better regularization."""
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                # Use smaller initialization for better generalization
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='tanh')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                # Smaller weight initialization for final layer
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        batch_size = x.size(0)
+        
+        # Apply zero padding (equivalent to ZeroPadding1D)
+        x = self.padding(x)  # (batch, n_chans, n_times + 2*padding)
+        
+        # Depthwise convolution
+        x = self.depthwise_conv(x)  # (batch, n_chans, conv_output_size)
+        
+        # Pointwise convolution  
+        x = self.pointwise_conv(x)  # (batch, filters, conv_output_size)
+        
+        # Batch normalization
+        x = self.bn(x)
+        
+        # Tanh activation (as in original model)
+        x = torch.tanh(x)
+        
+        # Dropout for regularization
+        x = self.dropout(x)
+        
+        # Global average pooling to reduce parameters (helps prevent overfitting)
+        x = F.adaptive_avg_pool1d(x, 1)  # (batch, filters, 1)
+        
+        # Flatten
+        x = x.view(batch_size, -1)  # (batch, filters)
+        
+        # Classification
+        x = self.classifier(x)  # (batch, n_outputs)
+        
+        return x
+
+
 def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None, model_name='ShallowFBCSPNet', input_channels=None):
     """Create a new model based on configuration.
     
@@ -617,6 +763,30 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
                 n_outputs=N_CLASSES,
                 n_times=INPUT_WINDOW_SAMPLES,
                 dropout=DROPOUT_RATE
+            )
+        elif model_name == 'SepConv1D':
+            # Get SepConv1D parameters from config if available
+            try:
+                from config import (
+                    SEPCONV1D_FILTERS, SEPCONV1D_KERNEL_SIZE, SEPCONV1D_STRIDE, 
+                    SEPCONV1D_PADDING
+                )
+            except ImportError:
+                # Default parameters optimized for small datasets
+                SEPCONV1D_FILTERS = 32
+                SEPCONV1D_KERNEL_SIZE = 16  
+                SEPCONV1D_STRIDE = 8
+                SEPCONV1D_PADDING = 4
+                
+            base_model = SepConv1D(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                filters=SEPCONV1D_FILTERS,
+                kernel_size=SEPCONV1D_KERNEL_SIZE,
+                stride=SEPCONV1D_STRIDE,
+                padding=SEPCONV1D_PADDING,
+                dropout=DROPOUT_RATE  # Use lighter dropout for small datasets
             )
         else:
             raise ValueError(f"Unknown model name: {model_name}")
@@ -938,7 +1108,54 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
         return correct / len(all_targets)
 
 
-def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=MAX_EPOCHS):
+def detect_small_dataset(train_loader, model_name=None):
+    """
+    Detect if dataset is small and should use overfitting prevention measures.
+    
+    Returns:
+        dict: Dictionary containing adjusted hyperparameters for small datasets
+    """
+    try:
+        total_samples = len(train_loader.dataset)
+    except:
+        total_samples = 0
+        
+    is_small_dataset = (
+        total_samples <= SMALL_DATASET_THRESHOLD
+        # Note: Removed automatic SepConv1D trigger per user request
+    )
+    
+    if is_small_dataset and ENABLE_SMALL_DATASET_PROTECTIONS:
+        print(f"\n{'='*60}")
+        print(f"SMALL DATASET DETECTED ({total_samples} samples)")
+        print(f"Applying overfitting prevention measures:")
+        print(f"  - Reduced dropout: {SMALL_DATASET_DROPOUT_RATE}")
+        print(f"  - Higher learning rate: {SMALL_DATASET_LEARNING_RATE}")
+        print(f"  - Stronger L2 regularization: {SMALL_DATASET_WEIGHT_DECAY}")
+        print(f"  - Early stopping patience: {SMALL_DATASET_EARLY_STOPPING_PATIENCE}")
+        print(f"  - Max epochs: {SMALL_DATASET_MAX_EPOCHS}")
+        print(f"{'='*60}")
+        
+        return {
+            'learning_rate': SMALL_DATASET_LEARNING_RATE,
+            'weight_decay': SMALL_DATASET_WEIGHT_DECAY,
+            'early_stopping_patience': SMALL_DATASET_EARLY_STOPPING_PATIENCE,
+            'max_epochs': SMALL_DATASET_MAX_EPOCHS,
+            'dropout_rate': SMALL_DATASET_DROPOUT_RATE,
+            'is_small_dataset': True
+        }
+    else:
+        return {
+            'learning_rate': LEARNING_RATE,
+            'weight_decay': WEIGHT_DECAY,
+            'early_stopping_patience': EARLY_STOPPING_PATIENCE,
+            'max_epochs': MAX_EPOCHS,
+            'dropout_rate': DROPOUT_RATE,
+            'is_small_dataset': False
+        }
+
+
+def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=MAX_EPOCHS, model_name=None):
     if is_lda:
         # Prepare data for LDA
         X_train = []
@@ -960,8 +1177,17 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
         return evaluate(model, test_loader, device, is_lda=True)
     
     # Neural Network training
-    optimizer = torch.optim.Adamax(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
+    # Detect small dataset and adjust hyperparameters
+    small_dataset_config = detect_small_dataset(train_loader, model_name)
+    
+    # Use adjusted hyperparameters for small datasets
+    effective_lr = small_dataset_config['learning_rate']
+    effective_weight_decay = small_dataset_config['weight_decay']
+    effective_patience = small_dataset_config['early_stopping_patience']
+    effective_max_epochs = min(max_epochs, small_dataset_config['max_epochs'])
+    
+    optimizer = torch.optim.Adamax(model.parameters(), lr=effective_lr, weight_decay=effective_weight_decay)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=effective_max_epochs)
     # Maintain state for early stopping using the helper function defined above
     es_state = {}
 
@@ -985,10 +1211,12 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
     
     # Training progress tracking
     print(f"\n{'='*60}")
-    print(f"Starting Training - Max Epochs: {max_epochs}")
+    print(f"Starting Training - Max Epochs: {effective_max_epochs}")
     print(f"Model: {type(model).__name__}")
-    print(f"Learning Rate: {LEARNING_RATE}, Weight Decay: {WEIGHT_DECAY}")
-    print(f"Dropout: {DROPOUT_RATE}, Early Stopping Patience: {EARLY_STOPPING_PATIENCE}")
+    print(f"Learning Rate: {effective_lr}, Weight Decay: {effective_weight_decay}")
+    print(f"Dropout: {small_dataset_config['dropout_rate']}, Early Stopping Patience: {effective_patience}")
+    if small_dataset_config['is_small_dataset']:
+        print(f"SMALL DATASET MODE: Enhanced overfitting prevention enabled")
     print(f"{'='*60}")
 
     for epoch in range(max_epochs):
@@ -1073,7 +1301,7 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
         if 'best_val_acc' not in es_state or val_acc > es_state['best_val_acc']:
             is_best = True
             
-        if early_stopping(val_acc, model, es_state, patience = EARLY_STOPPING_PATIENCE):
+        if early_stopping(val_acc, model, es_state, patience = effective_patience):
             print(f"Early stopping triggered! No improvement for {EARLY_STOPPING_PATIENCE} epochs")
             print(f"Best validation accuracy: {100. * es_state['best_val_acc']:.2f}%")
             break
@@ -1081,8 +1309,8 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             if is_best:
                 print(f"New best validation accuracy!")
             else:
-                remaining_patience = EARLY_STOPPING_PATIENCE - es_state['counter']
-                print(f"Patience remaining: {remaining_patience}/{EARLY_STOPPING_PATIENCE}")
+                remaining_patience = effective_patience - es_state['counter']
+                print(f"Patience remaining: {remaining_patience}/{effective_patience}")
         
         print(f"  {'-'*50}")
     
@@ -1163,6 +1391,8 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
             base_model_class = DeepConvNet
         elif model_name == 'EEGChannelNet':
             base_model_class = EEGChannelNet
+        elif model_name == 'SepConv1D':
+            base_model_class = SepConv1D
         else:
             raise ValueError(f"Unknown model name: {model_name}")
 
@@ -1207,6 +1437,29 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
                 })
         elif model_name == 'EEGChannelNet':
             base_model_params['dropout'] = DROPOUT_RATE
+        elif model_name == 'SepConv1D':
+            # Get SepConv1D parameters for fusion
+            try:
+                from config import (
+                    SEPCONV1D_FILTERS, SEPCONV1D_KERNEL_SIZE, SEPCONV1D_STRIDE, 
+                    SEPCONV1D_PADDING
+                )
+                base_model_params.update({
+                    'filters': SEPCONV1D_FILTERS,
+                    'kernel_size': SEPCONV1D_KERNEL_SIZE,
+                    'stride': SEPCONV1D_STRIDE,
+                    'padding': SEPCONV1D_PADDING,
+                    'dropout': DROPOUT_RATE
+                })
+            except ImportError:
+                # Use default parameters
+                base_model_params.update({
+                    'filters': 32,
+                    'kernel_size': 16,
+                    'stride': 8,
+                    'padding': 4,
+                    'dropout': DROPOUT_RATE
+                })
 
         fusion_model = FusionModelFactory.create_fusion_model(
             fusion_method, datasets_info,
