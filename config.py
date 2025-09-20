@@ -48,14 +48,16 @@ electrode_list = 'all'
 # - 'Deep4Net': Deep convolutional network for EEG
 # - 'EEGConformer': CNN-Transformer hybrid for EEG (state-of-the-art)
 # - 'EEGChannelNet': CNN with channel-wise attention mechanism
-# - 'SepConv1D': Lightweight separable convolution model (good for small datasets)
+# - 'SepConv1D': Enhanced separable convolution model with multi-scale features
+# - 'SepConv1DLite': Ultra-lightweight version with residual connections (recommended for small datasets)
 
 #classifier = 'EEGNet'
-classifier = 'EEGConformer'
+#classifier = 'EEGConformer'
 #classifier = 'ShallowFBCSPNet'
 #classifier = 'DeepConvNet' #problem
 #classifier = 'EEGChannelNet'
-#classifier = 'SepConv1D'
+classifier = 'SepConv1D'
+#classifier = 'SepConv1DLite'  # Try the lite version first for better accuracy
 #classifier = 'lda'
 
 # Training Configuration
@@ -106,9 +108,9 @@ MAX_TRIALS_PER_SUBJECT_TEST = None     # None = use all available trials
 
 # Alternative: Fixed trial counts (if you want exact numbers instead of ratios)
 # Set these to specific numbers if you want exact trial counts
-FIXED_TRIALS_PER_SUBJECT_TRAIN = 20  # e.g., 100 for exactly 100 train trials per subject
+FIXED_TRIALS_PER_SUBJECT_TRAIN = 50  # e.g., 100 for exactly 100 train trials per subject
 FIXED_TRIALS_PER_SUBJECT_VAL = 10    # e.g., 20 for exactly 20 val trials per subject
-FIXED_TRIALS_PER_SUBJECT_TEST = 10   # e.g., 30 for exactly 30 test trials per subject
+FIXED_TRIALS_PER_SUBJECT_TEST = 20   # e.g., 30 for exactly 30 test trials per subject
 
 # Example configurations:
 # 
@@ -136,11 +138,11 @@ INPUT_WINDOW_SAMPLES = int(1.0 * 128)  # 1 second at 128 Hz
 N_CLASSES = 2
 
 # Training hyperparameters
-LEARNING_RATE = 0.0005  # Reduced for better convergence
-WEIGHT_DECAY = 1e-5     # Reduced weight decay
-GAMMA = 0.5  # Learning rate decay factor
-EARLY_STOPPING_PATIENCE = 30 # Increased patience for complex models
-DROPOUT_RATE = 0.3      # Reduced dropout for transformer models
+LEARNING_RATE = 0.05   # Increased for SepConv1D models to improve learning
+WEIGHT_DECAY = 1e-4     # Moderate regularization
+GAMMA = 0.7  # Learning rate decay factor (less aggressive)
+EARLY_STOPPING_PATIENCE = 30 # Balanced patience
+DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
 
 # Data augmentation (enabled for better generalization)
 USE_DATA_AUGMENTATION = True
@@ -176,12 +178,16 @@ CONFORMER_NUM_HEADS = 10             # Number of attention heads
 CONFORMER_NUM_LAYERS = 3             # Number of transformer layers
 CONFORMER_ACTIVATION = 'gelu'        # Transformer activation function
 
-# SepConv1D specific parameters (optimized for small datasets and overfitting prevention)
-SEPCONV1D_FILTERS = 32               # Number of output filters (keep small to reduce overfitting)
+# SepConv1D specific parameters (optimized for better accuracy while staying lightweight)
+SEPCONV1D_FILTERS = 48               # Increased filters for better representation capacity
 SEPCONV1D_KERNEL_SIZE = 16           # Temporal kernel size for separable convolution
 SEPCONV1D_STRIDE = 8                 # Stride for downsampling (reduces parameters)
 SEPCONV1D_PADDING = 4                # Padding for temporal convolution
-# Note: SepConv1D uses the global DROPOUT_RATE but typically performs better with lighter dropout (0.2-0.3)
+
+# Performance tuning for SepConv1D models
+SEPCONV1D_USE_WARMUP = True          # Use learning rate warmup for better convergence
+SEPCONV1D_WARMUP_EPOCHS = 10         # Number of warmup epochs
+SEPCONV1D_WARMUP_FACTOR = 0.1        # Starting learning rate factor during warmup
 
 #######################
 # Device Configuration
@@ -228,7 +234,7 @@ VERBOSE_PROCESSING = True
 # 'none': 不使用融合方法，保持baseline状态
 # 'graph_gcn': 基于图神经网络的通用特征空间融合
 # 'spatial_attention': 基于空间注意力的端到端协调
-ELECTRODE_FUSION_METHOD = 'none'
+ELECTRODE_FUSION_METHOD = 'spatial_attention'
 
 # 图神经网络配置
 GCN_HIDDEN_DIM = 64            # GCN隐藏层维度

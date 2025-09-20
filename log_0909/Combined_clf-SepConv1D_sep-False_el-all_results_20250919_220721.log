@@ -1,0 +1,34 @@
+2025-09-19 22:07:21 - 
+Experiment Configuration:
+2025-09-19 22:07:21 - --------------------------------------------------
+2025-09-19 22:07:21 - dataset: use_combined_datasets
+2025-09-19 22:07:21 - use_combined_datasets: True
+2025-09-19 22:07:21 - electrode_list: all
+2025-09-19 22:07:21 - classifier: SepConv1D
+2025-09-19 22:07:21 - separate_subject_classification: False
+2025-09-19 22:07:21 - use_subject_layer: False
+2025-09-19 22:07:21 - seeds: [42]
+2025-09-19 22:07:21 - electrode_fusion_method: spatial_attention
+2025-09-19 22:07:21 - domain_adaptation_method: none
+2025-09-19 22:07:21 - enable_comprehensive_evaluation: True
+2025-09-19 22:07:21 - enable_domain_analysis: True
+2025-09-19 22:07:21 - enable_small_sample_analysis: False
+2025-09-19 22:07:21 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-19 22:07:21 - small_sample_subjects: [5, 10, 15]
+2025-09-19 22:07:21 - --------------------------------------------------
+2025-09-19 22:07:21 - 
+==================================================
+2025-09-19 22:07:21 - Processing Combined P3 and AVO Datasets
+2025-09-19 22:07:21 - ==================================================
+2025-09-19 22:07:21 - 启用融合方法: spatial_attention, 域适应: none
+2025-09-19 22:07:21 - 融合模式：使用各数据集的原生电极配置
+2025-09-19 22:07:21 - Processing datasets: ['P3', 'AVO']
+2025-09-19 22:07:21 - Processing dataset: P3
+2025-09-19 22:07:28 - Dataset P3 processed: 1960 training samples
+2025-09-19 22:07:28 - Processing dataset: AVO
+2025-09-19 22:07:34 - Dataset AVO processed: 1680 training samples
+2025-09-19 22:07:34 - Created data loaders for P3
+2025-09-19 22:07:34 - Created data loaders for AVO
+2025-09-19 22:07:34 - Training fusion model: spatial_attention with domain adaptation: none
+2025-09-19 22:07:44 - Fusion experiment completed successfully
+2025-09-19 22:07:44 - Final accuracy: 0.6767857142857143

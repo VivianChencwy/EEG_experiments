@@ -45,6 +45,41 @@ except ImportError:
 from constants import NORMALIZATION_EPSILON
 
 
+class WarmupCosineAnnealingLR:
+    """Learning rate scheduler with warmup followed by cosine annealing.
+    
+    Designed specifically for SepConv1D models to improve training stability.
+    """
+    def __init__(self, optimizer, warmup_epochs, total_epochs, warmup_factor=0.1):
+        self.optimizer = optimizer
+        self.warmup_epochs = warmup_epochs
+        self.total_epochs = total_epochs
+        self.warmup_factor = warmup_factor
+        self.base_lr = optimizer.param_groups[0]['lr']
+        self.current_epoch = 0
+        
+        # Initialize with warmup learning rate
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = self.base_lr * warmup_factor
+    
+    def step(self):
+        self.current_epoch += 1
+        
+        if self.current_epoch <= self.warmup_epochs:
+            # Warmup phase: linear increase
+            lr = self.base_lr * (self.warmup_factor + 
+                               (1 - self.warmup_factor) * self.current_epoch / self.warmup_epochs)
+        else:
+            # Cosine annealing phase
+            progress = (self.current_epoch - self.warmup_epochs) / (self.total_epochs - self.warmup_epochs)
+            lr = self.base_lr * 0.5 * (1 + math.cos(math.pi * progress))
+        
+        for param_group in self.optimizer.param_groups:
+            param_group['lr'] = lr
+        
+        return lr
+
+
 class CustomShallowFBCSPNet(nn.Module):
     """Custom implementation of ShallowFBCSPNet."""
     def __init__(self, n_chans, n_outputs, n_times, final_conv_length='auto'):
@@ -544,21 +579,16 @@ class EEGChannelNet(nn.Module):
 
 
 class SepConv1D(nn.Module):
-    """PyTorch implementation of SepConv1D model from P300-CNNT.
+    """Enhanced PyTorch implementation of SepConv1D model from P300-CNNT.
     
     A lightweight separable convolution model designed for small datasets
     to prevent overfitting in EEG P300 classification tasks.
     
-    Original paper architecture:
-    - Input: (batch, channels, samples) 
-    - Zero padding
-    - Separable 1D convolution with stride
-    - Tanh activation
-    - Global feature extraction
-    - Single dense layer with sigmoid
-    
-    This implementation adapts the original TensorFlow/Keras model to PyTorch
-    while maintaining compatibility with fusion methods and domain adaptation.
+    Improvements over original:
+    - Multi-scale temporal feature extraction
+    - Residual connections for better gradient flow
+    - ELU activation for better learning dynamics
+    - Improved feature fusion
     """
     def __init__(self, n_chans, n_outputs, n_times, 
                  filters=32, kernel_size=16, stride=8, padding=4, dropout=0.3):
@@ -567,71 +597,73 @@ class SepConv1D(nn.Module):
         self.n_outputs = n_outputs
         self.n_times = n_times
         
-        # Zero padding layer (equivalent to ZeroPadding1D)
-        self.padding = nn.ConstantPad1d(padding, 0)
+        # Multi-scale temporal convolution branches
+        self.temporal_branches = nn.ModuleList([
+            # Branch 1: Short-term patterns (high frequency)
+            nn.Sequential(
+                nn.Conv1d(n_chans, n_chans, kernel_size=8, stride=4, padding=2, groups=n_chans, bias=False),
+                nn.BatchNorm1d(n_chans),
+                nn.ELU(),
+            ),
+            # Branch 2: Medium-term patterns 
+            nn.Sequential(
+                nn.Conv1d(n_chans, n_chans, kernel_size=16, stride=8, padding=4, groups=n_chans, bias=False),
+                nn.BatchNorm1d(n_chans),
+                nn.ELU(),
+            ),
+            # Branch 3: Long-term patterns (low frequency)
+            nn.Sequential(
+                nn.Conv1d(n_chans, n_chans, kernel_size=32, stride=16, padding=8, groups=n_chans, bias=False),
+                nn.BatchNorm1d(n_chans),
+                nn.ELU(),
+            )
+        ])
         
-        # Separable 1D convolution - implemented as depthwise + pointwise
-        # Depthwise convolution (equivalent to first part of SeparableConv1D)
-        self.depthwise_conv = nn.Conv1d(
-            in_channels=n_chans, 
-            out_channels=n_chans, 
-            kernel_size=kernel_size, 
-            stride=stride, 
-            padding=0,  # padding handled separately
-            groups=n_chans,  # depthwise convolution
-            bias=True
+        # Channel-wise attention for multi-scale fusion
+        self.channel_attention = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Conv1d(n_chans * 3, n_chans * 3, kernel_size=1, bias=False),
+            nn.Sigmoid()
         )
         
-        # Pointwise convolution (equivalent to second part of SeparableConv1D)  
-        self.pointwise_conv = nn.Conv1d(
-            in_channels=n_chans,
-            out_channels=filters,
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            bias=True
+        # Pointwise convolution for feature integration
+        self.pointwise_conv = nn.Sequential(
+            nn.Conv1d(n_chans * 3, filters, kernel_size=1, bias=False),
+            nn.BatchNorm1d(filters),
+            nn.ELU(),
+            nn.Dropout(dropout * 0.5)  # Lighter dropout in middle layers
         )
         
-        # Batch normalization for stability
-        self.bn = nn.BatchNorm1d(filters)
+        # Additional feature enhancement (still lightweight)
+        self.feature_enhance = nn.Sequential(
+            nn.Conv1d(filters, filters, kernel_size=3, padding=1, groups=filters, bias=False),
+            nn.BatchNorm1d(filters),
+            nn.ELU(),
+            nn.Dropout(dropout)
+        )
         
-        # Dropout for regularization (important for small datasets)
-        self.dropout = nn.Dropout(dropout)
+        # Classification head with intermediate layer for better learning
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Flatten(),
+            nn.Linear(filters, filters // 2),
+            nn.ELU(),
+            nn.Dropout(dropout),
+            nn.Linear(filters // 2, n_outputs)
+        )
         
-        # Calculate output size after convolutions
-        self._calculate_conv_output_size()
-        
-        # Classification layer - using 2 outputs for binary classification
-        # Original model used sigmoid for binary classification, 
-        # but we use softmax for compatibility with cross-entropy loss
-        # Use filters as feature dimension after global average pooling
-        self.classifier = nn.Linear(filters, n_outputs)
-        
-        # Initialize weights with smaller values to prevent overfitting
+        # Initialize weights
         self._init_weights()
     
-    def _calculate_conv_output_size(self):
-        """Calculate the size of the output after convolution operations."""
-        # After padding: n_times + 2*padding
-        # After depthwise conv: (padded_size - kernel_size) / stride + 1
-        padded_size = self.n_times + 2 * 4  # padding=4 on both sides
-        self.conv_output_size = (padded_size - 16) // 8 + 1  # kernel_size=16, stride=8
-        
-        # Ensure output size is valid
-        if self.conv_output_size <= 0:
-            self.conv_output_size = 1
-    
     def _init_weights(self):
-        """Initialize weights with smaller values for better regularization."""
+        """Initialize weights for better learning."""
         for m in self.modules():
             if isinstance(m, nn.Conv1d):
-                # Use smaller initialization for better generalization
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='tanh')
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
             elif isinstance(m, nn.Linear):
-                # Smaller weight initialization for final layer
-                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
                 nn.init.constant_(m.bias, 0)
             elif isinstance(m, nn.BatchNorm1d):
                 nn.init.constant_(m.weight, 1)
@@ -641,32 +673,111 @@ class SepConv1D(nn.Module):
         # x shape: (batch, n_chans, n_times)
         batch_size = x.size(0)
         
-        # Apply zero padding (equivalent to ZeroPadding1D)
-        x = self.padding(x)  # (batch, n_chans, n_times + 2*padding)
+        # Multi-scale temporal feature extraction
+        branch_outputs = []
+        for branch in self.temporal_branches:
+            branch_out = branch(x)
+            branch_outputs.append(branch_out)
         
-        # Depthwise convolution
-        x = self.depthwise_conv(x)  # (batch, n_chans, conv_output_size)
+        # Concatenate multi-scale features
+        # Need to match temporal dimensions via adaptive pooling
+        min_time = min(out.size(-1) for out in branch_outputs)
+        aligned_outputs = []
+        for out in branch_outputs:
+            if out.size(-1) != min_time:
+                out = F.adaptive_avg_pool1d(out, min_time)
+            aligned_outputs.append(out)
         
-        # Pointwise convolution  
-        x = self.pointwise_conv(x)  # (batch, filters, conv_output_size)
+        multi_scale_features = torch.cat(aligned_outputs, dim=1)  # (batch, n_chans*3, time)
         
-        # Batch normalization
-        x = self.bn(x)
+        # Channel attention for feature selection
+        attention = self.channel_attention(multi_scale_features)
+        attended_features = multi_scale_features * attention
         
-        # Tanh activation (as in original model)
-        x = torch.tanh(x)
+        # Feature integration
+        x = self.pointwise_conv(attended_features)
         
-        # Dropout for regularization
-        x = self.dropout(x)
-        
-        # Global average pooling to reduce parameters (helps prevent overfitting)
-        x = F.adaptive_avg_pool1d(x, 1)  # (batch, filters, 1)
-        
-        # Flatten
-        x = x.view(batch_size, -1)  # (batch, filters)
+        # Feature enhancement with residual connection
+        residual = x
+        x = self.feature_enhance(x)
+        x = x + residual  # Residual connection
         
         # Classification
-        x = self.classifier(x)  # (batch, n_outputs)
+        x = self.classifier(x)
+        
+        return x
+
+
+class SepConv1DLite(nn.Module):
+    """Ultra-lightweight version with better learning dynamics."""
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 filters=32, kernel_size=16, stride=8, padding=4, dropout=0.3):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        
+        # Improved separable convolution with better activation
+        self.depthwise_conv = nn.Conv1d(
+            n_chans, n_chans, kernel_size=kernel_size, stride=stride, 
+            padding=padding, groups=n_chans, bias=False
+        )
+        self.bn1 = nn.BatchNorm1d(n_chans)
+        
+        self.pointwise_conv = nn.Conv1d(n_chans, filters, kernel_size=1, bias=False)
+        self.bn2 = nn.BatchNorm1d(filters)
+        
+        # Additional small conv for feature refinement
+        self.refine_conv = nn.Conv1d(filters, filters, kernel_size=3, padding=1, 
+                                   groups=filters, bias=False)
+        self.bn3 = nn.BatchNorm1d(filters)
+        
+        self.dropout = nn.Dropout(dropout)
+        
+        # Better classifier
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Flatten(),
+            nn.Linear(filters, filters // 2),
+            nn.ELU(),
+            nn.Dropout(dropout * 0.5),
+            nn.Linear(filters // 2, n_outputs)
+        )
+        
+        self._init_weights()
+    
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+    
+    def forward(self, x):
+        # Depthwise convolution
+        x = self.depthwise_conv(x)
+        x = self.bn1(x)
+        x = F.elu(x)
+        
+        # Pointwise convolution
+        residual = x  # Save for residual connection
+        x = self.pointwise_conv(x)
+        x = self.bn2(x)
+        x = F.elu(x)
+        x = self.dropout(x)
+        
+        # Feature refinement with residual
+        x_refined = self.refine_conv(x)
+        x_refined = self.bn3(x_refined)
+        x_refined = F.elu(x_refined)
+        x = x + x_refined  # Residual connection
+        
+        # Classification
+        x = self.classifier(x)
         
         return x
 
@@ -786,7 +897,30 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
                 kernel_size=SEPCONV1D_KERNEL_SIZE,
                 stride=SEPCONV1D_STRIDE,
                 padding=SEPCONV1D_PADDING,
-                dropout=DROPOUT_RATE  # Use lighter dropout for small datasets
+                dropout=DROPOUT_RATE
+            )
+        elif model_name == 'SepConv1DLite':
+            # Ultra-lightweight version with better learning
+            try:
+                from config import (
+                    SEPCONV1D_FILTERS, SEPCONV1D_KERNEL_SIZE, SEPCONV1D_STRIDE, 
+                    SEPCONV1D_PADDING
+                )
+            except ImportError:
+                SEPCONV1D_FILTERS = 32
+                SEPCONV1D_KERNEL_SIZE = 16  
+                SEPCONV1D_STRIDE = 8
+                SEPCONV1D_PADDING = 4
+                
+            base_model = SepConv1DLite(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                filters=SEPCONV1D_FILTERS,
+                kernel_size=SEPCONV1D_KERNEL_SIZE,
+                stride=SEPCONV1D_STRIDE,
+                padding=SEPCONV1D_PADDING,
+                dropout=DROPOUT_RATE
             )
         else:
             raise ValueError(f"Unknown model name: {model_name}")
@@ -1187,7 +1321,26 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
     effective_max_epochs = min(max_epochs, small_dataset_config['max_epochs'])
     
     optimizer = torch.optim.Adamax(model.parameters(), lr=effective_lr, weight_decay=effective_weight_decay)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=effective_max_epochs)
+    
+    # Check if this is a SepConv1D model that needs warmup
+    use_warmup = False
+    try:
+        from config import SEPCONV1D_USE_WARMUP, SEPCONV1D_WARMUP_EPOCHS, SEPCONV1D_WARMUP_FACTOR
+        use_warmup = (SEPCONV1D_USE_WARMUP and 
+                     model_name in ['SepConv1D', 'SepConv1DLite'] and
+                     hasattr(model, '__class__') and 
+                     'SepConv1D' in model.__class__.__name__)
+        warmup_epochs = SEPCONV1D_WARMUP_EPOCHS
+        warmup_factor = SEPCONV1D_WARMUP_FACTOR
+    except ImportError:
+        warmup_epochs = 10
+        warmup_factor = 0.1
+    
+    if use_warmup:
+        # Custom scheduler with warmup for SepConv1D
+        scheduler = WarmupCosineAnnealingLR(optimizer, warmup_epochs, effective_max_epochs, warmup_factor)
+    else:
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=effective_max_epochs)
     # Maintain state for early stopping using the helper function defined above
     es_state = {}
 
@@ -1393,6 +1546,8 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
             base_model_class = EEGChannelNet
         elif model_name == 'SepConv1D':
             base_model_class = SepConv1D
+        elif model_name == 'SepConv1DLite':
+            base_model_class = SepConv1DLite
         else:
             raise ValueError(f"Unknown model name: {model_name}")
 
@@ -1437,7 +1592,7 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
                 })
         elif model_name == 'EEGChannelNet':
             base_model_params['dropout'] = DROPOUT_RATE
-        elif model_name == 'SepConv1D':
+        elif model_name == 'SepConv1D' or model_name == 'SepConv1DLite':
             # Get SepConv1D parameters for fusion
             try:
                 from config import (
