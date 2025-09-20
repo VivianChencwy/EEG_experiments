@@ -9,10 +9,9 @@ import numpy as np
 from typing import Dict, List, Tuple, Optional, Union
 import math
 
-from electrode_utils import ElectrodeGraphBuilder, create_positional_encoding, get_electrode_positions
+from electrode_utils import ElectrodeGraphBuilder, create_positional_encoding, get_electrode_positions, create_unified_electrode_space
 from config import (
     GCN_HIDDEN_DIM, GCN_NUM_LAYERS, GCN_EMBEDDING_DIM, GCN_DROPOUT,
-    SPATIAL_ATTENTION_VIRTUAL_CHANNELS,
     INPUT_WINDOW_SAMPLES, N_CLASSES
 )
 
@@ -136,11 +135,24 @@ class GraphEEGEncoder(nn.Module):
             )
             current_channels = out_channels
 
-        # 全局池化和特征提取
-        self.global_pool = nn.AdaptiveAvgPool2d((1, 1))
-        # 我们需要推断最终的特征维度，先设置为None，在第一次前向传播时确定
-        self.feature_extractor = None
-        self.embedding_dim = embedding_dim or GCN_EMBEDDING_DIM
+        # 更有效的池化策略 - 保留更多的时空信息
+        self.temporal_pool = nn.AdaptiveAvgPool1d(8)  # 保留8个时间点
+        self.spatial_pool = nn.AdaptiveAvgPool1d(min(n_channels, 16))  # 保留关键空间信息
+
+        # 预先计算特征维度并创建特征提取器
+        # 最终特征维度 = n_channels * current_channels * 8
+        final_feature_dim = n_channels * current_channels * 8
+
+        self.feature_extractor = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(final_feature_dim, self.embedding_dim * 2),
+            nn.ReLU(),
+            nn.Dropout(GCN_DROPOUT),
+            nn.Linear(self.embedding_dim * 2, self.embedding_dim),
+            nn.ReLU(),
+            nn.Dropout(GCN_DROPOUT),
+            nn.Linear(self.embedding_dim, self.embedding_dim)
+        )
 
     def forward(self, x: torch.Tensor, adj: torch.Tensor) -> torch.Tensor:
         """
@@ -150,7 +162,7 @@ class GraphEEGEncoder(nn.Module):
         Returns:
             embedding: (batch_size, embedding_dim)
         """
-        batch_size = x.shape[0]
+        batch_size, n_channels, n_timepoints = x.shape
 
         # 重塑输入 (batch_size, n_channels, 1, n_timepoints)
         x = x.unsqueeze(2)
@@ -160,19 +172,16 @@ class GraphEEGEncoder(nn.Module):
             x = layer(x, adj)
             x = F.relu(x)
 
-        # 全局池化
-        x = self.global_pool(x)  # (batch_size, n_channels, 1, 1)
-        x = x.view(batch_size, -1)  # (batch_size, flattened_features)
+        # x shape: (batch_size, n_channels, out_channels, n_timepoints)
+        batch_size, n_channels, out_channels, n_timepoints = x.shape
 
-        # 动态创建特征提取器（仅在第一次运行时）
-        if self.feature_extractor is None:
-            input_dim = x.shape[1]
-            self.feature_extractor = nn.Sequential(
-                nn.Linear(input_dim, self.embedding_dim),
-                nn.ReLU(),
-                nn.Dropout(GCN_DROPOUT),
-                nn.Linear(self.embedding_dim, self.embedding_dim)
-            ).to(x.device)
+        # 更有效的池化：保留关键的时空信息
+        # 对时间维度进行池化
+        x = x.view(batch_size * n_channels, out_channels, n_timepoints)  # 重塑为3D进行时间池化
+        x = self.temporal_pool(x)  # (batch_size * n_channels, out_channels, 8)
+
+        # 重塑回4D并进行特征提取
+        x = x.view(batch_size, n_channels, out_channels, 8)  # (batch_size, n_channels, out_channels, 8)
 
         # 特征提取
         embedding = self.feature_extractor(x)
@@ -206,12 +215,18 @@ class UniversalFeatureSpace(nn.Module):
             nn.Linear(self.embedding_dim, self.embedding_dim)
         )
 
-        # 分类头
+        # 增强的分类头 - 增加复杂度确保充分训练
         self.classifier = nn.Sequential(
+            nn.Linear(self.embedding_dim, self.embedding_dim),
+            nn.ReLU(),
+            nn.Dropout(GCN_DROPOUT),
             nn.Linear(self.embedding_dim, self.embedding_dim // 2),
             nn.ReLU(),
             nn.Dropout(GCN_DROPOUT),
-            nn.Linear(self.embedding_dim // 2, n_classes)
+            nn.Linear(self.embedding_dim // 2, self.embedding_dim // 4),
+            nn.ReLU(),
+            nn.Dropout(GCN_DROPOUT),
+            nn.Linear(self.embedding_dim // 4, n_classes)
         )
 
         # 预构建图结构
@@ -272,107 +287,182 @@ class UniversalFeatureSpace(nn.Module):
         return self.forward(x, dataset_name)
 
 
-class SpatialAttentionLayer(nn.Module):
-    """简化的空间注意力层 - 基本的通道加权融合"""
+class LightweightGraphEnhancer(nn.Module):
+    """轻量级图特征增强器 - 作为主干模型的预处理层"""
 
-    def __init__(self, max_channels: int, virtual_channels: int, hidden_dim: int = None):
-        super(SpatialAttentionLayer, self).__init__()
-        self.max_channels = max_channels
-        self.virtual_channels = virtual_channels
-        
-        # 简单的线性通道混合 - 直接学习通道间的线性组合
-        # 这相当于学习一个 (virtual_channels, max_channels) 的权重矩阵
-        self.channel_mixer = nn.Linear(max_channels, virtual_channels, bias=False)
-        
-        # 初始化为接近单位映射的权重
-        with torch.no_grad():
-            # 如果虚拟通道数等于真实通道数，初始化为单位矩阵
-            if virtual_channels == max_channels:
-                self.channel_mixer.weight.data = torch.eye(virtual_channels)
-            else:
-                # 否则使用Xavier初始化，但缩放较小以保持稳定性
-                nn.init.xavier_uniform_(self.channel_mixer.weight.data, gain=0.1)
+    def __init__(self, n_channels: int, enhancement_strength: float = 0.1):
+        super(LightweightGraphEnhancer, self).__init__()
+        self.n_channels = n_channels
+        self.enhancement_strength = enhancement_strength
 
-    def forward(self, x: torch.Tensor, electrode_positions: torch.Tensor = None) -> torch.Tensor:
+        # 轻量级图卷积层 - 只做一层简单的空间特征增强
+        self.spatial_conv = GraphConvLayer(1, 1, bias=False)  # 输入输出都是1维特征
+
+        # 可学习的增强强度门控
+        self.enhancement_gate = nn.Parameter(torch.tensor(enhancement_strength))
+
+        # 邻接矩阵缓存
+        self.adjacency_matrix = None
+        self.graph_builder = ElectrodeGraphBuilder()
+
+    def build_graph_once(self, channels: List[str], dataset_name: str = 'combined'):
+        """构建并缓存邻接矩阵（只在第一次调用时执行）"""
+        if self.adjacency_matrix is None:
+            adj = self.graph_builder.build_graph(channels, dataset_name)
+            self.adjacency_matrix = adj
+        return self.adjacency_matrix
+
+    def forward(self, x: torch.Tensor, channels: List[str] = None) -> torch.Tensor:
         """
-        简化的前向传播：直接进行通道间的线性组合
+        轻量级图增强前向传播
         Args:
-            x: (batch_size, n_channels, n_timepoints)
-            electrode_positions: 忽略，保持接口兼容性
+            x: (batch_size, n_channels, n_timepoints) - 原始EEG信号
+            channels: 电极名称列表（可选，用于构建图）
         Returns:
-            output: (batch_size, virtual_channels, n_timepoints)
+            enhanced_x: (batch_size, n_channels, n_timepoints) - 增强后的EEG信号
         """
         batch_size, n_channels, n_timepoints = x.shape
-        
-        # 确保输入通道数匹配
-        if n_channels != self.max_channels:
-            # 如果输入通道数不足，用零填充
-            if n_channels < self.max_channels:
-                padding = torch.zeros(batch_size, self.max_channels - n_channels, n_timepoints, 
-                                    device=x.device, dtype=x.dtype)
-                x = torch.cat([x, padding], dim=1)
-            else:
-                # 如果输入通道数过多，截取前max_channels个
-                x = x[:, :self.max_channels, :]
-        
-        # 简单的线性通道混合: (B, C, T) -> (B, V, T)
-        # 将时间维度展平，应用线性变换，再恢复形状
-        x_flat = x.transpose(1, 2)  # (B, T, C)
-        x_mixed = self.channel_mixer(x_flat)  # (B, T, V)
-        output = x_mixed.transpose(1, 2)  # (B, V, T)
-        
+
+        # 总是使用简单的局部连接图，维度与实际输入匹配
+        adj = self._create_simple_adjacency(n_channels).to(x.device)
+
+        # 计算增强强度（sigmoid确保在0-1之间）
+        gate = torch.sigmoid(self.enhancement_gate)
+
+        # 重塑输入进行批量图卷积：(batch_size, n_channels, n_timepoints) -> (batch_size * n_timepoints, n_channels, 1)
+        x_reshaped = x.permute(0, 2, 1).contiguous()  # (batch_size, n_timepoints, n_channels)
+        x_reshaped = x_reshaped.view(-1, n_channels, 1)  # (batch_size * n_timepoints, n_channels, 1)
+
+        # 批量图卷积增强
+        enhanced_reshaped = self.spatial_conv(x_reshaped, adj)  # (batch_size * n_timepoints, n_channels, 1)
+
+        # 重塑回原始形状
+        enhanced_reshaped = enhanced_reshaped.squeeze(-1)  # (batch_size * n_timepoints, n_channels)
+        enhanced_x = enhanced_reshaped.view(batch_size, n_timepoints, n_channels)  # (batch_size, n_timepoints, n_channels)
+        enhanced_x = enhanced_x.permute(0, 2, 1).contiguous()  # (batch_size, n_channels, n_timepoints)
+
+        # 残差连接：原始信号 + 门控的增强特征
+        output = x + gate * enhanced_x
+
         return output
 
+    def _create_simple_adjacency(self, n_channels: int = None) -> torch.Tensor:
+        """创建简单的局部连接邻接矩阵（当没有电极位置信息时）"""
+        if n_channels is None:
+            n_channels = self.n_channels
 
-class SpatialAttentionModel(nn.Module):
-    """基于空间注意力的端到端协调模型"""
+        adj = torch.eye(n_channels, dtype=torch.float32)
 
-    def __init__(self, max_channels: int, base_model_class, base_model_params: Dict, n_classes: int = N_CLASSES):
-        super(SpatialAttentionModel, self).__init__()
-        self.max_channels = max_channels
-        # 如果配置为0，则使用与真实通道数相同的虚拟通道数
-        self.virtual_channels = max_channels if SPATIAL_ATTENTION_VIRTUAL_CHANNELS == 0 else SPATIAL_ATTENTION_VIRTUAL_CHANNELS
-        self.n_classes = n_classes
+        # 添加相邻通道的连接（简单的一维邻接）
+        for i in range(n_channels - 1):
+            adj[i, i + 1] = 0.5
+            adj[i + 1, i] = 0.5
 
-        # 空间注意力前端
-        self.spatial_attention = SpatialAttentionLayer(max_channels, self.virtual_channels)
+        # 对称归一化：D^(-1/2) A D^(-1/2)
+        degree = adj.sum(dim=1)
+        degree_inv_sqrt = torch.pow(degree, -0.5)
+        degree_inv_sqrt[torch.isinf(degree_inv_sqrt)] = 0.0
 
-        # 修改基础模型参数以适应虚拟通道
-        modified_params = base_model_params.copy()
-        if 'n_chans' in modified_params:
-            modified_params['n_chans'] = self.virtual_channels
-        if 'n_channels' in modified_params:
-            modified_params['n_channels'] = self.virtual_channels
+        # 创建度矩阵的逆平方根
+        degree_matrix_inv_sqrt = torch.diag(degree_inv_sqrt)
+        adj = torch.mm(torch.mm(degree_matrix_inv_sqrt, adj), degree_matrix_inv_sqrt)
 
-        # 基础分类器后端
-        self.base_model = base_model_class(**modified_params)
+        return adj
 
-    def forward(self, x: torch.Tensor, electrode_positions: torch.Tensor) -> torch.Tensor:
+
+class GraphEnhancedModel(nn.Module):
+    """图增强 + 主干模型的混合架构"""
+
+    def __init__(self, base_model_class, base_model_params: Dict,
+                 datasets_info: Dict, enhancement_strength: float = 0.1):
+        super(GraphEnhancedModel, self).__init__()
+
+        # 创建统一的电极空间
+        self.unified_channels, self.channel_mapping = create_unified_electrode_space(datasets_info)
+        self.unified_n_channels = len(self.unified_channels)
+
+        print(f"GraphEnhancedModel: 使用统一电极空间，{self.unified_n_channels}个电极")
+
+        # 图特征增强器 - 使用统一的电极空间
+        self.graph_enhancer = LightweightGraphEnhancer(
+            n_channels=self.unified_n_channels,
+            enhancement_strength=enhancement_strength
+        )
+
+        # 主干模型（如SepConv1D）- 使用统一的通道数
+        unified_model_params = base_model_params.copy()
+        unified_model_params['n_chans'] = self.unified_n_channels
+        self.backbone = base_model_class(**unified_model_params)
+
+    def forward(self, x: torch.Tensor, channels: List[str] = None, dataset_name: str = None, **kwargs) -> torch.Tensor:
         """
+        混合模型前向传播
         Args:
             x: (batch_size, n_channels, n_timepoints)
-            electrode_positions: (n_channels, 3)
+            channels: 电极名称列表（可选）
+            dataset_name: 数据集名称，用于电极映射
+            **kwargs: 其他参数（为了兼容性）
         Returns:
             output: (batch_size, n_classes)
         """
-        # 空间注意力变换
-        x_transformed = self.spatial_attention(x, electrode_positions)
+        batch_size, input_channels, n_timepoints = x.shape
 
-        # 基础模型分类
-        output = self.base_model(x_transformed)
+        # 第一步：将输入映射到统一的电极空间
+        if dataset_name and dataset_name in self.channel_mapping:
+            # 使用数据集特定的映射
+            channel_map = self.channel_mapping[dataset_name]
+            mapped_x = self._map_to_unified_space(x, channel_map, batch_size, n_timepoints)
+        else:
+            # 回退到简单的填充/裁剪策略
+            mapped_x = self._simple_resize(x, batch_size, n_timepoints)
+
+        # 第二步：图特征增强
+        enhanced_x = self.graph_enhancer(mapped_x, self.unified_channels)
+
+        # 第三步：主干模型分类
+        output = self.backbone(enhanced_x)
 
         return output
 
-    def extract_features(self, x: torch.Tensor, electrode_positions: torch.Tensor) -> torch.Tensor:
-        """提取空间变换后的特征"""
-        x_transformed = self.spatial_attention(x, electrode_positions)
+    def _map_to_unified_space(self, x: torch.Tensor, channel_map: Dict[int, int],
+                            batch_size: int, n_timepoints: int) -> torch.Tensor:
+        """将输入映射到统一的电极空间"""
+        # 创建零填充的统一空间张量
+        unified_x = torch.zeros(batch_size, self.unified_n_channels, n_timepoints,
+                              dtype=x.dtype, device=x.device)
 
-        # 如果基础模型有特征提取方法
-        if hasattr(self.base_model, 'extract_features'):
-            features = self.base_model.extract_features(x_transformed)
+        # 根据映射填充数据
+        for input_idx, unified_idx in channel_map.items():
+            if input_idx < x.shape[1]:  # 确保输入索引有效
+                unified_x[:, unified_idx, :] = x[:, input_idx, :]
+
+        return unified_x
+
+    def _simple_resize(self, x: torch.Tensor, batch_size: int, n_timepoints: int) -> torch.Tensor:
+        """简单的尺寸调整策略（回退方案）"""
+        input_channels = x.shape[1]
+
+        if input_channels == self.unified_n_channels:
+            return x
+        elif input_channels < self.unified_n_channels:
+            # 零填充
+            padding = torch.zeros(batch_size, self.unified_n_channels - input_channels, n_timepoints,
+                                dtype=x.dtype, device=x.device)
+            return torch.cat([x, padding], dim=1)
         else:
-            # 否则使用变换后的原始信号作为特征
-            features = x_transformed.view(x_transformed.shape[0], -1)
+            # 裁剪
+            return x[:, :self.unified_n_channels, :]
+
+    def extract_features(self, x: torch.Tensor, channels: List[str] = None) -> torch.Tensor:
+        """提取增强后的特征"""
+        enhanced_x = self.graph_enhancer(x, channels)
+
+        # 如果主干模型有特征提取方法
+        if hasattr(self.backbone, 'extract_features'):
+            features = self.backbone.extract_features(enhanced_x)
+        else:
+            # 否则返回增强后的原始信号特征
+            features = enhanced_x.view(enhanced_x.shape[0], -1)
 
         return features
 
@@ -396,15 +486,16 @@ class FusionModelFactory:
         if fusion_method == 'graph_gcn':
             return UniversalFeatureSpace(datasets_info)
 
-        elif fusion_method == 'spatial_attention':
+        elif fusion_method == 'graph_enhanced':
+            # 新的混合方法：轻量级GCN增强 + 主干模型
             if base_model_info is None:
-                raise ValueError("base_model_info is required for spatial_attention method")
+                raise ValueError("base_model_info is required for graph_enhanced method")
 
-            max_channels = max(len(info['channels']) for info in datasets_info.values())
-            return SpatialAttentionModel(
-                max_channels=max_channels,
+            return GraphEnhancedModel(
                 base_model_class=base_model_info['class'],
-                base_model_params=base_model_info['params']
+                base_model_params=base_model_info['params'],
+                datasets_info=datasets_info,
+                enhancement_strength=0.1  # 可配置的增强强度
             )
 
         elif fusion_method == 'none':

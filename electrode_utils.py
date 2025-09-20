@@ -236,6 +236,91 @@ def normalize_adjacency_matrix(adjacency: np.ndarray, method: str = 'symmetric')
     return normalized
 
 
+def create_unified_electrode_space(datasets_info: Dict[str, Dict]) -> Tuple[List[str], Dict[str, int]]:
+    """
+    为多数据集创建统一的电极空间
+
+    Args:
+        datasets_info: 数据集信息字典，包含每个数据集的电极列表
+
+    Returns:
+        unified_channels: 统一的电极列表（并集）
+        channel_mapping: 每个数据集到统一空间的映射
+    """
+    # 收集所有数据集的电极
+    all_channels = set()
+    for dataset_name, info in datasets_info.items():
+        all_channels.update(info['channels'])
+
+    # 将电极标准化（处理大小写不一致的问题）
+    standardized_channels = set()
+    name_mapping = {}  # 标准化名称到原始名称的映射
+
+    for ch in all_channels:
+        # 标准化电极名称（首字母大写，去除空格）
+        std_name = ch.strip().capitalize()
+
+        # 处理特殊情况
+        if std_name.lower().startswith('fp'):
+            std_name = 'Fp' + std_name[2:]
+        elif std_name.lower() in ['oz', 'pz', 'cz', 'fz']:
+            std_name = std_name.lower().capitalize() + 'z'[1:] if std_name.lower().endswith('z') else std_name
+
+        standardized_channels.add(std_name)
+        name_mapping[std_name] = ch
+
+    # 按照标准10-20系统的顺序排序
+    electrode_order = [
+        'Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8',
+        'FC5', 'FC1', 'FCz', 'FC2', 'FC6',
+        'T7', 'C5', 'C3', 'C1', 'Cz', 'C2', 'C4', 'C6', 'T8',
+        'CP5', 'CP1', 'CPz', 'CP2', 'CP6',
+        'P7', 'P3', 'P1', 'Pz', 'P2', 'P4', 'P8', 'P9', 'P10',
+        'PO7', 'PO3', 'POz', 'PO4', 'PO8',
+        'O1', 'Oz', 'O2'
+    ]
+
+    # 创建有序的统一电极列表
+    unified_channels = []
+    for ch in electrode_order:
+        if ch in standardized_channels:
+            unified_channels.append(ch)
+
+    # 添加不在标准顺序中的电极
+    for ch in sorted(standardized_channels):
+        if ch not in unified_channels:
+            unified_channels.append(ch)
+
+    # 创建每个数据集到统一空间的映射
+    channel_mapping = {}
+    for dataset_name, info in datasets_info.items():
+        dataset_channels = info['channels']
+        mapping = {}
+
+        for input_idx, original_ch in enumerate(dataset_channels):
+            # 找到对应的标准化名称
+            std_ch = original_ch.strip().capitalize()
+            if std_ch.lower().startswith('fp'):
+                std_ch = 'Fp' + std_ch[2:]
+            elif std_ch.lower() in ['oz', 'pz', 'cz', 'fz']:
+                std_ch = std_ch.lower().capitalize() + 'z'[1:] if std_ch.lower().endswith('z') else std_ch
+
+            if std_ch in unified_channels:
+                # 映射：输入索引 -> 统一空间索引
+                mapping[input_idx] = unified_channels.index(std_ch)
+
+        channel_mapping[dataset_name] = mapping
+
+    print(f"创建统一电极空间: {len(unified_channels)}个电极")
+    print(f"统一电极列表: {unified_channels}")
+    for dataset_name in datasets_info.keys():
+        mapped_count = len(channel_mapping[dataset_name])
+        total_count = len(datasets_info[dataset_name]['channels'])
+        print(f"{dataset_name}: {mapped_count}/{total_count}个电极映射到统一空间")
+
+    return unified_channels, channel_mapping
+
+
 class ElectrodeGraphBuilder:
     """电极图构建器类"""
 

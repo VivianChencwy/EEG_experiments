@@ -1515,7 +1515,7 @@ def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str
         filtered_kwargs['model_name'] = model_name
         return create_model(n_channels=filtered_kwargs.pop('n_channels'), **filtered_kwargs)
 
-    elif fusion_method in ['graph_gcn', 'spatial_attention']:
+    elif fusion_method in ['graph_gcn', 'graph_enhanced']:
         # Create fusion model
         # Determine a reasonable default for channel count from datasets_info
         max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
@@ -1739,11 +1739,7 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
                 if domain_adaptation == 'adversarial':
                     # Adversarial training
                     alpha = 2.0 / (1.0 + np.exp(-10 * epoch / max_epochs)) - 1.0  # GRL schedule
-                    if hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
-                        pos = position_tensors[dataset_name].to(device)
-                        task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True, electrode_positions=pos)
-                    else:
-                        task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True)
+                    task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True)
 
                     # Create domain labels for current dataset
                     domain_labels = torch.full((len(data),), hash(dataset_name) % len(dataset_names),
@@ -1754,15 +1750,9 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
                 elif domain_adaptation == 'ms_mda':
                     # MS-MDA training - single domain per batch
                     domain = dataset_name
-                    if hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
-                        pos = position_tensors[dataset_name].to(device)
-                        task_pred, shared_feat, adapted_feat = model(
-                            data, domain=domain, return_features=True, electrode_positions=pos
-                        )
-                    else:
-                        task_pred, shared_feat, adapted_feat = model(
-                            data, domain=domain, return_features=True
-                        )
+                    task_pred, shared_feat, adapted_feat = model(
+                        data, domain=domain, return_features=True
+                    )
 
                     # Compute adaptation loss (domain features will be accumulated across batches)
                     adaptation_loss = model.compute_adaptation_loss({domain: shared_feat})
@@ -1774,9 +1764,6 @@ def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loade
                     # No domain adaptation
                     if hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
                         task_pred = model(data, dataset_name=domains[0] if domains else 'unknown')
-                    elif hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
-                        pos = position_tensors[dataset_name].to(device)
-                        task_pred = model(data, electrode_positions=pos)
                     else:
                         task_pred = model(data)
                     predictions = {'task': task_pred}
@@ -1905,20 +1892,12 @@ def evaluate_fusion_model(model, test_loaders: Dict, device, fusion_method: str 
                 data = normalize_data(data)
 
                 # Forward pass
-                if (domain_adaptation == 'adversarial'
-                    and hasattr(model, 'forward')
-                    and 'electrode_positions' in model.forward.__code__.co_varnames
-                    and fusion_method == 'spatial_attention'
-                    and position_tensors is not None):
-                    pos = position_tensors[domain_name].to(device)
+                if domain_adaptation == 'adversarial':
                     # For adversarial adapter, also pass dataset_name if supported
                     if 'dataset_name' in model.forward.__code__.co_varnames:
-                        outputs = model(data, electrode_positions=pos, dataset_name=domain_name)
+                        outputs = model(data, dataset_name=domain_name)
                     else:
-                        outputs = model(data, electrode_positions=pos)
-                elif hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
-                    pos = position_tensors[domain_name].to(device)
-                    outputs = model(data, electrode_positions=pos)
+                        outputs = model(data)
                 elif hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
                     outputs = model(data, dataset_name=domain_name)
                 elif domain_adaptation == 'ms_mda':

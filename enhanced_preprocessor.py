@@ -542,11 +542,6 @@ class EnhancedOddballPreprocessor(OddballPreprocessor):
             # The actual graph processing will be done in the model
             return windows_data
 
-        elif self.fusion_method == 'spatial_attention':
-            # For spatial attention, we include electrode positions
-            # The actual attention mechanism will be in the model
-            return windows_data
-
         else:
             return windows_data
 

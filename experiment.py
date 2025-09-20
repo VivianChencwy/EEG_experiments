@@ -1025,7 +1025,7 @@ def run_fusion_experiment(fusion_method: str, domain_adaptation: str = 'none',
     运行融合实验
 
     Args:
-        fusion_method: 融合方法 ('graph', 'spatial_attention', 'none')
+        fusion_method: 融合方法 ('graph_gcn', 'none')
         domain_adaptation: 域适应方法 ('ms_mda', 'adversarial', 'none')
         datasets: 数据集列表
         channels: 通道列表

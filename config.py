@@ -108,7 +108,7 @@ MAX_TRIALS_PER_SUBJECT_TEST = None     # None = use all available trials
 
 # Alternative: Fixed trial counts (if you want exact numbers instead of ratios)
 # Set these to specific numbers if you want exact trial counts
-FIXED_TRIALS_PER_SUBJECT_TRAIN = 50  # e.g., 100 for exactly 100 train trials per subject
+FIXED_TRIALS_PER_SUBJECT_TRAIN = 60  # e.g., 100 for exactly 100 train trials per subject
 FIXED_TRIALS_PER_SUBJECT_VAL = 10    # e.g., 20 for exactly 20 val trials per subject
 FIXED_TRIALS_PER_SUBJECT_TEST = 20   # e.g., 30 for exactly 30 test trials per subject
 
@@ -141,7 +141,7 @@ N_CLASSES = 2
 LEARNING_RATE = 0.05   # Increased for SepConv1D models to improve learning
 WEIGHT_DECAY = 1e-4     # Moderate regularization
 GAMMA = 0.7  # Learning rate decay factor (less aggressive)
-EARLY_STOPPING_PATIENCE = 30 # Balanced patience
+EARLY_STOPPING_PATIENCE = 50 # Balanced patience
 DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
 
 # Data augmentation (enabled for better generalization)
@@ -233,8 +233,8 @@ VERBOSE_PROCESSING = True
 # 电极分布融合方法选择
 # 'none': 不使用融合方法，保持baseline状态
 # 'graph_gcn': 基于图神经网络的通用特征空间融合
-# 'spatial_attention': 基于空间注意力的端到端协调
-ELECTRODE_FUSION_METHOD = 'spatial_attention'
+# 'graph_enhanced': 轻量级GCN特征增强 + 主干模型
+ELECTRODE_FUSION_METHOD = 'none'
 
 # 图神经网络配置
 GCN_HIDDEN_DIM = 64            # GCN隐藏层维度
@@ -243,9 +243,10 @@ GCN_EMBEDDING_DIM = 128        # 图嵌入向量维度
 GCN_DROPOUT = 0.3              # GCN dropout率
 GCN_LEARNING_RATE = 0.001      # GCN专用学习率
 
-# 空间注意力配置（简化版）
-# 设置为0表示使用与真实通道数相同的虚拟通道数
-SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 32    # 0=自动匹配真实通道数，>0=指定虚拟通道数
+# 图增强配置
+GRAPH_ENHANCEMENT_STRENGTH = 0.1    # 图增强的强度 (0.0-1.0)
+GRAPH_ADJACENCY_METHOD = 'knn'      # 邻接矩阵构建方法: 'knn', 'threshold'
+GRAPH_K_NEIGHBORS = 3               # KNN图的邻居数量
 
 #######################
 # Domain Adaptation Configuration
