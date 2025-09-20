@@ -217,7 +217,7 @@ GCN_LEARNING_RATE = 0.001      # GCN专用学习率
 
 # 空间注意力配置
 # 减少虚拟通道数以加速训练（对性能影响较小，显著降低计算量）
-SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 64  # 虚拟通道数
+SPATIAL_ATTENTION_VIRTUAL_CHANNELS = 128  # 虚拟通道数
 SPATIAL_ATTENTION_HIDDEN_DIM = 64         # 注意力层隐藏维度
 SPATIAL_ATTENTION_NUM_HEADS = 8           # 多头注意力头数
 SPATIAL_ATTENTION_HEADS = 8               # 别名，保持向后兼容

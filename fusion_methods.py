@@ -337,17 +337,9 @@ class SpatialAttentionLayer(nn.Module):
             key=real_pos_encoded,      # (batch_size, C, D)
             value=real_pos_encoded     # (batch_size, C, D)
         )
-
-        # 使用注意力输出生成每个虚拟通道的权重特征（不做维度扩展）
-        spatial_logits = self.weight_generator(attention_output)  # (batch_size, V, V')
-
-        # 以位置相似度作为真实通道的权重：一次性向量化计算余弦相似度
-        # real_pos_encoded: (B, C, D), virtual_pos_encoded: (B, V, D)
-        real_norm = F.normalize(real_pos_encoded, p=2, dim=-1)
-        virt_norm = F.normalize(virtual_pos_encoded, p=2, dim=-1)
-        # 相似度矩阵: (B, V, C)
-        similarity_matrix = torch.matmul(virt_norm, real_norm.transpose(1, 2))
-        weights_matrix = F.softmax(similarity_matrix, dim=2)  # softmax over real channels
+        # 直接使用注意力权重进行通道融合（注意力权重已沿 key 维度 softmax）
+        # attention_weights: (B, V, C)
+        weights_matrix = attention_weights
 
         # 将实通道信号 x (B, C, T) 线性组合为虚拟通道 (B, V, T)
         # 使用批处理矩阵乘法: (B, V, C) @ (B, C, T) -> (B, V, T)

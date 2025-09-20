@@ -120,6 +120,8 @@ class MultiSourceDomainAdapter(nn.Module):
 
         # 共享特征提取器
         self.shared_feature_extractor = feature_extractor
+        # 可选输入投影：将任意维度特征映射到期望的 feature_dim（懒加载）
+        self.input_projection: Optional[nn.Linear] = None
 
         # 为每个源域创建独立的适配分支
         self.domain_adapters = nn.ModuleDict()
@@ -147,7 +149,8 @@ class MultiSourceDomainAdapter(nn.Module):
         # 领域权重（可学习）
         self.domain_weights = nn.Parameter(torch.ones(self.num_sources) / self.num_sources)
 
-    def forward(self, x: torch.Tensor, domain: str = None, return_features: bool = False) -> Union[torch.Tensor, Tuple]:
+    def forward(self, x: torch.Tensor, domain: str = None, return_features: bool = False,
+                electrode_positions: Optional[torch.Tensor] = None, dataset_name: Optional[str] = None) -> Union[torch.Tensor, Tuple]:
         """
         Args:
             x: 输入数据
@@ -156,16 +159,36 @@ class MultiSourceDomainAdapter(nn.Module):
         Returns:
             predictions 或 (predictions, features, domain_features)
         """
-        # 共享特征提取
-        # 如果特征提取器需要dataset_name参数（如UniversalFeatureSpace），则传递domain
-        if hasattr(self.shared_feature_extractor, 'forward') and 'dataset_name' in self.shared_feature_extractor.forward.__code__.co_varnames:
-            # 对于UniversalFeatureSpace，需要返回特征而不是分类结果
-            if hasattr(self.shared_feature_extractor, 'forward') and 'return_features' in self.shared_feature_extractor.forward.__code__.co_varnames:
-                shared_features = self.shared_feature_extractor(x, dataset_name=domain, return_features=True)
-            else:
-                shared_features = self.shared_feature_extractor(x, dataset_name=domain)
+        # 共享特征提取（优先使用 extract_features 获取特征而非分类分数）
+        if hasattr(self.shared_feature_extractor, 'extract_features'):
+            ef = self.shared_feature_extractor.extract_features
+            ef_argnames = ef.__code__.co_varnames
+            ef_kwargs = {}
+            if 'electrode_positions' in ef_argnames and electrode_positions is not None:
+                ef_kwargs['electrode_positions'] = electrode_positions
+            if 'dataset_name' in ef_argnames and (dataset_name is not None or domain is not None):
+                ef_kwargs['dataset_name'] = dataset_name or domain
+            shared_features = ef(x, **ef_kwargs) if ef_kwargs else ef(x)
+        elif hasattr(self.shared_feature_extractor, 'forward'):
+            argnames = self.shared_feature_extractor.forward.__code__.co_varnames
+            kwargs = {}
+            if 'dataset_name' in argnames and (dataset_name is not None or domain is not None):
+                kwargs['dataset_name'] = dataset_name or domain
+            if 'electrode_positions' in argnames and electrode_positions is not None:
+                kwargs['electrode_positions'] = electrode_positions
+            if 'return_features' in argnames:
+                kwargs['return_features'] = True
+            shared_features = self.shared_feature_extractor(x, **kwargs) if kwargs else self.shared_feature_extractor(x)
         else:
             shared_features = self.shared_feature_extractor(x)
+
+        # 标准化特征形状并投影到期望维度
+        if shared_features.dim() > 2:
+            shared_features = shared_features.view(shared_features.size(0), -1)
+        if shared_features.size(1) != self.feature_dim:
+            if self.input_projection is None:
+                self.input_projection = nn.Linear(shared_features.size(1), self.feature_dim).to(shared_features.device)
+            shared_features = self.input_projection(shared_features)
 
         if domain is not None and domain in self.source_domains:
             # 训练模式：使用特定域的适配器
@@ -244,6 +267,9 @@ class AdversarialDomainAdapter(nn.Module):
         # 特征提取器
         self.feature_extractor = feature_extractor
 
+        # 输入特征投影（在首次前向时按需创建，将任意维度映射到 feature_dim）
+        self.input_projection: Optional[nn.Linear] = None
+
         # 任务分类器
         self.task_classifier = nn.Sequential(
             nn.Linear(feature_dim, feature_dim // 2),
@@ -258,7 +284,8 @@ class AdversarialDomainAdapter(nn.Module):
         # 梯度反转强度
         self.lambda_grl = GRADIENT_REVERSAL_LAMBDA
 
-    def forward(self, x: torch.Tensor, alpha: float = 1.0, return_features: bool = False) -> Union[torch.Tensor, Tuple]:
+    def forward(self, x: torch.Tensor, alpha: float = 1.0, return_features: bool = False,
+                electrode_positions: Optional[torch.Tensor] = None, dataset_name: Optional[str] = None) -> Union[torch.Tensor, Tuple]:
         """
         Args:
             x: 输入数据
@@ -268,7 +295,36 @@ class AdversarialDomainAdapter(nn.Module):
             task_pred 或 (task_pred, domain_pred, features)
         """
         # 特征提取
-        features = self.feature_extractor(x)
+        if hasattr(self.feature_extractor, 'forward'):
+            argnames = self.feature_extractor.forward.__code__.co_varnames
+            # 优先使用 extract_features（如可用）
+            if hasattr(self.feature_extractor, 'extract_features'):
+                ef_argnames = self.feature_extractor.extract_features.__code__.co_varnames
+                ef_kwargs = {}
+                if 'electrode_positions' in ef_argnames and electrode_positions is not None:
+                    ef_kwargs['electrode_positions'] = electrode_positions
+                if 'dataset_name' in ef_argnames and dataset_name is not None:
+                    ef_kwargs['dataset_name'] = dataset_name
+                features = self.feature_extractor.extract_features(x, **ef_kwargs)
+            else:
+                kwargs = {}
+                if 'dataset_name' in argnames and dataset_name is not None:
+                    kwargs['dataset_name'] = dataset_name
+                if 'electrode_positions' in argnames and electrode_positions is not None:
+                    kwargs['electrode_positions'] = electrode_positions
+                if 'return_features' in argnames:
+                    kwargs['return_features'] = True
+                features = self.feature_extractor(x, **kwargs) if kwargs else self.feature_extractor(x)
+        else:
+            features = self.feature_extractor(x)
+
+        # 将特征展平并投影到预期维度
+        if features.dim() > 2:
+            features = features.view(features.size(0), -1)
+        if features.size(1) != self.feature_dim:
+            if self.input_projection is None:
+                self.input_projection = nn.Linear(features.size(1), self.feature_dim).to(features.device)
+            features = self.input_projection(features)
 
         # 任务预测
         task_pred = self.task_classifier(features)
@@ -283,7 +339,14 @@ class AdversarialDomainAdapter(nn.Module):
 
     def extract_features(self, x: torch.Tensor) -> torch.Tensor:
         """提取领域不变特征"""
-        return self.feature_extractor(x)
+        features = self.feature_extractor(x)
+        if features.dim() > 2:
+            features = features.view(features.size(0), -1)
+        if features.size(1) != self.feature_dim:
+            if self.input_projection is None:
+                self.input_projection = nn.Linear(features.size(1), self.feature_dim).to(features.device)
+            features = self.input_projection(features)
+        return features
 
 
 class DomainAdaptationLoss(nn.Module):
@@ -392,6 +455,9 @@ class DomainAdapterFactory:
         if adaptation_method == 'adversarial' and isinstance(model, AdversarialDomainAdapter):
             # 对抗性训练需要分别优化特征提取器和判别器
             feature_params = list(model.feature_extractor.parameters()) + list(model.task_classifier.parameters())
+            # 包含可选的输入投影层
+            if getattr(model, 'input_projection', None) is not None:
+                feature_params += list(model.input_projection.parameters())
             discriminator_params = list(model.domain_discriminator.parameters())
 
             optimizers['feature'] = torch.optim.Adam(feature_params, lr=LEARNING_RATE)

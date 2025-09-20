@@ -1449,11 +1449,22 @@ def evaluate_fusion_model(model, test_loaders: Dict, device, fusion_method: str 
                 data = normalize_data(data)
 
                 # Forward pass
-                if hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
-                    outputs = model(data, dataset_name=domain_name)
+                if (domain_adaptation == 'adversarial'
+                    and hasattr(model, 'forward')
+                    and 'electrode_positions' in model.forward.__code__.co_varnames
+                    and fusion_method == 'spatial_attention'
+                    and position_tensors is not None):
+                    pos = position_tensors[domain_name].to(device)
+                    # For adversarial adapter, also pass dataset_name if supported
+                    if 'dataset_name' in model.forward.__code__.co_varnames:
+                        outputs = model(data, electrode_positions=pos, dataset_name=domain_name)
+                    else:
+                        outputs = model(data, electrode_positions=pos)
                 elif hasattr(model, 'forward') and 'electrode_positions' in model.forward.__code__.co_varnames and fusion_method == 'spatial_attention' and position_tensors is not None:
                     pos = position_tensors[domain_name].to(device)
                     outputs = model(data, electrode_positions=pos)
+                elif hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
+                    outputs = model(data, dataset_name=domain_name)
                 elif domain_adaptation == 'ms_mda':
                     outputs = model(data, domain=domain_name)
                 else:
