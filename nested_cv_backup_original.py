@@ -1,16 +1,16 @@
 """
-Nested Cross-Validation Framework for EEG Experiments (FIXED VERSION)
+Nested Cross-Validation Framework for EEG Experiments
 
-This module implements cross-validation without hyperparameter tuning:
-- Outer loop: Model performance estimation with proper data splits
-- Repeated with different random seeds for robust statistics  
+This module implements nested cross-validation as the primary evaluation method:
+- Outer loop: Model comparison and final performance estimation
+- Inner loop: Hyperparameter tuning and model selection
+- Repeated 10 times for robust statistics
 - 95% confidence intervals for all metrics
-- FIXED: No data leakage - proper train/val/test splits
 """
 
 import numpy as np
 import torch
-from sklearn.model_selection import StratifiedKFold, train_test_split
+from sklearn.model_selection import StratifiedKFold, ParameterGrid
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from typing import Dict, List, Tuple, Any, Optional
 import logging
@@ -20,7 +20,6 @@ import scipy.stats as stats
 from config import (
     BATCH_SIZE, MAX_EPOCHS, EARLY_STOPPING_PATIENCE,
     LEARNING_RATE, WEIGHT_DECAY, DROPOUT_RATE,
-    TRAIN_SIZE, VAL_SIZE, TEST_SIZE,  # Import size configurations
     seeds
 )
 from models import create_model, train_model, evaluate
@@ -37,7 +36,6 @@ class NestedCrossValidation:
     - Repeated 10 times for statistical significance
     - 95% confidence intervals for all metrics
     - Uses default hyperparameters (no tuning)
-    - FIXED: Proper data splits to prevent leakage
     """
 
     def __init__(self,
@@ -47,13 +45,12 @@ class NestedCrossValidation:
                  seeds: Optional[List[int]] = None,
                  logger: Optional[logging.Logger] = None):
         """
-        Initialize cross-validation.
+        Initialize nested cross-validation.
 
         Args:
-            outer_cv_folds: Number of folds for CV (performance estimation)
+            outer_cv_folds: Number of folds for outer CV (performance estimation)
             n_repeats: Number of times to repeat the entire process
             random_state: Random seed for reproducibility
-            seeds: List of random seeds to use for each repeat
             logger: Logger instance
         """
         self.outer_cv_folds = outer_cv_folds
@@ -71,7 +68,7 @@ class NestedCrossValidation:
                      subject_indices: Optional[np.ndarray] = None,
                      **kwargs) -> Dict[str, Any]:
         """
-        Run cross-validation without hyperparameter tuning (fixed version).
+        Run cross-validation without hyperparameter tuning (simplified version).
 
         Args:
             data: Input data (n_samples, n_channels, n_timepoints)
@@ -87,7 +84,6 @@ class NestedCrossValidation:
         """
         self.logger.info(f"Starting Cross-Validation for {model_name}")
         self.logger.info(f"Configuration: {self.outer_cv_folds}-fold CV, {self.n_repeats} repeats")
-        self.logger.info(f"Data split ratios: Train={TRAIN_SIZE}, Val={VAL_SIZE}, Test={TEST_SIZE}")
 
         all_repeat_results = []
 
@@ -107,32 +103,32 @@ class NestedCrossValidation:
             for fold_idx, (train_idx, test_idx) in enumerate(cv.split(data, labels)):
                 self.logger.info(f"  Fold {fold_idx + 1}/{self.outer_cv_folds}")
 
-                # Split data - test_idx is the TRUE test set for this fold
-                X_train_fold, X_test_fold = data[train_idx], data[test_idx]
-                y_train_fold, y_test_fold = labels[train_idx], labels[test_idx]
+                # Split data
+                X_train, X_test = data[train_idx], data[test_idx]
+                y_train, y_test = labels[train_idx], labels[test_idx]
 
                 if subject_indices is not None:
-                    subj_train_fold = subject_indices[train_idx]
-                    subj_test_fold = subject_indices[test_idx]
+                    subj_train = subject_indices[train_idx]
+                    subj_test = subject_indices[test_idx]
                 else:
-                    subj_train_fold = None
-                    subj_test_fold = None
+                    subj_train = None
+                    subj_test = None
 
-                # Train model with proper train/val split (FIXED)
-                model = self._train_model_with_proper_split(
-                    X_train_fold, y_train_fold, model_name, n_channels, device, subj_train_fold
+                # Train model with default parameters
+                model = self._train_model_with_default_params(
+                    X_train, y_train, model_name, n_channels, device, subj_train
                 )
 
-                # Evaluate on the TRUE test set (never seen during training)
+                # Evaluate on test set
                 test_metrics = self._evaluate_model(
-                    model, X_test_fold, y_test_fold, model_name, device, subj_test_fold
+                    model, X_test, y_test, model_name, device, subj_test
                 )
 
                 repeat_scores.append(test_metrics['accuracy'])
                 fold_results.append({
                     'fold': fold_idx,
                     'test_metrics': test_metrics,
-                    'test_size': len(X_test_fold)
+                    'test_size': len(X_test)
                 })
 
                 self.logger.info(f"    Test accuracy: {test_metrics['accuracy']:.4f}")
@@ -158,49 +154,31 @@ class NestedCrossValidation:
 
         return final_results
 
-    def _train_model_with_proper_split(self,
-                                     X_train_fold: np.ndarray,
-                                     y_train_fold: np.ndarray,
-                                     model_name: str,
-                                     n_channels: int,
-                                     device: torch.device,
-                                     subject_indices: Optional[np.ndarray] = None) -> Any:
+    def _train_model_with_default_params(self,
+                                       X_train: np.ndarray,
+                                       y_train: np.ndarray,
+                                       model_name: str,
+                                       n_channels: int,
+                                       device: torch.device,
+                                       subject_indices: Optional[np.ndarray] = None) -> Any:
         """
-        Train a model with proper train/validation split (FIXED - No data leakage).
+        Train a model with default parameters (no hyperparameter tuning).
         """
         if model_name.lower() == 'lda':
             from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
             model = LinearDiscriminantAnalysis()
-            X_train_flat = X_train_fold.reshape(X_train_fold.shape[0], -1)
-            model.fit(X_train_flat, y_train_fold)
+            X_train_flat = X_train.reshape(X_train.shape[0], -1)
+            model.fit(X_train_flat, y_train)
             return model
 
-        # FIXED: Properly split the fold's training data into train and validation
-        # Calculate the ratio for train/val split within the fold
-        train_val_total = TRAIN_SIZE + VAL_SIZE  # 0.7 + 0.1 = 0.8
-        train_ratio_within_fold = TRAIN_SIZE / train_val_total  # 0.7 / 0.8 = 0.875
-
-        # Split fold training data into actual train and validation sets
-        X_train_actual, X_val, y_train_actual, y_val = train_test_split(
-            X_train_fold, y_train_fold,
-            train_size=train_ratio_within_fold,
-            stratify=y_train_fold,
-            random_state=self.random_state
-        )
-
-        self.logger.info(f"    Fold split: Train={len(X_train_actual)}, Val={len(X_val)}")
-
-        # Create proper data loaders with NO leakage
+        # Create data loaders
         from torch.utils.data import DataLoader, TensorDataset
 
-        train_dataset = TensorDataset(torch.FloatTensor(X_train_actual), torch.LongTensor(y_train_actual))
-        val_dataset = TensorDataset(torch.FloatTensor(X_val), torch.LongTensor(y_val))
-
+        train_dataset = TensorDataset(torch.FloatTensor(X_train), torch.LongTensor(y_train))
         train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
         # Create model
-        actual_input_channels = X_train_fold.shape[1]
+        actual_input_channels = X_train.shape[1]
         model = create_model(
             n_channels,
             is_lda=False,
@@ -208,6 +186,9 @@ class NestedCrossValidation:
             input_channels=actual_input_channels
         )
         model = model.to(device)
+
+        # Use default parameters from config
+        from config import LEARNING_RATE, WEIGHT_DECAY, DROPOUT_RATE
 
         # Apply default hyperparameters
         import config
@@ -220,9 +201,11 @@ class NestedCrossValidation:
         config.DROPOUT_RATE = DROPOUT_RATE
 
         try:
-            # FIXED: Use proper validation set, not training data
-            # For the test_loader parameter, we use val_loader to avoid any test data leakage
-            train_model(model, train_loader, val_loader, val_loader, device, is_lda=False)
+            # Create a dummy validation loader for training function
+            val_loader = train_loader  # Use same data for validation (simplified)
+            test_loader = train_loader  # Use same data for test (simplified)
+
+            train_model(model, train_loader, val_loader, test_loader, device, is_lda=False)
         finally:
             # Restore original parameters
             config.LEARNING_RATE = original_lr
@@ -230,6 +213,7 @@ class NestedCrossValidation:
             config.DROPOUT_RATE = original_dr
 
         return model
+
 
     def _evaluate_model(self,
                        model: Any,
@@ -394,7 +378,7 @@ def run_nested_cv_experiment(data: np.ndarray,
                             logger: Optional[logging.Logger] = None,
                             **kwargs) -> Dict[str, Any]:
     """
-    Convenience function to run cross-validation experiment (FIXED VERSION).
+    Convenience function to run nested cross-validation experiment.
 
     Args:
         data: Input data (n_samples, n_channels, n_timepoints)
@@ -406,7 +390,7 @@ def run_nested_cv_experiment(data: np.ndarray,
         **kwargs: Additional arguments for NestedCrossValidation
 
     Returns:
-        Cross-validation results with 95% confidence intervals
+        Nested CV results with 95% confidence intervals
     """
     cv = NestedCrossValidation(logger=logger, **kwargs)
     return cv.run_nested_cv(data, labels, model_name, n_channels, device)
@@ -428,7 +412,7 @@ if __name__ == "__main__":
     results = run_nested_cv_experiment(
         data=data,
         labels=labels,
-        model_name='lda',
+        model_name='EEGNet',
         n_channels=n_channels,
         device=device,
         logger=logger,

@@ -61,7 +61,6 @@ def test_nested_cv():
                 device=device,
                 logger=logger,
                 outer_cv_folds=2,  # Minimal for testing
-                inner_cv_folds=2,  # Minimal for testing
                 n_repeats=1        # Single repeat for testing
             )
 

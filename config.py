@@ -18,9 +18,9 @@ LOG_DIR = './log_0909'
 #######################
 
 # Option 1: P3 dataset only 
-data_dir = P3_DATA_DIR
-dataset = 'P3 Raw Data BIDS-Compatible'
-use_combined_datasets = False
+# data_dir = P3_DATA_DIR
+# dataset = 'P3 Raw Data BIDS-Compatible'
+# use_combined_datasets = False
 
 # Option 2: ds005863 only
 # data_dir = AVO_DATA_DIR
@@ -28,9 +28,9 @@ use_combined_datasets = False
 # use_combined_datasets = False
 
 # Option 3: Both datasets combined
-# use_combined_datasets = True
-# data_dir = P3_DATA_DIR
-# dataset = 'use_combined_datasets'
+use_combined_datasets = True
+data_dir = P3_DATA_DIR
+dataset = 'use_combined_datasets'
 
 #######################
 # Experiment Configuration
@@ -127,7 +127,7 @@ FIXED_TRIALS_PER_SUBJECT_TEST = 10   # e.g., 30 for exactly 30 test trials per s
 # MAX_TRIALS_PER_SUBJECT_TEST = None
 
 # Random seeds for reproducibility
-seeds = [42]#, 123, 456, 789, 321]
+seeds = [42, 123, 456, 789, 321]
 
 #######################
 # Nested Cross-Validation Configuration
@@ -138,8 +138,8 @@ USE_NESTED_CV = True
 
 # Nested CV configuration
 NESTED_CV_OUTER_FOLDS = 5      # Outer CV folds for performance estimation
-NESTED_CV_INNER_FOLDS = 3      # Inner CV folds for hyperparameter tuning
-NESTED_CV_REPEATS = 10         # Number of times to repeat the entire process
+# NESTED_CV_INNER_FOLDS = 3      # 已删除：不再使用内层超参数调优
+NESTED_CV_REPEATS = 5         # Number of times to repeat the entire process
 NESTED_CV_CONFIDENCE_LEVEL = 0.95  # Confidence level for intervals
 
 #######################
@@ -154,7 +154,7 @@ N_CLASSES = 2
 LEARNING_RATE = 0.05   # Increased for SepConv1D models to improve learning
 WEIGHT_DECAY = 1e-4     # Moderate regularization
 GAMMA = 0.7  # Learning rate decay factor (less aggressive)
-EARLY_STOPPING_PATIENCE = 50 # Balanced patience
+EARLY_STOPPING_PATIENCE = 30 # Balanced patience
 DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
 
 # Data augmentation (enabled for better generalization)

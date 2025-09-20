@@ -38,7 +38,7 @@ from config import (
     EXTRACT_FREQUENCY_FEATURES, APPLY_NOTCH_FILTER,
     ELECTRODE_FUSION_METHOD, DOMAIN_ADAPTATION_METHOD,
     ENABLE_COMPREHENSIVE_EVALUATION, ENABLE_DOMAIN_ANALYSIS,
-    DEVICE_MODE, USE_NESTED_CV, NESTED_CV_OUTER_FOLDS, NESTED_CV_INNER_FOLDS,
+    DEVICE_MODE, USE_NESTED_CV, NESTED_CV_OUTER_FOLDS, 
     NESTED_CV_REPEATS, NESTED_CV_CONFIDENCE_LEVEL
 )
 from constants import COMMON_CHANNELS, P3_CHANNELS, AVO_CHANNELS
@@ -202,8 +202,8 @@ def run_experiment(datasets, training_mode, channels, logger, **kwargs):
 
     # Check if nested CV is enabled
     if USE_NESTED_CV:
-        logger.info("Using Nested Cross-Validation (politically correct approach)")
-        logger.info(f"Configuration: {NESTED_CV_OUTER_FOLDS}-fold outer, {NESTED_CV_INNER_FOLDS}-fold inner, {NESTED_CV_REPEATS} repeats")
+        logger.info("Using Cross-Validation (simplified approach)")
+        logger.info(f"Configuration: {NESTED_CV_OUTER_FOLDS}-fold CV, {NESTED_CV_REPEATS} repeats")
         return _run_nested_cv_experiment(datasets, channels, logger, device,
                                        p3_dir, avo_dir, exp_classifier, exp_seeds)
     else:
@@ -235,11 +235,10 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
     Run nested cross-validation experiment with aggregated data from all specified datasets.
     """
     logger.info("="*60)
-    logger.info("NESTED CROSS-VALIDATION CONFIGURATION")
+    logger.info("CROSS-VALIDATION CONFIGURATION")
     logger.info("="*60)
     logger.info(f"Datasets: {datasets}")
-    logger.info(f"Outer folds: {NESTED_CV_OUTER_FOLDS}")
-    logger.info(f"Inner folds: {NESTED_CV_INNER_FOLDS}")
+    logger.info(f"CV folds: {NESTED_CV_OUTER_FOLDS}")
     logger.info(f"Repeats: {NESTED_CV_REPEATS}")
     logger.info(f"Confidence level: {NESTED_CV_CONFIDENCE_LEVEL}")
     logger.info("="*60)
@@ -296,9 +295,9 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
     # Run nested cross-validation
     nested_cv = NestedCrossValidation(
         outer_cv_folds=NESTED_CV_OUTER_FOLDS,
-        inner_cv_folds=NESTED_CV_INNER_FOLDS,
         n_repeats=NESTED_CV_REPEATS,
         random_state=42,
+        seeds=seeds,
         logger=logger
     )
 
@@ -342,13 +341,13 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
 
         trial_counts[subject_id] = {
             'total': subject_trials,
-            'nested_cv_folds': f"{NESTED_CV_OUTER_FOLDS}x{NESTED_CV_INNER_FOLDS}",
+            'cv_folds': NESTED_CV_OUTER_FOLDS,
             'repeats': NESTED_CV_REPEATS
         }
 
-    # Log nested CV results
+    # Log CV results
     logger.info("\n" + "="*60)
-    logger.info("NESTED CROSS-VALIDATION RESULTS")
+    logger.info("CROSS-VALIDATION RESULTS")
     logger.info("="*60)
     logger.info(f"Model: {exp_classifier}")
     logger.info(f"Overall accuracy: {overall_acc:.4f} ± {nested_results['std_accuracy']:.4f}")
