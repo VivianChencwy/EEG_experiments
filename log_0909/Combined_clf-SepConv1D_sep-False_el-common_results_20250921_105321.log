@@ -1,0 +1,48 @@
+2025-09-21 10:53:21 - 
+Experiment Configuration:
+2025-09-21 10:53:21 - --------------------------------------------------
+2025-09-21 10:53:21 - dataset: use_combined_datasets
+2025-09-21 10:53:21 - use_combined_datasets: True
+2025-09-21 10:53:21 - electrode_list: common
+2025-09-21 10:53:21 - classifier: SepConv1D
+2025-09-21 10:53:21 - separate_subject_classification: False
+2025-09-21 10:53:21 - use_subject_layer: False
+2025-09-21 10:53:21 - seeds: [42, 123, 456, 789, 321]
+2025-09-21 10:53:21 - use_nested_cv: True
+2025-09-21 10:53:21 - electrode_fusion_method: none
+2025-09-21 10:53:21 - domain_adaptation_method: none
+2025-09-21 10:53:21 - enable_comprehensive_evaluation: True
+2025-09-21 10:53:21 - enable_domain_analysis: True
+2025-09-21 10:53:21 - enable_small_sample_analysis: False
+2025-09-21 10:53:21 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-21 10:53:21 - small_sample_subjects: [5, 10, 15]
+2025-09-21 10:53:21 - --------------------------------------------------
+2025-09-21 10:53:21 - 
+==================================================
+2025-09-21 10:53:21 - Processing Combined P3 and AVO Datasets
+2025-09-21 10:53:21 - ==================================================
+2025-09-21 10:53:21 - 使用传统方法（无融合）
+2025-09-21 10:53:21 - Using Cross-Validation (simplified approach)
+2025-09-21 10:53:21 - Configuration: 5-fold CV, 5 repeats
+2025-09-21 10:53:21 - ============================================================
+2025-09-21 10:53:21 - CROSS-VALIDATION CONFIGURATION
+2025-09-21 10:53:21 - ============================================================
+2025-09-21 10:53:21 - Datasets: ['P3', 'AVO']
+2025-09-21 10:53:21 - CV folds: 5
+2025-09-21 10:53:21 - Repeats: 5
+2025-09-21 10:53:21 - Confidence level: 0.95
+2025-09-21 10:53:21 - ============================================================
+2025-09-21 10:53:38 - Nested CV dataset summary:
+2025-09-21 10:53:38 -   Total subjects: 80
+2025-09-21 10:53:38 -   Total trials: 6212
+2025-09-21 10:53:38 -   Average trials per subject: 77.7
+2025-09-21 10:53:38 - Enhanced preprocessing increased channels from 16 to 80
+2025-09-21 10:53:38 - Starting Cross-Validation for SepConv1D
+2025-09-21 10:53:38 - Configuration: 5-fold CV, 5 repeats
+2025-09-21 10:53:38 - Data split ratios: Train=0.7, Val=0.1, Test=0.2
+2025-09-21 10:53:38 - Repeat 1/5
+2025-09-21 10:53:38 -   Fold 1/5
+2025-09-21 10:53:38 -     Fold split: Train=4347, Val=622
+2025-09-21 10:56:24 -     Test accuracy: 0.6637
+2025-09-21 10:56:24 -   Fold 2/5
+2025-09-21 10:56:24 -     Fold split: Train=4347, Val=622

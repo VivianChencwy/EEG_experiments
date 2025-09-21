@@ -192,6 +192,17 @@ def main():
                     # For nested CV, the meaningful results are already logged by the nested CV framework
                     logger.info("Individual subject results skipped - using Nested Cross-Validation results")
 
+                    # But still analyze P3 and AVO subset performance even with nested CV
+                    # Analyze P3 and AVO subset performance
+                    p3_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('P3_')}
+                    avo_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('AVO_')}
+                    p3_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('P3_')}
+                    avo_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('AVO_')}
+                    if p3_subset:
+                        print_statistics(calculate_statistics(p3_subset), "Combined Model – P3 Subjects", logger, p3_details_subset)
+                    if avo_subset:
+                        print_statistics(calculate_statistics(avo_subset), "Combined Model – AVO Subjects", logger, avo_details_subset)
+
                 # 处理融合实验的额外结果
                 if ELECTRODE_FUSION_METHOD != 'none' or DOMAIN_ADAPTATION_METHOD != 'none':
                     if isinstance(results, dict):
