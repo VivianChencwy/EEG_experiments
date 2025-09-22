@@ -602,9 +602,9 @@ def main():
     import importlib.util
     import os
     
-    # Force fresh import by loading config from current working directory
+    # Force fresh import by loading config from batch_runner override path
     # This will load the temporary config.py created by batch_runner
-    config_path = os.path.join(os.getcwd(), 'config.py')
+    config_path = os.environ.get('CONFIG_OVERRIDE_PATH', os.path.join(os.getcwd(), 'config.py'))
     spec = importlib.util.spec_from_file_location("config", config_path)
     config = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(config)
