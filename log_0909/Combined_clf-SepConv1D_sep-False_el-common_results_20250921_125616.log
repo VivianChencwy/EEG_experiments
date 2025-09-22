@@ -1,0 +1,221 @@
+2025-09-21 12:56:16 - 
+Experiment Configuration:
+2025-09-21 12:56:16 - --------------------------------------------------
+2025-09-21 12:56:16 - dataset: use_combined_datasets
+2025-09-21 12:56:16 - use_combined_datasets: True
+2025-09-21 12:56:16 - electrode_list: common
+2025-09-21 12:56:16 - classifier: SepConv1D
+2025-09-21 12:56:16 - separate_subject_classification: False
+2025-09-21 12:56:16 - use_subject_layer: False
+2025-09-21 12:56:16 - seeds: [42]
+2025-09-21 12:56:16 - use_nested_cv: True
+2025-09-21 12:56:16 - electrode_fusion_method: none
+2025-09-21 12:56:16 - domain_adaptation_method: none
+2025-09-21 12:56:16 - enable_comprehensive_evaluation: True
+2025-09-21 12:56:16 - enable_domain_analysis: True
+2025-09-21 12:56:16 - enable_small_sample_analysis: False
+2025-09-21 12:56:16 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-21 12:56:16 - small_sample_subjects: [5, 10, 15]
+2025-09-21 12:56:16 - --------------------------------------------------
+2025-09-21 12:56:16 - 
+==================================================
+2025-09-21 12:56:16 - Processing Combined P3 and AVO Datasets
+2025-09-21 12:56:16 - ==================================================
+2025-09-21 12:56:16 - 使用传统方法（无融合）
+2025-09-21 12:56:16 - Using Cross-Validation (simplified approach)
+2025-09-21 12:56:16 - Configuration: 5-fold CV, 1 repeats
+2025-09-21 12:56:16 - ============================================================
+2025-09-21 12:56:16 - CROSS-VALIDATION CONFIGURATION
+2025-09-21 12:56:16 - ============================================================
+2025-09-21 12:56:16 - Datasets: ['P3', 'AVO']
+2025-09-21 12:56:16 - CV folds: 5
+2025-09-21 12:56:16 - Repeats: 1
+2025-09-21 12:56:16 - Confidence level: 0.95
+2025-09-21 12:56:16 - ============================================================
+2025-09-21 12:56:16 - STRATIFIED SAMPLING CONFIGURATION
+2025-09-21 12:56:16 - ============================================================
+2025-09-21 12:56:16 - Nested CV Mode: Trial counts per subject by dataset
+2025-09-21 12:56:16 -   P3 dataset: 20 trials per subject
+2025-09-21 12:56:16 -   AVO dataset: 200 trials per subject
+2025-09-21 12:56:16 - Sampling strategy: Multi-level stratified sampling
+2025-09-21 12:56:16 -   - Subject-level: Stratified trial selection per subject
+2025-09-21 12:56:16 -   - Dataset-level: Stratified sampling when dataset trial counts differ
+2025-09-21 12:56:16 -   - Fold-level: StratifiedKFold for 5-fold CV
+2025-09-21 12:56:16 -   - Train/Val split: Stratified train_test_split within each fold
+2025-09-21 12:56:16 - ============================================================
+2025-09-21 12:56:16 - Subject P3_sub-001: Sampled 20/80 trials
+2025-09-21 12:56:16 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:16 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 - Subject P3_sub-002: Sampled 20/80 trials
+2025-09-21 12:56:17 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 - Subject P3_sub-003: Sampled 20/80 trials
+2025-09-21 12:56:17 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 - Subject P3_sub-004: Sampled 20/78 trials
+2025-09-21 12:56:17 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 - Subject P3_sub-005: Sampled 20/80 trials
+2025-09-21 12:56:17 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 - Subject P3_sub-006: Sampled 20/80 trials
+2025-09-21 12:56:17 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 - Subject P3_sub-007: Sampled 20/80 trials
+2025-09-21 12:56:17 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:17 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 - Subject P3_sub-008: Sampled 20/80 trials
+2025-09-21 12:56:18 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 - Subject P3_sub-009: Sampled 20/80 trials
+2025-09-21 12:56:18 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 - Subject P3_sub-010: Sampled 20/80 trials
+2025-09-21 12:56:18 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 - Subject P3_sub-011: Sampled 20/80 trials
+2025-09-21 12:56:18 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 - Subject P3_sub-012: Sampled 20/78 trials
+2025-09-21 12:56:18 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 - Subject P3_sub-013: Sampled 20/80 trials
+2025-09-21 12:56:18 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 - Subject P3_sub-014: Sampled 20/80 trials
+2025-09-21 12:56:18 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:18 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 - Subject P3_sub-015: Sampled 20/80 trials
+2025-09-21 12:56:19 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 - Subject P3_sub-016: Sampled 20/80 trials
+2025-09-21 12:56:19 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 - Subject P3_sub-017: Sampled 20/80 trials
+2025-09-21 12:56:19 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 - Subject P3_sub-018: Sampled 20/80 trials
+2025-09-21 12:56:19 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 - Subject P3_sub-019: Sampled 20/80 trials
+2025-09-21 12:56:19 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 - Subject P3_sub-020: Sampled 20/78 trials
+2025-09-21 12:56:19 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:19 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 - Subject P3_sub-021: Sampled 20/80 trials
+2025-09-21 12:56:20 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 - Subject P3_sub-022: Sampled 20/80 trials
+2025-09-21 12:56:20 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 - Subject P3_sub-023: Sampled 20/78 trials
+2025-09-21 12:56:20 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 - Subject P3_sub-024: Sampled 20/80 trials
+2025-09-21 12:56:20 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 - Subject P3_sub-025: Sampled 20/80 trials
+2025-09-21 12:56:20 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 - Subject P3_sub-026: Sampled 20/80 trials
+2025-09-21 12:56:20 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:20 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 - Subject P3_sub-027: Sampled 20/80 trials
+2025-09-21 12:56:21 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 - Subject P3_sub-028: Sampled 20/80 trials
+2025-09-21 12:56:21 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 - Subject P3_sub-029: Sampled 20/80 trials
+2025-09-21 12:56:21 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 - Subject P3_sub-030: Sampled 20/80 trials
+2025-09-21 12:56:21 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 - Subject P3_sub-031: Sampled 20/80 trials
+2025-09-21 12:56:21 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 - Subject P3_sub-032: Sampled 20/80 trials
+2025-09-21 12:56:21 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 - Subject P3_sub-033: Sampled 20/80 trials
+2025-09-21 12:56:21 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:21 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 - Subject P3_sub-034: Sampled 20/80 trials
+2025-09-21 12:56:22 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 - Subject P3_sub-035: Sampled 20/78 trials
+2025-09-21 12:56:22 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 - Subject P3_sub-036: Sampled 20/80 trials
+2025-09-21 12:56:22 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 - Subject P3_sub-037: Sampled 20/78 trials
+2025-09-21 12:56:22 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 - Subject P3_sub-038: Sampled 20/80 trials
+2025-09-21 12:56:22 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 - Subject P3_sub-039: Sampled 20/80 trials
+2025-09-21 12:56:22 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:22 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:23 - Subject P3_sub-040: Sampled 20/80 trials
+2025-09-21 12:56:23 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:23 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-21 12:56:29 - Nested CV dataset summary:
+2025-09-21 12:56:29 -   Total subjects: 80
+2025-09-21 12:56:29 -   Total trials: 3824
+2025-09-21 12:56:29 -   Average trials per subject: 47.8
+2025-09-21 12:56:29 -   P3 dataset: 40 subjects, 800 trials (20.0 trials/subject)
+2025-09-21 12:56:29 -   AVO dataset: 40 subjects, 3024 trials (75.6 trials/subject)
+2025-09-21 12:56:29 -   Class distribution: {0: 1912, 1: 1912}
+2025-09-21 12:56:29 -   Class proportions: [0.5 0.5]
+2025-09-21 12:56:29 -   NOTE: Datasets have different trial counts - StratifiedKFold will handle balanced sampling
+2025-09-21 12:56:29 - Enhanced preprocessing increased channels from 5 to 25
+2025-09-21 12:56:29 - Starting Cross-Validation for SepConv1D
+2025-09-21 12:56:29 - Configuration: 5-fold CV, 1 repeats
+2025-09-21 12:56:29 - Data split ratios: Train=0.7, Val=0.1, Test=0.2
+2025-09-21 12:56:29 - Repeat 1/1
+2025-09-21 12:56:29 -   Fold 1/5
+2025-09-21 12:56:29 -     Fold split: Train=2676, Val=383
+2025-09-21 12:57:36 -     Test accuracy: 0.6405
+2025-09-21 12:57:36 -   Fold 2/5
+2025-09-21 12:57:36 -     Fold split: Train=2676, Val=383
+2025-09-21 12:58:23 -     Test accuracy: 0.6431
+2025-09-21 12:58:23 -   Fold 3/5
+2025-09-21 12:58:23 -     Fold split: Train=2676, Val=383
+2025-09-21 12:58:42 -     Test accuracy: 0.6392
+2025-09-21 12:58:42 -   Fold 4/5
+2025-09-21 12:58:42 -     Fold split: Train=2676, Val=383
+2025-09-21 12:59:12 -     Test accuracy: 0.6248
+2025-09-21 12:59:12 -   Fold 5/5
+2025-09-21 12:59:12 -     Fold split: Train=2677, Val=383
+2025-09-21 12:59:30 -     Test accuracy: 0.6230
+2025-09-21 12:59:30 -   Repeat 1 mean accuracy: 0.6341 ± 0.0085
+2025-09-21 12:59:30 - Cross-Validation completed for SepConv1D
+2025-09-21 12:59:30 - Final accuracy: 0.6341 ± 0.0095
+2025-09-21 12:59:30 - 95% CI: [0.6224, 0.6459]
+2025-09-21 12:59:30 - 
+============================================================
+2025-09-21 12:59:30 - CROSS-VALIDATION RESULTS
+2025-09-21 12:59:30 - ============================================================
+2025-09-21 12:59:30 - Model: SepConv1D
+2025-09-21 12:59:30 - Overall accuracy: 0.6341 ± 0.0095
+2025-09-21 12:59:30 - 95% Confidence Interval: [0.6224, 0.6459]
+2025-09-21 12:59:30 - Statistical significance: 5 evaluations
+2025-09-21 12:59:30 - Precision: 0.6228 [0.6082, 0.6374]
+2025-09-21 12:59:30 - Recall: 0.6820 [0.6422, 0.7218]
+2025-09-21 12:59:30 - F1_Score: 0.6506 [0.6347, 0.6665]
+2025-09-21 12:59:30 - Auc: 0.6945 [0.6839, 0.7052]
+2025-09-21 12:59:30 - ============================================================
+2025-09-21 12:59:30 - Individual subject results skipped - using Nested Cross-Validation results
+2025-09-21 12:59:30 - Dataset-specific results from Nested Cross-Validation:
+2025-09-21 12:59:30 - P3 Dataset - Nested CV Results:
+2025-09-21 12:59:30 -   Mean Accuracy: 0.5952 ± 0.0212
+2025-09-21 12:59:30 -   95% CI: [0.5689, 0.6216]
+2025-09-21 12:59:30 -   AUC: 0.6171 ± 0.0369
+2025-09-21 12:59:30 - AVO Dataset - Nested CV Results:
+2025-09-21 12:59:30 -   Mean Accuracy: 0.6442 ± 0.0080
+2025-09-21 12:59:30 -   95% CI: [0.6342, 0.6542]
+2025-09-21 12:59:30 -   AUC: 0.7140 ± 0.0073

@@ -32,6 +32,14 @@ use_combined_datasets = True
 data_dir = P3_DATA_DIR
 dataset = 'use_combined_datasets'
 
+
+# Nested Cross-Validation trial configuration (only used when USE_NESTED_CV = True)
+# Specify how many trials to use per subject for each dataset in nested CV
+# The 5-fold CV will automatically handle train/val/test splits, so you only need to specify total trials
+NESTED_CV_TRIALS_PER_SUBJECT_P3 = 200    # Number of trials per P3 subject for nested CV
+NESTED_CV_TRIALS_PER_SUBJECT_AVO = 20   # Number of trials per AVO subject for nested CV
+
+
 #######################
 # Experiment Configuration
 #######################
@@ -52,11 +60,11 @@ electrode_list = 'all'
 # - 'SepConv1DLite': Ultra-lightweight version with residual connections (recommended for small datasets)
 
 #classifier = 'EEGNet'
-#classifier = 'EEGConformer'
+classifier = 'EEGConformer'
 #classifier = 'ShallowFBCSPNet'
 #classifier = 'DeepConvNet' #problem
 #classifier = 'EEGChannelNet'
-classifier = 'SepConv1D'
+#classifier = 'SepConv1D'
 #classifier = 'SepConv1DLite'  # Try the lite version first for better accuracy
 #classifier = 'lda'
 
@@ -76,8 +84,16 @@ HIGH_FREQ = 30
 RESAMPLE_FREQ = 128
 
 # Trial window (in samples, relative to event)
-TRIAL_START_OFFSET_SAMPLES = 0
-TRIAL_STOP_OFFSET_SAMPLES = int(1.0 * 128)  # 1 second at 128 Hz
+# Window: ~150ms before event to 1s after event (total ~1.15s)
+# This captures the baseline period before stimulus and the full ERP response
+TRIAL_START_OFFSET_SAMPLES = int(-0.1 * 128)  # -100ms before event (-19 samples, baseline period)
+TRIAL_STOP_OFFSET_SAMPLES = int(1.0 * 128)     # 1 second after event (128 samples)
+
+# Notes:
+# - Pre-stimulus period (-150ms to 0ms) serves as baseline for baseline correction
+# - Post-stimulus period (0ms to 1000ms) captures the full ERP components including P3
+# - Total window length: 147 samples (1148ms) at 128Hz
+# - Baseline correction (if enabled) will use the pre-stimulus period
 
 #######################
 # Training Configuration
@@ -106,11 +122,27 @@ MAX_TRIALS_PER_SUBJECT_TRAIN = None    # None = use all available trials
 MAX_TRIALS_PER_SUBJECT_VAL = None      # None = use all available trials  
 MAX_TRIALS_PER_SUBJECT_TEST = None     # None = use all available trials
 
-# Alternative: Fixed trial counts (if you want exact numbers instead of ratios)
+# Traditional train/val/test split configuration (only used when USE_NESTED_CV = False)
 # Set these to specific numbers if you want exact trial counts
-FIXED_TRIALS_PER_SUBJECT_TRAIN = 20  # e.g., 100 for exactly 100 train trials per subject
-FIXED_TRIALS_PER_SUBJECT_VAL = 10    # e.g., 20 for exactly 20 val trials per subject
+FIXED_TRIALS_PER_SUBJECT_TRAIN = 60  # e.g., 100 for exactly 100 train trials per subject
+FIXED_TRIALS_PER_SUBJECT_VAL = 20    # e.g., 20 for exactly 20 val trials per subject
 FIXED_TRIALS_PER_SUBJECT_TEST = 10   # e.g., 30 for exactly 30 test trials per subject
+
+
+
+# Examples for different experimental designs:
+#
+# Balanced design (same trials per subject for both datasets):
+# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 50
+# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 50
+#
+# Unbalanced design (different trials per subject - system handles stratification):
+# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 60    # P3 has more trials available
+# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 30   # AVO has fewer trials available
+#
+# Quick testing (small number of trials):
+# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 20
+# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 20
 
 # Example configurations:
 # 
@@ -127,7 +159,7 @@ FIXED_TRIALS_PER_SUBJECT_TEST = 10   # e.g., 30 for exactly 30 test trials per s
 # MAX_TRIALS_PER_SUBJECT_TEST = None
 
 # Random seeds for reproducibility
-seeds = [42, 123, 456, 789, 321]
+seeds = [42]#, 123, 456, 789, 321]
 
 #######################
 # Nested Cross-Validation Configuration
@@ -139,7 +171,7 @@ USE_NESTED_CV = True
 # Nested CV configuration
 NESTED_CV_OUTER_FOLDS = 5      # Outer CV folds for performance estimation
 # NESTED_CV_INNER_FOLDS = 3      # 已删除：不再使用内层超参数调优
-NESTED_CV_REPEATS = 5         # Number of times to repeat the entire process
+NESTED_CV_REPEATS = 1         # Number of times to repeat the entire process
 NESTED_CV_CONFIDENCE_LEVEL = 0.95  # Confidence level for intervals
 
 #######################
@@ -147,14 +179,14 @@ NESTED_CV_CONFIDENCE_LEVEL = 0.95  # Confidence level for intervals
 #######################
 
 # Input/Output dimensions
-INPUT_WINDOW_SAMPLES = int(1.0 * 128)  # 1 second at 128 Hz
+INPUT_WINDOW_SAMPLES = TRIAL_STOP_OFFSET_SAMPLES - TRIAL_START_OFFSET_SAMPLES  # Total window samples
 N_CLASSES = 2
 
 # Training hyperparameters
-LEARNING_RATE = 0.05   # Increased for SepConv1D models to improve learning
+LEARNING_RATE = 0.01   # Increased for SepConv1D models to improve learning
 WEIGHT_DECAY = 1e-4     # Moderate regularization
 GAMMA = 0.7  # Learning rate decay factor (less aggressive)
-EARLY_STOPPING_PATIENCE = 30 # Balanced patience
+EARLY_STOPPING_PATIENCE = 50 # Balanced patience
 DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
 
 # Data augmentation (enabled for better generalization)
@@ -170,7 +202,7 @@ ENABLE_SMALL_DATASET_PROTECTIONS = False # Enable automatic overfitting preventi
 
 # Small dataset specific settings (applied automatically when conditions are met)
 SMALL_DATASET_DROPOUT_RATE = 0.2       # Lower dropout for small datasets (vs 0.3 default)
-SMALL_DATASET_LEARNING_RATE = 0.001    # Higher initial learning rate
+SMALL_DATASET_LEARNING_RATE = 0.01    # Higher initial learning rate
 SMALL_DATASET_WEIGHT_DECAY = 1e-4      # Stronger L2 regularization  
 SMALL_DATASET_EARLY_STOPPING_PATIENCE = 20  # Lower patience to avoid overfitting
 SMALL_DATASET_MAX_EPOCHS = 300          # Fewer max epochs

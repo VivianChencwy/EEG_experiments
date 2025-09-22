@@ -28,7 +28,8 @@ from experiment import (
     run_experiment,
     train_combined_model, train_single_dataset_model,
     run_separate_subject_experiments,
-    run_experiment_with_fusion  # 融合实验函数
+    run_experiment_with_fusion,  # 融合实验函数
+    _run_nested_cv_experiment
 )
 from utils import calculate_statistics, print_statistics, get_channel_list
 from experiment_logger import (
@@ -155,16 +156,24 @@ def main():
                     combined_predictions = results.get('predictions', {})
                 else:
                     # 如果返回元组格式，按传统方式处理
-                    if len(results) == 6:
-                        combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions, _ = results
+                    if len(results) == 6:  # Nested CV returns 6 values (including nested_results as last element)
+                        combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions, nested_results = results
+                    elif len(results) == 5:
+                        combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
+                        nested_results = None
                     else:
                         combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
+                        nested_results = None
             else:
                 # 处理传统实验结果（元组格式）
-                if len(results) == 6:
-                    combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions, _ = results
+                if len(results) == 6:  # Nested CV returns 6 values (including nested_results as last element)
+                    combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions, nested_results = results
+                elif len(results) == 5:
+                    combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
+                    nested_results = None
                 else:
                     combined_accuracies, combined_trial_counts, combined_prediction_details, combined_true_labels, combined_predictions = results
+                    nested_results = None
             
             if combined_accuracies:
                 # FIXED: Skip individual subject results if using nested CV
@@ -192,16 +201,40 @@ def main():
                     # For nested CV, the meaningful results are already logged by the nested CV framework
                     logger.info("Individual subject results skipped - using Nested Cross-Validation results")
 
-                    # But still analyze P3 and AVO subset performance even with nested CV
-                    # Analyze P3 and AVO subset performance
-                    p3_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('P3_')}
-                    avo_subset = {k: v for k, v in combined_accuracies.items() if k.startswith('AVO_')}
-                    p3_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('P3_')}
-                    avo_details_subset = {k: v for k, v in combined_prediction_details.items() if k.startswith('AVO_')}
-                    if p3_subset:
-                        print_statistics(calculate_statistics(p3_subset), "Combined Model – P3 Subjects", logger, p3_details_subset)
-                    if avo_subset:
-                        print_statistics(calculate_statistics(avo_subset), "Combined Model – AVO Subjects", logger, avo_details_subset)
+                    # Check if dataset-specific results are available from nested CV
+                    if nested_results is not None and isinstance(nested_results, dict) and 'dataset_specific_results' in nested_results:
+                        dataset_results = nested_results['dataset_specific_results']
+                        logger.info("Dataset-specific results from Nested Cross-Validation:")
+
+                        # Display P3 results if available (handle both string and numpy string keys)
+                        p3_key = None
+                        avo_key = None
+                        for key in dataset_results.keys():
+                            if str(key) == 'P3':
+                                p3_key = key
+                            elif str(key) == 'AVO':
+                                avo_key = key
+                        
+                        if p3_key is not None:
+                            p3_stats = dataset_results[p3_key]
+                            logger.info(f"P3 Dataset - Nested CV Results:")
+                            logger.info(f"  Mean Accuracy: {p3_stats.get('mean_accuracy', 0):.4f} ± {p3_stats.get('std_accuracy', 0):.4f}")
+                            if 'accuracy' in p3_stats:
+                                logger.info(f"  95% CI: [{p3_stats['accuracy']['ci_lower']:.4f}, {p3_stats['accuracy']['ci_upper']:.4f}]")
+                            if 'auc' in p3_stats:
+                                logger.info(f"  AUC: {p3_stats['auc']['mean']:.4f} ± {p3_stats['auc']['std']:.4f}")
+
+                        # Display AVO results if available
+                        if avo_key is not None:
+                            avo_stats = dataset_results[avo_key]
+                            logger.info(f"AVO Dataset - Nested CV Results:")
+                            logger.info(f"  Mean Accuracy: {avo_stats.get('mean_accuracy', 0):.4f} ± {avo_stats.get('std_accuracy', 0):.4f}")
+                            if 'accuracy' in avo_stats:
+                                logger.info(f"  95% CI: [{avo_stats['accuracy']['ci_lower']:.4f}, {avo_stats['accuracy']['ci_upper']:.4f}]")
+                            if 'auc' in avo_stats:
+                                logger.info(f"  AUC: {avo_stats['auc']['mean']:.4f} ± {avo_stats['auc']['std']:.4f}")
+                    else:
+                        logger.info("Dataset-specific analysis not available - check if combined datasets are being used")
 
                 # 处理融合实验的额外结果
                 if ELECTRODE_FUSION_METHOD != 'none' or DOMAIN_ADAPTATION_METHOD != 'none':

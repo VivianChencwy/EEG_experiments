@@ -143,39 +143,137 @@ def process_dataset_subjects(dataset_info, dataset_type, prefix, channels, logge
     return start_idx
 
 
+def stratified_sample_trials(data, labels, n_trials, subject_id, logger):
+    """
+    Perform stratified sampling of trials for a single subject.
+
+    Args:
+        data: Trial data (n_trials, n_channels, n_timepoints)
+        labels: Trial labels (n_trials,)
+        n_trials: Number of trials to sample
+        subject_id: Subject identifier for logging
+        logger: Logger instance
+
+    Returns:
+        tuple: (sampled_data, sampled_labels)
+    """
+    # Set random seed for reproducible sampling
+    from config import RANDOM_SEED
+    np.random.seed(RANDOM_SEED + hash(subject_id) % 1000)  # Add subject-specific variation
+    unique_labels = np.unique(labels)
+    if len(unique_labels) < 2:
+        logger.warning(f"Subject {subject_id}: Only one class found, using random sampling")
+        indices = np.random.choice(len(data), size=min(n_trials, len(data)), replace=False)
+        return data[indices], labels[indices]
+
+    # Calculate how many trials to sample from each class
+    label_counts = {label: np.sum(labels == label) for label in unique_labels}
+    total_available = len(data)
+
+    if n_trials >= total_available:
+        # If we want more trials than available, return all
+        logger.info(f"Subject {subject_id}: Requested {n_trials} trials, but only {total_available} available. Using all.")
+        return data, labels
+
+    # Proportional stratified sampling
+    sampled_indices = []
+    for label in unique_labels:
+        label_mask = labels == label
+        available_for_label = np.sum(label_mask)
+
+        # Calculate proportional number of samples for this label
+        proportion = available_for_label / total_available
+        n_for_label = max(1, int(n_trials * proportion))  # At least 1 sample per class
+
+        # Adjust if we would exceed the requested total
+        if len(sampled_indices) + n_for_label > n_trials:
+            n_for_label = n_trials - len(sampled_indices)
+
+        if n_for_label > 0 and available_for_label >= n_for_label:
+            label_indices = np.where(label_mask)[0]
+            selected = np.random.choice(label_indices, size=n_for_label, replace=False)
+            sampled_indices.extend(selected)
+
+    # If we still need more samples (due to rounding), randomly add from remaining
+    remaining_needed = n_trials - len(sampled_indices)
+    if remaining_needed > 0:
+        all_indices = set(range(len(data)))
+        used_indices = set(sampled_indices)
+        remaining_indices = list(all_indices - used_indices)
+
+        if len(remaining_indices) >= remaining_needed:
+            additional = np.random.choice(remaining_indices, size=remaining_needed, replace=False)
+            sampled_indices.extend(additional)
+
+    sampled_indices = np.array(sampled_indices)
+
+    # Verify stratification
+    original_distribution = {label: np.mean(labels == label) for label in unique_labels}
+    sampled_distribution = {label: np.mean(labels[sampled_indices] == label) for label in unique_labels}
+
+    logger.info(f"Subject {subject_id}: Sampled {len(sampled_indices)}/{total_available} trials")
+    logger.info(f"  Original distribution: {original_distribution}")
+    logger.info(f"  Sampled distribution: {sampled_distribution}")
+
+    return data[sampled_indices], labels[sampled_indices]
+
+
 def process_dataset_subjects_with_indices(dataset_info, dataset_type, prefix, channels, logger,
-                           all_data, all_labels, all_subject_indices, subject_ranges, subject_ids, 
+                           all_data, all_labels, all_subject_indices, subject_ranges, subject_ids,
                            subject_id_to_index, start_idx, current_subject_index):
     """
     Process subjects from a single dataset with subject indices for subject layer.
+    Now supports stratified sampling based on configuration and CV mode.
     """
+    from config import (USE_NESTED_CV,
+                       FIXED_TRIALS_PER_SUBJECT_TRAIN, FIXED_TRIALS_PER_SUBJECT_VAL, FIXED_TRIALS_PER_SUBJECT_TEST,
+                       NESTED_CV_TRIALS_PER_SUBJECT_P3, NESTED_CV_TRIALS_PER_SUBJECT_AVO)
+
     dataset_obj, subject_list = dataset_info
     preprocessor = create_preprocessor(channels, dataset_type)
-    
+
+    # Calculate total trials per subject based on CV mode and dataset type
+    if USE_NESTED_CV:
+        if dataset_type == 'P3':
+            total_trials_per_subject = NESTED_CV_TRIALS_PER_SUBJECT_P3
+        elif dataset_type == 'AVO':
+            total_trials_per_subject = NESTED_CV_TRIALS_PER_SUBJECT_AVO
+        else:
+            raise ValueError(f"Unknown dataset_type: {dataset_type}")
+    else:
+        # Traditional train/val/test split
+        total_trials_per_subject = FIXED_TRIALS_PER_SUBJECT_TRAIN + FIXED_TRIALS_PER_SUBJECT_VAL + FIXED_TRIALS_PER_SUBJECT_TEST
+
     for subject_id in subject_list:
         # Processing subject silently
         data, labels = process_subject_data(subject_id, dataset_obj, preprocessor, logger, dataset_type=dataset_type)
-        
+
         if data is not None and labels is not None:
-            # Print original trial count for this subject
             full_subject_id = f"{prefix}_{subject_id}" if prefix else subject_id
             print(f"Subject {full_subject_id} ({dataset_type}): {len(data)} total trials available")
-            
+
             # Standardize label format
             if labels.ndim > 1:
                 labels = np.argmax(labels, axis=1)
             labels = labels.squeeze()
-            
+
+            # Perform stratified sampling if we have more trials than needed
+            if len(data) > total_trials_per_subject:
+                print(f"  Performing stratified sampling: {total_trials_per_subject} trials")
+                data, labels = stratified_sample_trials(data, labels, total_trials_per_subject, full_subject_id, logger)
+            else:
+                print(f"  Using all available trials: {len(data)} trials")
+
             # Assign subject index
             if full_subject_id not in subject_id_to_index:
                 subject_id_to_index[full_subject_id] = current_subject_index
                 current_subject_index += 1
-            
+
             subject_index = subject_id_to_index[full_subject_id]
-            
+
             # Create subject indices array for all samples from this subject
             subject_indices = np.full(len(data), subject_index, dtype=np.int64)
-            
+
             # Add to combined dataset
             all_data.append(data)
             all_labels.append(labels)
@@ -184,7 +282,7 @@ def process_dataset_subjects_with_indices(dataset_info, dataset_type, prefix, ch
             subject_ranges.append((start_idx, end_idx))
             subject_ids.append(full_subject_id)
             start_idx = end_idx
-    
+
     return start_idx, current_subject_index
 
 
@@ -241,12 +339,29 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
     logger.info(f"CV folds: {NESTED_CV_OUTER_FOLDS}")
     logger.info(f"Repeats: {NESTED_CV_REPEATS}")
     logger.info(f"Confidence level: {NESTED_CV_CONFIDENCE_LEVEL}")
+
+    # Import and display stratified sampling configuration
+    from config import NESTED_CV_TRIALS_PER_SUBJECT_P3, NESTED_CV_TRIALS_PER_SUBJECT_AVO
+    logger.info("="*60)
+    logger.info("STRATIFIED SAMPLING CONFIGURATION")
+    logger.info("="*60)
+    logger.info("Nested CV Mode: Trial counts per subject by dataset")
+    if 'P3' in datasets:
+        logger.info(f"  P3 dataset: {NESTED_CV_TRIALS_PER_SUBJECT_P3} trials per subject")
+    if 'AVO' in datasets:
+        logger.info(f"  AVO dataset: {NESTED_CV_TRIALS_PER_SUBJECT_AVO} trials per subject")
+    logger.info("Sampling strategy: Multi-level stratified sampling")
+    logger.info("  - Subject-level: Stratified trial selection per subject")
+    logger.info("  - Dataset-level: Stratified sampling when dataset trial counts differ")
+    logger.info("  - Fold-level: StratifiedKFold for 5-fold CV")
+    logger.info("  - Train/Val split: Stratified train_test_split within each fold")
     logger.info("="*60)
 
     # Collect all data from specified datasets
     all_data = []
     all_labels = []
     all_subject_indices = []
+    all_dataset_sources = []  # Track which dataset each sample comes from
     subject_ranges = []
     subject_ids = []
     subject_id_to_index = {}
@@ -254,6 +369,8 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
     current_subject_index = 0
 
     for dataset_type in datasets:
+        dataset_start_samples = sum(len(d) for d in all_data) if all_data else 0
+
         if dataset_type == 'P3':
             subjects = get_dataset_subjects('P3', p3_dir)
             prefix = 'P3' if len(datasets) > 1 else ''
@@ -273,6 +390,11 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
                 subject_ranges, subject_ids, subject_id_to_index, start_idx, current_subject_index
             )
 
+        # Mark dataset source for each sample
+        dataset_end_samples = sum(len(d) for d in all_data) if all_data else 0
+        dataset_sample_count = dataset_end_samples - dataset_start_samples
+        all_dataset_sources.extend([dataset_type] * dataset_sample_count)
+
     if not all_data:
         logger.error("No data available for nested CV")
         return {}, {}, {}, [], []
@@ -281,11 +403,32 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
     all_data = np.concatenate(all_data)
     all_labels = np.concatenate(all_labels)
     all_subject_indices = np.concatenate(all_subject_indices)
+    all_dataset_sources = np.array(all_dataset_sources)
+    
 
     logger.info(f"Nested CV dataset summary:")
     logger.info(f"  Total subjects: {len(subject_ids)}")
     logger.info(f"  Total trials: {len(all_data)}")
     logger.info(f"  Average trials per subject: {len(all_data) / len(subject_ids):.1f}")
+
+    # Display dataset-specific information
+    p3_trials = np.sum(all_dataset_sources == 'P3')
+    avo_trials = np.sum(all_dataset_sources == 'AVO')
+    if p3_trials > 0:
+        p3_subjects = len([s for s in subject_ids if s.startswith('P3_')])
+        logger.info(f"  P3 dataset: {p3_subjects} subjects, {p3_trials} trials ({p3_trials/p3_subjects:.1f} trials/subject)")
+    if avo_trials > 0:
+        avo_subjects = len([s for s in subject_ids if s.startswith('AVO_')])
+        logger.info(f"  AVO dataset: {avo_subjects} subjects, {avo_trials} trials ({avo_trials/avo_subjects:.1f} trials/subject)")
+
+    # Display class distribution
+    unique_labels, label_counts = np.unique(all_labels, return_counts=True)
+    label_distribution = {label: count for label, count in zip(unique_labels, label_counts)}
+    logger.info(f"  Class distribution: {label_distribution}")
+    logger.info(f"  Class proportions: {label_counts / len(all_labels)}")
+
+    if len(datasets) > 1 and p3_trials != avo_trials:
+        logger.info("  NOTE: Datasets have different trial counts - StratifiedKFold will handle balanced sampling")
 
     # Detect actual input channels
     actual_input_channels = all_data.shape[1]
@@ -307,8 +450,10 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
         model_name=exp_classifier,
         n_channels=len(channels),
         device=device,
-        subject_indices=all_subject_indices
+        subject_indices=all_subject_indices,
+        dataset_sources=all_dataset_sources  # Pass dataset source information
     )
+    
 
     # Convert nested CV results to format compatible with existing code
     accuracies = {}
@@ -362,7 +507,8 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
     logger.info("="*60)
 
     # Return in format compatible with existing experiment flow
-    return accuracies, trial_counts, prediction_details, [], []
+    # Include nested CV results for dataset-specific analysis
+    return accuracies, trial_counts, prediction_details, [], [], nested_results
 
 
 def _run_separate_training(datasets, channels, logger, device, p3_dir, avo_dir, exp_classifier, exp_seeds):

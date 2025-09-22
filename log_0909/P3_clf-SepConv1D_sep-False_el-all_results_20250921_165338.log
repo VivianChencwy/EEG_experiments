@@ -1,0 +1,33 @@
+2025-09-21 16:53:38 - 
+Experiment Configuration:
+2025-09-21 16:53:38 - --------------------------------------------------
+2025-09-21 16:53:38 - dataset: P3 Raw Data BIDS-Compatible
+2025-09-21 16:53:38 - use_combined_datasets: False
+2025-09-21 16:53:38 - electrode_list: all
+2025-09-21 16:53:38 - classifier: SepConv1D
+2025-09-21 16:53:38 - separate_subject_classification: False
+2025-09-21 16:53:38 - use_subject_layer: False
+2025-09-21 16:53:38 - seeds: [42]
+2025-09-21 16:53:38 - use_nested_cv: False
+2025-09-21 16:53:38 - electrode_fusion_method: none
+2025-09-21 16:53:38 - domain_adaptation_method: none
+2025-09-21 16:53:38 - enable_comprehensive_evaluation: True
+2025-09-21 16:53:38 - enable_domain_analysis: True
+2025-09-21 16:53:38 - enable_small_sample_analysis: False
+2025-09-21 16:53:38 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-21 16:53:38 - small_sample_subjects: [5, 10, 15]
+2025-09-21 16:53:38 - --------------------------------------------------
+2025-09-21 16:53:38 - 
+==================================================
+2025-09-21 16:53:38 - Processing P3 Dataset
+2025-09-21 16:53:38 - ==================================================
+2025-09-21 16:53:38 - Using traditional train/validation/test split
+2025-09-21 16:55:07 - 
+==================================================
+2025-09-21 16:55:07 - Individual Subject Results - P3
+2025-09-21 16:55:07 - ==================================================
+2025-09-21 16:55:07 - 
+P3 Pooled Model Statistics:
+2025-09-21 16:55:07 - 95% Confidence Interval: [nan, nan]
+2025-09-21 16:55:07 - Best Subject: sub-001 (0.000)
+2025-09-21 16:55:07 - Worst Subject: sub-001 (0.000)

@@ -69,6 +69,7 @@ class NestedCrossValidation:
                      n_channels: int,
                      device: torch.device,
                      subject_indices: Optional[np.ndarray] = None,
+                     dataset_sources: Optional[np.ndarray] = None,
                      **kwargs) -> Dict[str, Any]:
         """
         Run cross-validation without hyperparameter tuning (fixed version).
@@ -80,6 +81,7 @@ class NestedCrossValidation:
             n_channels: Number of input channels
             device: PyTorch device
             subject_indices: Subject indices for subject layer (optional)
+            dataset_sources: Array indicating which dataset each sample comes from (optional)
             **kwargs: Additional arguments
 
         Returns:
@@ -118,6 +120,12 @@ class NestedCrossValidation:
                     subj_train_fold = None
                     subj_test_fold = None
 
+                # Track dataset sources for this fold if provided
+                if dataset_sources is not None:
+                    test_sources_fold = dataset_sources[test_idx]
+                else:
+                    test_sources_fold = None
+
                 # Train model with proper train/val split (FIXED)
                 model = self._train_model_with_proper_split(
                     X_train_fold, y_train_fold, model_name, n_channels, device, subj_train_fold
@@ -125,7 +133,7 @@ class NestedCrossValidation:
 
                 # Evaluate on the TRUE test set (never seen during training)
                 test_metrics = self._evaluate_model(
-                    model, X_test_fold, y_test_fold, model_name, device, subj_test_fold
+                    model, X_test_fold, y_test_fold, model_name, device, subj_test_fold, test_sources_fold
                 )
 
                 repeat_scores.append(test_metrics['accuracy'])
@@ -237,7 +245,8 @@ class NestedCrossValidation:
                        y_test: np.ndarray,
                        model_name: str,
                        device: torch.device,
-                       subject_indices: Optional[np.ndarray] = None) -> Dict[str, float]:
+                       subject_indices: Optional[np.ndarray] = None,
+                       dataset_sources: Optional[np.ndarray] = None) -> Dict[str, Any]:
         """
         Evaluate model and return comprehensive metrics.
         """
@@ -295,7 +304,8 @@ class NestedCrossValidation:
         except:
             auc = 0.5
 
-        return {
+        # Prepare overall results
+        results = {
             'accuracy': accuracy,
             'precision': precision,
             'recall': recall,
@@ -303,6 +313,45 @@ class NestedCrossValidation:
             'auc': auc,
             'n_samples': len(y_test)
         }
+
+        # Calculate dataset-specific metrics if dataset sources are provided
+        if dataset_sources is not None:
+            dataset_metrics = {}
+            unique_sources = np.unique(dataset_sources)
+
+            for source in unique_sources:
+                source_mask = dataset_sources == source
+                if np.sum(source_mask) > 0:  # Ensure we have samples from this dataset
+                    source_y_test = y_test[source_mask]
+                    source_predictions = predictions[source_mask]
+                    source_probabilities = probabilities[source_mask]
+
+                    if len(source_y_test) > 0:
+                        source_accuracy = accuracy_score(source_y_test, source_predictions)
+                        source_precision = precision_score(source_y_test, source_predictions, average='binary', zero_division=0)
+                        source_recall = recall_score(source_y_test, source_predictions, average='binary', zero_division=0)
+                        source_f1 = f1_score(source_y_test, source_predictions, average='binary', zero_division=0)
+
+                        try:
+                            if len(np.unique(source_y_test)) > 1:
+                                source_auc = roc_auc_score(source_y_test, source_probabilities)
+                            else:
+                                source_auc = 0.5
+                        except:
+                            source_auc = 0.5
+
+                        dataset_metrics[source] = {
+                            'accuracy': source_accuracy,
+                            'precision': source_precision,
+                            'recall': source_recall,
+                            'f1_score': source_f1,
+                            'auc': source_auc,
+                            'n_samples': len(source_y_test)
+                        }
+
+            results['dataset_metrics'] = dataset_metrics
+
+        return results
 
     def _compile_final_results(self, all_repeat_results: List[Dict], model_name: str) -> Dict[str, Any]:
         """
@@ -317,6 +366,9 @@ class NestedCrossValidation:
             'auc': []
         }
 
+        # Track dataset-specific metrics
+        dataset_specific_metrics = {}
+
         for repeat_result in all_repeat_results:
             all_accuracies.extend(repeat_result['scores'])
 
@@ -325,6 +377,23 @@ class NestedCrossValidation:
                 metrics = fold_result['test_metrics']
                 for metric_name in all_metrics.keys():
                     all_metrics[metric_name].append(metrics[metric_name])
+
+                # Collect dataset-specific metrics if available
+                if 'dataset_metrics' in metrics:
+                    for dataset, dataset_metrics in metrics['dataset_metrics'].items():
+                        if dataset not in dataset_specific_metrics:
+                            dataset_specific_metrics[dataset] = {
+                                'accuracy': [],
+                                'precision': [],
+                                'recall': [],
+                                'f1_score': [],
+                                'auc': []
+                            }
+
+                        for metric_name in dataset_specific_metrics[dataset].keys():
+                            dataset_specific_metrics[dataset][metric_name].append(
+                                dataset_metrics[metric_name]
+                            )
 
         # Calculate statistics for accuracy
         mean_acc = np.mean(all_accuracies)
@@ -353,6 +422,33 @@ class NestedCrossValidation:
                     'ci_upper': mean_val + margin
                 }
 
+        # Calculate dataset-specific statistics
+        dataset_stats = {}
+        for dataset, metrics_dict in dataset_specific_metrics.items():
+            dataset_stats[dataset] = {}
+            for metric_name, values in metrics_dict.items():
+                if values:  # Check if we have values
+                    mean_val = np.mean(values)
+                    std_val = np.std(values, ddof=1)
+                    n_vals = len(values)
+                    t_crit = stats.t.ppf(0.975, df=n_vals-1)
+                    margin = t_crit * (std_val / np.sqrt(n_vals))
+
+                    dataset_stats[dataset][metric_name] = {
+                        'mean': mean_val,
+                        'std': std_val,
+                        'ci_lower': mean_val - margin,
+                        'ci_upper': mean_val + margin,
+                        'n_samples': n_vals
+                    }
+
+                    # Add backward compatibility fields for accuracy
+                    if metric_name == 'accuracy':
+                        dataset_stats[dataset]['mean_accuracy'] = mean_val
+                        dataset_stats[dataset]['std_accuracy'] = std_val
+                        dataset_stats[dataset]['ci_lower'] = mean_val - margin
+                        dataset_stats[dataset]['ci_upper'] = mean_val + margin
+
         # Compile final results
         final_results = {
             'model_name': model_name,
@@ -373,6 +469,7 @@ class NestedCrossValidation:
             'ci_lower': ci_lower,       # For backward compatibility
             'ci_upper': ci_upper,       # For backward compatibility
             'other_metrics': other_stats,
+            'dataset_specific_results': dataset_stats,  # Dataset-specific results
             'all_repeat_results': all_repeat_results,
             'raw_scores': all_accuracies,
             'statistical_significance': {
@@ -382,6 +479,13 @@ class NestedCrossValidation:
                 'confidence_level': 0.95
             }
         }
+
+        # Add convenience fields for each dataset
+        for dataset, dataset_stat in dataset_stats.items():
+            field_name = f'mean_{dataset.lower()}_accuracy'
+            final_results[field_name] = dataset_stat.get('mean_accuracy', 0.0)
+            field_name = f'std_{dataset.lower()}_accuracy'
+            final_results[field_name] = dataset_stat.get('std_accuracy', 0.0)
 
         return final_results
 

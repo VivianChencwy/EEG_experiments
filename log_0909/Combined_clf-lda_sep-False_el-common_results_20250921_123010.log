@@ -1,0 +1,94 @@
+2025-09-21 12:30:10 - 
+Experiment Configuration:
+2025-09-21 12:30:10 - --------------------------------------------------
+2025-09-21 12:30:10 - dataset: use_combined_datasets
+2025-09-21 12:30:10 - use_combined_datasets: True
+2025-09-21 12:30:10 - electrode_list: common
+2025-09-21 12:30:10 - classifier: lda
+2025-09-21 12:30:10 - separate_subject_classification: False
+2025-09-21 12:30:10 - use_subject_layer: False
+2025-09-21 12:30:10 - seeds: [42]
+2025-09-21 12:30:10 - use_nested_cv: True
+2025-09-21 12:30:10 - electrode_fusion_method: none
+2025-09-21 12:30:10 - domain_adaptation_method: none
+2025-09-21 12:30:10 - enable_comprehensive_evaluation: True
+2025-09-21 12:30:10 - enable_domain_analysis: True
+2025-09-21 12:30:10 - enable_small_sample_analysis: False
+2025-09-21 12:30:10 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-21 12:30:10 - small_sample_subjects: [5, 10, 15]
+2025-09-21 12:30:10 - --------------------------------------------------
+2025-09-21 12:30:10 - 
+==================================================
+2025-09-21 12:30:10 - Processing Combined P3 and AVO Datasets
+2025-09-21 12:30:10 - ==================================================
+2025-09-21 12:30:10 - 使用传统方法（无融合）
+2025-09-21 12:30:10 - Using Cross-Validation (simplified approach)
+2025-09-21 12:30:10 - Configuration: 3-fold CV, 1 repeats
+2025-09-21 12:30:10 - ============================================================
+2025-09-21 12:30:10 - CROSS-VALIDATION CONFIGURATION
+2025-09-21 12:30:10 - ============================================================
+2025-09-21 12:30:10 - Datasets: ['P3', 'AVO']
+2025-09-21 12:30:10 - CV folds: 3
+2025-09-21 12:30:10 - Repeats: 1
+2025-09-21 12:30:10 - Confidence level: 0.95
+2025-09-21 12:30:10 - ============================================================
+2025-09-21 12:30:11 - Dataset sources debug:
+2025-09-21 12:30:11 -   Total samples: 150
+2025-09-21 12:30:11 -   Unique sources: (array(['AVO', 'P3'], dtype='<U3'), array([70, 80]))
+2025-09-21 12:30:11 -   First 10 sources: ['P3' 'P3' 'P3' 'P3' 'P3' 'P3' 'P3' 'P3' 'P3' 'P3']
+2025-09-21 12:30:11 -   Last 10 sources: ['AVO' 'AVO' 'AVO' 'AVO' 'AVO' 'AVO' 'AVO' 'AVO' 'AVO' 'AVO']
+2025-09-21 12:30:11 - Nested CV dataset summary:
+2025-09-21 12:30:11 -   Total subjects: 2
+2025-09-21 12:30:11 -   Total trials: 150
+2025-09-21 12:30:11 -   Average trials per subject: 75.0
+2025-09-21 12:30:11 - Enhanced preprocessing increased channels from 5 to 25
+2025-09-21 12:30:11 - Starting Cross-Validation for lda
+2025-09-21 12:30:11 - Configuration: 3-fold CV, 1 repeats
+2025-09-21 12:30:11 - Data split ratios: Train=0.7, Val=0.1, Test=0.2
+2025-09-21 12:30:11 - Repeat 1/1
+2025-09-21 12:30:11 -   Fold 1/3
+2025-09-21 12:30:11 -     Test accuracy: 0.5400
+2025-09-21 12:30:11 -   Fold 2/3
+2025-09-21 12:30:11 -     Test accuracy: 0.5200
+2025-09-21 12:30:11 -   Fold 3/3
+2025-09-21 12:30:11 -     Test accuracy: 0.5600
+2025-09-21 12:30:11 -   Repeat 1 mean accuracy: 0.5400 ± 0.0163
+2025-09-21 12:30:11 - Cross-Validation completed for lda
+2025-09-21 12:30:11 - Final accuracy: 0.5400 ± 0.0200
+2025-09-21 12:30:11 - 95% CI: [0.4903, 0.5897]
+2025-09-21 12:30:11 - Nested CV results debug:
+2025-09-21 12:30:11 -   Results keys: ['model_name', 'cv_config', 'accuracy', 'mean_accuracy', 'std_accuracy', 'ci_lower', 'ci_upper', 'other_metrics', 'dataset_specific_results', 'all_repeat_results', 'raw_scores', 'statistical_significance', 'mean_avo_accuracy', 'std_avo_accuracy', 'mean_p3_accuracy', 'std_p3_accuracy']
+2025-09-21 12:30:11 -   Dataset specific results keys: [np.str_('AVO'), np.str_('P3')]
+2025-09-21 12:30:11 -     AVO (<class 'numpy.str_'>): ['accuracy', 'mean_accuracy', 'std_accuracy', 'ci_lower', 'ci_upper', 'precision', 'recall', 'f1_score', 'auc']
+2025-09-21 12:30:11 -     P3 (<class 'numpy.str_'>): ['accuracy', 'mean_accuracy', 'std_accuracy', 'ci_lower', 'ci_upper', 'precision', 'recall', 'f1_score', 'auc']
+2025-09-21 12:30:11 - 
+============================================================
+2025-09-21 12:30:11 - CROSS-VALIDATION RESULTS
+2025-09-21 12:30:11 - ============================================================
+2025-09-21 12:30:11 - Model: lda
+2025-09-21 12:30:11 - Overall accuracy: 0.5400 ± 0.0200
+2025-09-21 12:30:11 - 95% Confidence Interval: [0.4903, 0.5897]
+2025-09-21 12:30:11 - Statistical significance: 3 evaluations
+2025-09-21 12:30:11 - Precision: 0.5398 [0.4811, 0.5985]
+2025-09-21 12:30:11 - Recall: 0.5600 [0.4606, 0.6594]
+2025-09-21 12:30:11 - F1_Score: 0.5487 [0.5113, 0.5862]
+2025-09-21 12:30:11 - Auc: 0.5568 [0.3967, 0.7169]
+2025-09-21 12:30:11 - ============================================================
+2025-09-21 12:30:11 - Debug: results type: <class 'tuple'>
+2025-09-21 12:30:11 - Debug: results length: 6
+2025-09-21 12:30:11 - Debug: first result type: <class 'dict'>
+2025-09-21 12:30:11 - Debug: unpacked 6 values, nested_results type: <class 'dict'>
+2025-09-21 12:30:11 - Individual subject results skipped - using Nested Cross-Validation results
+2025-09-21 12:30:11 - Debug: nested_results type: <class 'dict'>
+2025-09-21 12:30:11 - Debug: nested_results is not None: True
+2025-09-21 12:30:11 - Debug: nested_results keys: ['model_name', 'cv_config', 'accuracy', 'mean_accuracy', 'std_accuracy', 'ci_lower', 'ci_upper', 'other_metrics', 'dataset_specific_results', 'all_repeat_results', 'raw_scores', 'statistical_significance', 'mean_avo_accuracy', 'std_avo_accuracy', 'mean_p3_accuracy', 'std_p3_accuracy']
+2025-09-21 12:30:11 - Debug: has dataset_specific_results: True
+2025-09-21 12:30:11 - Dataset-specific results from Nested Cross-Validation:
+2025-09-21 12:30:11 - P3 Dataset - Nested CV Results:
+2025-09-21 12:30:11 -   Mean Accuracy: 0.5129 ± 0.0916
+2025-09-21 12:30:11 -   95% CI: [0.2855, 0.7404]
+2025-09-21 12:30:11 -   AUC: 0.5534 ± 0.1560
+2025-09-21 12:30:11 - AVO Dataset - Nested CV Results:
+2025-09-21 12:30:11 -   Mean Accuracy: 0.5707 ± 0.0767
+2025-09-21 12:30:11 -   95% CI: [0.3803, 0.7611]
+2025-09-21 12:30:11 -   AUC: 0.5911 ± 0.0700
