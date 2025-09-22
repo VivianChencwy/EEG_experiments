@@ -36,8 +36,8 @@ dataset = 'use_combined_datasets'
 # Nested Cross-Validation trial configuration (only used when USE_NESTED_CV = True)
 # Specify how many trials to use per subject for each dataset in nested CV
 # The 5-fold CV will automatically handle train/val/test splits, so you only need to specify total trials
-NESTED_CV_TRIALS_PER_SUBJECT_P3 = 200    # Number of trials per P3 subject for nested CV
-NESTED_CV_TRIALS_PER_SUBJECT_AVO = 20   # Number of trials per AVO subject for nested CV
+NESTED_CV_TRIALS_PER_SUBJECT_P3 = 200    
+NESTED_CV_TRIALS_PER_SUBJECT_AVO = 20  
 
 
 #######################
@@ -159,7 +159,7 @@ FIXED_TRIALS_PER_SUBJECT_TEST = 10   # e.g., 30 for exactly 30 test trials per s
 # MAX_TRIALS_PER_SUBJECT_TEST = None
 
 # Random seeds for reproducibility
-seeds = [42]#, 123, 456, 789, 321]
+seeds = [42, 123, 456, 789, 321]
 
 #######################
 # Nested Cross-Validation Configuration
@@ -171,7 +171,7 @@ USE_NESTED_CV = True
 # Nested CV configuration
 NESTED_CV_OUTER_FOLDS = 5      # Outer CV folds for performance estimation
 # NESTED_CV_INNER_FOLDS = 3      # 已删除：不再使用内层超参数调优
-NESTED_CV_REPEATS = 1         # Number of times to repeat the entire process
+NESTED_CV_REPEATS = 5         # Number of times to repeat the entire process
 NESTED_CV_CONFIDENCE_LEVEL = 0.95  # Confidence level for intervals
 
 #######################

@@ -45,13 +45,24 @@ warnings.filterwarnings('ignore')
 
 
 def main():
+    # Reload config to get dynamic values from batch_runner
+    import importlib.util
+    import os
+    
+    # Force fresh import by loading config from batch_runner override path
+    # This will load the temporary config.py created by batch_runner
+    config_path = os.environ.get('CONFIG_OVERRIDE_PATH', os.path.join(os.getcwd(), 'config.py'))
+    spec = importlib.util.spec_from_file_location("config", config_path)
+    config = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config)
+    
     logger = None
     try:
         current_electrode_list = electrode_list
         current_separate_subject_classification = separate_subject_classification
         
         # Validate configuration
-        if use_combined_datasets:
+        if config.use_combined_datasets:
             # 融合实验可以使用所有电极，传统实验需要公共电极
             if ELECTRODE_FUSION_METHOD == 'none' and DOMAIN_ADAPTATION_METHOD == 'none':
                 # 传统实验：强制使用公共电极
@@ -67,11 +78,11 @@ def main():
                 current_separate_subject_classification = False
         
         # Determine dataset name for logging
-        if use_combined_datasets:
+        if config.use_combined_datasets:
             dataset_name = "Combined"
-        elif 'P3' in dataset:
+        elif 'P3' in config.dataset:
             dataset_name = "P3"
-        elif 'ds005863' in dataset:
+        elif 'ds005863' in config.dataset:
             dataset_name = "AVO"
         else:
             dataset_name = "ConfigurableExperiments"
@@ -84,8 +95,8 @@ def main():
 
         # Log current configuration for reproducibility
         log_configuration(logger, {
-            "dataset": dataset,
-            "use_combined_datasets": use_combined_datasets,
+            "dataset": config.dataset,
+            "use_combined_datasets": config.use_combined_datasets,
             "electrode_list": current_electrode_list,
             "classifier": classifier,
             "separate_subject_classification": current_separate_subject_classification,
@@ -118,7 +129,7 @@ def main():
         
         all_accuracies = {}
 
-        if use_combined_datasets:
+        if config.use_combined_datasets:
             # Configuration: Combined datasets + pooled training
             log_section_header(logger, "Processing Combined P3 and AVO Datasets")
 
@@ -268,7 +279,7 @@ def main():
                         if 'model_params' in results:
                             logger.info(f"模型参数数量: {results['model_params']:,}")
 
-        elif 'P3' in dataset:
+        elif 'P3' in config.dataset:
             log_section_header(logger, "Processing P3 Dataset")
             p3_channels = P3_CHANNELS if current_electrode_list == 'all' else COMMON_CHANNELS
             
@@ -318,7 +329,7 @@ def main():
                     # For nested CV, the meaningful results are already logged by the nested CV framework
                     logger.info("Individual subject results skipped - using Nested Cross-Validation results")
 
-        elif 'ds005863' in dataset:
+        elif 'ds005863' in config.dataset:
             log_section_header(logger, "Processing Active Visual Oddball Dataset")
             avo_channels = AVO_CHANNELS if current_electrode_list == 'all' else COMMON_CHANNELS
             

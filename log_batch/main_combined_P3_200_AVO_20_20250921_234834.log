@@ -1,0 +1,69 @@
+2025-09-21 23:48:36 - 
+Experiment Configuration:
+2025-09-21 23:48:36 - --------------------------------------------------
+2025-09-21 23:48:36 - dataset: use_combined_datasets
+2025-09-21 23:48:36 - use_combined_datasets: True
+2025-09-21 23:48:36 - electrode_list: common
+2025-09-21 23:48:36 - classifier: EEGConformer
+2025-09-21 23:48:36 - separate_subject_classification: False
+2025-09-21 23:48:36 - use_subject_layer: False
+2025-09-21 23:48:36 - seeds: [42, 123, 456, 789, 321]
+2025-09-21 23:48:36 - use_nested_cv: True
+2025-09-21 23:48:36 - electrode_fusion_method: none
+2025-09-21 23:48:36 - domain_adaptation_method: none
+2025-09-21 23:48:36 - enable_comprehensive_evaluation: True
+2025-09-21 23:48:36 - enable_domain_analysis: True
+2025-09-21 23:48:36 - enable_small_sample_analysis: False
+2025-09-21 23:48:36 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-21 23:48:36 - small_sample_subjects: [5, 10, 15]
+2025-09-21 23:48:36 - --------------------------------------------------
+2025-09-21 23:48:36 - 
+==================================================
+2025-09-21 23:48:36 - Processing Combined P3 and AVO Datasets
+2025-09-21 23:48:36 - ==================================================
+2025-09-21 23:48:36 - 使用传统方法（无融合）
+2025-09-21 23:48:36 - Using Cross-Validation (simplified approach)
+2025-09-21 23:48:36 - Configuration: 5-fold CV, 5 repeats
+2025-09-21 23:48:36 - ============================================================
+2025-09-21 23:48:36 - CROSS-VALIDATION CONFIGURATION
+2025-09-21 23:48:36 - ============================================================
+2025-09-21 23:48:36 - Datasets: ['P3', 'AVO']
+2025-09-21 23:48:36 - CV folds: 5
+2025-09-21 23:48:36 - Repeats: 5
+2025-09-21 23:48:36 - Confidence level: 0.95
+2025-09-21 23:48:36 - ============================================================
+2025-09-21 23:48:36 - STRATIFIED SAMPLING CONFIGURATION
+2025-09-21 23:48:36 - ============================================================
+2025-09-21 23:48:36 - Nested CV Mode: Trial counts per subject by dataset
+2025-09-21 23:48:36 -   P3 dataset: 200 trials per subject
+2025-09-21 23:48:36 -   AVO dataset: 20 trials per subject
+2025-09-21 23:48:36 - Sampling strategy: Multi-level stratified sampling
+2025-09-21 23:48:36 -   - Subject-level: Stratified trial selection per subject
+2025-09-21 23:48:36 -   - Dataset-level: Stratified sampling when dataset trial counts differ
+2025-09-21 23:48:36 -   - Fold-level: StratifiedKFold for 5-fold CV
+2025-09-21 23:48:36 -   - Train/Val split: Stratified train_test_split within each fold
+2025-09-21 23:48:36 - ============================================================
+Traceback (most recent call last):
+  File "<string>", line 7, in <module>
+  File "<frozen runpy>", line 291, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/vivian/eeg/EEG_experiments/main.py", line 397, in <module>
+    main()
+  File "/home/vivian/eeg/EEG_experiments/main.py", line 148, in main
+    results = run_experiment(
+              ^^^^^^^^^^^^^^^
+  File "/home/vivian/eeg/EEG_experiments/experiment.py", line 316, in run_experiment
+    return _run_nested_cv_experiment(datasets, channels, logger, device,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vivian/eeg/EEG_experiments/experiment.py", line 400, in _run_nested_cv_experiment
+    subjects = get_dataset_subjects('P3', p3_dir)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vivian/eeg/EEG_experiments/experiment.py", line 97, in get_dataset_subjects
+    all_subjects = sorted([d for d in os.listdir(dataset_obj) if d.startswith('sub-')])
+                                      ^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '../P3_Raw_Data_BIDS-Compatible'
+Warning: Forcing electrode_list to 'common' for traditional combined datasets
+
+--- Experiment Failed: [Errno 2] No such file or directory: '../P3_Raw_Data_BIDS-Compatible' ---
+Cleaned up failed experiment log: ./log_0909/Combined_clf-EEGConformer_sep-False_el-common_results_20250921_234836.log

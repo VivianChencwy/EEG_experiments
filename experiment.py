@@ -227,17 +227,28 @@ def process_dataset_subjects_with_indices(dataset_info, dataset_type, prefix, ch
     """
     from config import (USE_NESTED_CV,
                        FIXED_TRIALS_PER_SUBJECT_TRAIN, FIXED_TRIALS_PER_SUBJECT_VAL, FIXED_TRIALS_PER_SUBJECT_TEST,
-                       NESTED_CV_TRIALS_PER_SUBJECT_P3, NESTED_CV_TRIALS_PER_SUBJECT_AVO)
+                       )
 
     dataset_obj, subject_list = dataset_info
     preprocessor = create_preprocessor(channels, dataset_type)
 
     # Calculate total trials per subject based on CV mode and dataset type
     if USE_NESTED_CV:
+        # Get dynamic config values
+        import importlib.util
+        import os
+        
+        # Force fresh import by loading config from batch_runner override path
+        # This will load the temporary config.py created by batch_runner
+        config_path = os.environ.get('CONFIG_OVERRIDE_PATH', os.path.join(os.getcwd(), 'config.py'))
+        spec = importlib.util.spec_from_file_location("config", config_path)
+        config = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(config)
+        
         if dataset_type == 'P3':
-            total_trials_per_subject = NESTED_CV_TRIALS_PER_SUBJECT_P3
+            total_trials_per_subject = config.NESTED_CV_TRIALS_PER_SUBJECT_P3
         elif dataset_type == 'AVO':
-            total_trials_per_subject = NESTED_CV_TRIALS_PER_SUBJECT_AVO
+            total_trials_per_subject = config.NESTED_CV_TRIALS_PER_SUBJECT_AVO
         else:
             raise ValueError(f"Unknown dataset_type: {dataset_type}")
     else:
@@ -341,7 +352,21 @@ def _run_nested_cv_experiment(datasets, channels, logger, device, p3_dir, avo_di
     logger.info(f"Confidence level: {NESTED_CV_CONFIDENCE_LEVEL}")
 
     # Import and display stratified sampling configuration
-    from config import NESTED_CV_TRIALS_PER_SUBJECT_P3, NESTED_CV_TRIALS_PER_SUBJECT_AVO
+    # Use dynamic import to get current config values
+    import sys
+    import importlib.util
+    import os
+    
+    # Force fresh import by loading config from batch_runner override path
+    # This will load the temporary config.py created by batch_runner
+    config_path = os.environ.get('CONFIG_OVERRIDE_PATH', os.path.join(os.getcwd(), 'config.py'))
+    spec = importlib.util.spec_from_file_location("config", config_path)
+    config = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config)
+    
+    NESTED_CV_TRIALS_PER_SUBJECT_P3 = config.NESTED_CV_TRIALS_PER_SUBJECT_P3
+    NESTED_CV_TRIALS_PER_SUBJECT_AVO = config.NESTED_CV_TRIALS_PER_SUBJECT_AVO
+    
     logger.info("="*60)
     logger.info("STRATIFIED SAMPLING CONFIGURATION")
     logger.info("="*60)
