@@ -1,0 +1,48 @@
+{
+  "best_params": {
+    "LEARNING_RATE": 0.00040293422181941475,
+    "WEIGHT_DECAY": 0.00019333213426487295,
+    "DROPOUT_RATE": 0.1781735499321437,
+    "BATCH_SIZE": 16,
+    "MAX_EPOCHS": 610,
+    "EARLY_STOPPING_PATIENCE": 43,
+    "NOISE_STD": 0.014726374215635576,
+    "TIME_SHIFT_RANGE": 14,
+    "LABEL_SMOOTHING": 0.1994996670140655,
+    "classifier": "EEGChannelNet",
+    "w_small_clip_max": 7.119136753250224,
+    "lambda_mmd_base": 0.4961947687951707,
+    "gradient_clip_norm": 6.0806626095166365,
+    "warmup_ratio": 0.07030673710483781
+  },
+  "best_score": 0.6471,
+  "n_trials": 1,
+  "trials": [
+    {
+      "trial_id": 0,
+      "params": {
+        "LEARNING_RATE": 0.00040293422181941475,
+        "WEIGHT_DECAY": 0.00019333213426487295,
+        "DROPOUT_RATE": 0.1781735499321437,
+        "BATCH_SIZE": 16,
+        "MAX_EPOCHS": 610,
+        "EARLY_STOPPING_PATIENCE": 43,
+        "NOISE_STD": 0.014726374215635576,
+        "TIME_SHIFT_RANGE": 14,
+        "LABEL_SMOOTHING": 0.1994996670140655,
+        "classifier": "EEGChannelNet",
+        "w_small_clip_max": 7.119136753250224,
+        "lambda_mmd_base": 0.4961947687951707,
+        "gradient_clip_norm": 6.0806626095166365,
+        "warmup_ratio": 0.07030673710483781
+      },
+      "score": 0.6471,
+      "metadata": {
+        "duration": 1120.0746772289276,
+        "stdout": "Warning: Combined training without fusion/domain methods uses COMMON channels\nUsing Enhanced Preprocessor with advanced features:\n  - Artifact removal (ICA): True\n  - Baseline correction: True\n  - Frequency features: True\n  - Notch filter: True\nStarting enhanced preprocessing...\nChecking cache for: sub-001_task-P3_eeg.fdt\n\u2713 Loaded cached enhanced data: 80 windows in 0.00s\n\u2713 Using cached enhanced preprocessing data\nStarting enhanced preprocessing...\nChecking cache for: sub-002_task-P3_eeg.fdt\n\u2713 Loaded cached enhanced data: 80 windows in 0.00s\n\u2713 Using cached enhanced preprocessing data\nStarting enhanced preprocessing...\nChecking cache for: sub-003_task-P3_eeg.fdt\n\u2713 Loaded cached enhanced data: 80 windows in 0.00s\n\u2713 Using cached enhanced preprocessing data\nStarting enhanced preprocessing...\nChecking cache for: sub-004_task-P3_eeg.fdt\n\u2713 Loaded cached enhanced data: 78 windows in 0.00s\n\u2713 Using cached enhanced preprocessing data\nStarting enhanced preprocessing...\nChecking cache for: sub-005_"
+      },
+      "timestamp": "2025-09-24T10:13:50.774386"
+    }
+  ],
+  "timestamp": "2025-09-24T10:13:50.774475"
+}

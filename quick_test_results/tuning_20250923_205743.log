@@ -1,0 +1,17 @@
+2025-09-23 20:57:43,222 - INFO - Starting hyperparameter tuning with random strategy, 5 trials
+2025-09-23 20:57:43,222 - INFO - Starting trial 0 with params: {
+  "LEARNING_RATE": 0.0023417201757241833,
+  "WEIGHT_DECAY": 4.568494410826185e-05,
+  "DROPOUT_RATE": 0.12316533611996566,
+  "BATCH_SIZE": 64,
+  "MAX_EPOCHS": 797,
+  "EARLY_STOPPING_PATIENCE": 68,
+  "NOISE_STD": 0.016338787249356126,
+  "TIME_SHIFT_RANGE": 6,
+  "LABEL_SMOOTHING": 0.030232520800697604,
+  "classifier": "EEGNetv4",
+  "w_small_clip_max": 6.8401143464215,
+  "lambda_mmd_base": 0.23893209652091701,
+  "gradient_clip_norm": 9.504208273970342,
+  "warmup_ratio": 0.19672731591757275
+}

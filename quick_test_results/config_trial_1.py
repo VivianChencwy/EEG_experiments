@@ -100,8 +100,8 @@ TRIAL_STOP_OFFSET_SAMPLES = int(1.0 * 128)     # 1 second after event (128 sampl
 #######################
 
 # Model and training hyperparameters
-BATCH_SIZE = 32
-MAX_EPOCHS = 500
+BATCH_SIZE = 48
+MAX_EPOCHS = 235
 
 # Dataset split ratios (must sum to ≤ 1.0)
 TRAIN_SIZE = 0.7
@@ -183,17 +183,17 @@ INPUT_WINDOW_SAMPLES = TRIAL_STOP_OFFSET_SAMPLES - TRIAL_START_OFFSET_SAMPLES  #
 N_CLASSES = 2
 
 # Training hyperparameters
-LEARNING_RATE = 0.01   # Increased for SepConv1D models to improve learning
-WEIGHT_DECAY = 1e-4     # Moderate regularization
+LEARNING_RATE = 0.025129
+WEIGHT_DECAY = 6.78e-06
 GAMMA = 0.7  # Learning rate decay factor (less aggressive)
-EARLY_STOPPING_PATIENCE = 50 # Balanced patience
-DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
+EARLY_STOPPING_PATIENCE = 97
+DROPOUT_RATE = 0.461
 
 # Data augmentation (enabled for better generalization)
 USE_DATA_AUGMENTATION = True
-NOISE_STD = 0.005       # Reduced noise
-TIME_SHIFT_RANGE = 5    # Small time shifts (in samples)
-LABEL_SMOOTHING = 0.05  # Reduced label smoothing
+NOISE_STD = 0.0107
+TIME_SHIFT_RANGE = 8
+LABEL_SMOOTHING = 0.098
 
 # Small Dataset Overfitting Prevention Configuration
 # These settings are automatically applied when using SepConv1D or when detected small sample size

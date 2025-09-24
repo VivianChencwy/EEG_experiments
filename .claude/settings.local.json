@@ -3,7 +3,10 @@
     "allow": [
       "Bash(python:*)",
       "Bash(timeout:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(chmod:*)",
+      "Bash(find:*)",
+      "Bash(nvidia-smi:*)"
     ],
     "deny": [],
     "ask": []
