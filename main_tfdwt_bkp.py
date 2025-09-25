@@ -18,7 +18,6 @@ Run: python main_tfdwt.py
 """
 
 import os
-import sys
 import math
 import logging
 import warnings
@@ -30,7 +29,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.model_selection import train_test_split
-from scipy import stats
 
 import mne
 
@@ -459,9 +457,6 @@ def run_nested_cv_tfdwt(logger: logging.Logger, channels: List[str]) -> Dict[str
     fold_acc = []
     dataset_metrics = {'P3': [], 'AVO': []}
 
-    # Detailed results for statistical testing - each fold's raw results
-    detailed_fold_results = []
-
     for repeat in range(NESTED_CV_REPEATS):
         logger.info(f"Repeat {repeat + 1}/{NESTED_CV_REPEATS}")
         cv = StratifiedKFold(n_splits=NESTED_CV_OUTER_FOLDS, shuffle=True, random_state=seeds[repeat % len(seeds)])
@@ -551,26 +546,6 @@ def run_nested_cv_tfdwt(logger: logging.Logger, channels: List[str]) -> Dict[str
             dataset_metrics['P3'].append(m_p3['accuracy'])
             dataset_metrics['AVO'].append(m_avo['accuracy'])
 
-            # Store detailed fold results for t-test analysis
-            fold_result = {
-                'repeat': repeat + 1,
-                'fold': fold_idx + 1,
-                'overall_accuracy': acc_overall,
-                'p3_accuracy': m_p3['accuracy'],
-                'avo_accuracy': m_avo['accuracy'],
-                'p3_precision': m_p3['precision'],
-                'p3_recall': m_p3['recall'],
-                'p3_f1': m_p3['f1_score'],
-                'p3_auc': m_p3['auc'],
-                'avo_precision': m_avo['precision'],
-                'avo_recall': m_avo['recall'],
-                'avo_f1': m_avo['f1_score'],
-                'avo_auc': m_avo['auc'],
-                'p3_test_size': n_p3,
-                'avo_test_size': n_avo
-            }
-            detailed_fold_results.append(fold_result)
-
     # Aggregate with CI like nested_cv
     acc_array = np.array(fold_acc, dtype=float)
     mean_acc = float(np.mean(acc_array)) if acc_array.size > 0 else 0.0
@@ -604,64 +579,18 @@ def run_nested_cv_tfdwt(logger: logging.Logger, channels: List[str]) -> Dict[str
     logger.info(f"P3 Dataset - Mean Accuracy: {mean_p3:.4f} | 95% CI: [{p3_ci[0]:.4f}, {p3_ci[1]:.4f}]")
     logger.info(f"AVO Dataset - Mean Accuracy: {mean_avo:.4f} | 95% CI: [{avo_ci[0]:.4f}, {avo_ci[1]:.4f}]")
 
-    # Calculate detailed statistics for all metrics
-    def calculate_metric_stats(metric_values, metric_name):
-        arr = np.array(metric_values, dtype=float)
-        if arr.size == 0:
-            return {f'{metric_name}_mean': 0.0, f'{metric_name}_std': 0.0,
-                   f'{metric_name}_ci_lower': 0.0, f'{metric_name}_ci_upper': 0.0}
-
-        mean_val = float(np.mean(arr))
-        std_val = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
-        n_samples = max(1, arr.size)
-        t_crit = stats.t.ppf(0.5 + 0.5 * 0.95, df=max(1, n_samples - 1))
-        margin = float(t_crit * (std_val / math.sqrt(n_samples))) if n_samples > 1 else 0.0
-
-        return {
-            f'{metric_name}_mean': mean_val,
-            f'{metric_name}_std': std_val,
-            f'{metric_name}_ci_lower': mean_val - margin,
-            f'{metric_name}_ci_upper': mean_val + margin
-        }
-
-    # Extract metrics for statistics calculation
-    metrics_data = {
-        'overall_accuracy': [r['overall_accuracy'] for r in detailed_fold_results],
-        'p3_accuracy': [r['p3_accuracy'] for r in detailed_fold_results],
-        'avo_accuracy': [r['avo_accuracy'] for r in detailed_fold_results],
-        'p3_precision': [r['p3_precision'] for r in detailed_fold_results],
-        'p3_recall': [r['p3_recall'] for r in detailed_fold_results],
-        'p3_f1': [r['p3_f1'] for r in detailed_fold_results],
-        'p3_auc': [r['p3_auc'] for r in detailed_fold_results],
-        'avo_precision': [r['avo_precision'] for r in detailed_fold_results],
-        'avo_recall': [r['avo_recall'] for r in detailed_fold_results],
-        'avo_f1': [r['avo_f1'] for r in detailed_fold_results],
-        'avo_auc': [r['avo_auc'] for r in detailed_fold_results]
+    return {
+        'mean_accuracy': mean_acc,
+        'std_accuracy': std_acc,
+        'ci_lower': ci_lower,
+        'ci_upper': ci_upper,
+        'mean_p3_accuracy': mean_p3,
+        'mean_avo_accuracy': mean_avo,
+        'p3_ci_lower': p3_ci[0],
+        'p3_ci_upper': p3_ci[1],
+        'avo_ci_lower': avo_ci[0],
+        'avo_ci_upper': avo_ci[1],
     }
-
-    # Calculate statistics for all metrics
-    results = {}
-    for metric_name, values in metrics_data.items():
-        results.update(calculate_metric_stats(values, metric_name))
-
-    # Add detailed fold results for CSV export
-    results['detailed_fold_results'] = detailed_fold_results
-
-    # Legacy compatibility
-    results.update({
-        'mean_accuracy': results['overall_accuracy_mean'],
-        'std_accuracy': results['overall_accuracy_std'],
-        'ci_lower': results['overall_accuracy_ci_lower'],
-        'ci_upper': results['overall_accuracy_ci_upper'],
-        'mean_p3_accuracy': results['p3_accuracy_mean'],
-        'mean_avo_accuracy': results['avo_accuracy_mean'],
-        'p3_ci_lower': results['p3_accuracy_ci_lower'],
-        'p3_ci_upper': results['p3_accuracy_ci_upper'],
-        'avo_ci_lower': results['avo_accuracy_ci_lower'],
-        'avo_ci_upper': results['avo_accuracy_ci_upper']
-    })
-
-    return results
 
 
 def main():
@@ -720,33 +649,7 @@ def main():
         log_section_header(logger, "Running Nested Cross-Validation with TF-DWT")
         results = run_nested_cv_tfdwt(logger, channels)
 
-        # Save detailed results to CSV for t-test analysis
-        import pandas as pd
-        import datetime
-
-        if 'detailed_fold_results' in results:
-            df = pd.DataFrame(results['detailed_fold_results'])
-            timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-            csv_filename = f'tfdwt_detailed_results_{timestamp}.csv'
-            df.to_csv(csv_filename, index=False)
-            logger.info(f"Detailed results saved to: {csv_filename}")
-            print(f"Detailed results saved to: {csv_filename}")
-
-            # Save summary statistics
-            summary_stats = {k: v for k, v in results.items() if k != 'detailed_fold_results'}
-            summary_df = pd.DataFrame([summary_stats])
-            summary_filename = f'tfdwt_summary_stats_{timestamp}.csv'
-            summary_df.to_csv(summary_filename, index=False)
-            logger.info(f"Summary statistics saved to: {summary_filename}")
-            print(f"Summary statistics saved to: {summary_filename}")
-
         print("\n--- Experiment Run Complete (TF-DWT) ---")
-        print(f"Final Results: Overall Accuracy = {results.get('mean_accuracy', 0.0):.4f}")
-        
-        # Force flush and exit cleanly
-        sys.stdout.flush()
-        sys.stderr.flush()
-        sys.exit(0)
 
     except Exception as e:
         print(f"\n--- TF-DWT Experiment Failed: {e} ---")
