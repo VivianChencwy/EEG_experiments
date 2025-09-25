@@ -428,6 +428,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             else:
                 print(f"Could not extract accuracy from output")
             print("="*80)
+            
+            # Force flush output to ensure it's visible
+            import sys
+            sys.stdout.flush()
+            sys.stderr.flush()
 
             self.logger.info(f"Trial {trial_id} completed with accuracy: {accuracy:.4f}")
 
@@ -442,6 +447,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             return -1.0, {'error': 'timeout'}
         except Exception as e:
             self.logger.error(f"Trial {trial_id} failed with exception: {e}")
+            # Force flush on error too
+            import sys
+            sys.stdout.flush()
+            sys.stderr.flush()
             return -1.0, {'error': str(e)}
 
     def _extract_accuracy_from_output(self, output: str, trial_id: int) -> float:

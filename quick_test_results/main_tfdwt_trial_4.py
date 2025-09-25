@@ -209,8 +209,8 @@ def get_symmetric_adjustments(n_train_a: int, n_train_b: int) -> Tuple[float, fl
     w_small = float(np.clip(math.sqrt(1.0 / max(ratio_ab, 1.0)), 1.0, 6.0))
     # Alignment strength by overall imbalance magnitude
     overall_ratio = max(ratio_ab, 1.0 / ratio_ab)
-    lambda_mmd = 0.312 if overall_ratio < 2.0 else (0.623 if overall_ratio < 4.0 else 0.935)
-    warmup = max(2, min(10, int(0.067 * MAX_EPOCHS)))
+    lambda_mmd = 0.101 if overall_ratio < 2.0 else (0.203 if overall_ratio < 4.0 else 0.304)
+    warmup = max(2, min(10, int(0.127 * MAX_EPOCHS)))
     return w_small, lambda_mmd, warmup
 
 
@@ -320,7 +320,7 @@ def tfdwt_train_fold(
         # Emphasize the smaller domain; keep large at 1.0 (symmetric rule)
         w_small_target = max(1.0, math.sqrt(max(1, n_large) / max(1, n_small)))
         # Cap the max emphasis ratio to avoid suppressing large domain too much
-        w_small_target = min(w_small_target, 7.8)
+        w_small_target = min(w_small_target, 2.4)
         w_large_target = 1.0
         w_small = 1.0 + alpha * (w_small_target - 1.0)
         w_large = 1.0 + alpha * (w_large_target - 1.0)

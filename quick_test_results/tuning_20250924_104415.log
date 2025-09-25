@@ -1,0 +1,102 @@
+2025-09-24 10:44:15,681 - INFO - Starting hyperparameter tuning with random strategy, 5 trials
+2025-09-24 10:44:15,681 - INFO - Starting trial 0 with params: {
+  "LEARNING_RATE": 0.0007702087684118544,
+  "WEIGHT_DECAY": 0.0017545075561992036,
+  "DROPOUT_RATE": 0.1842276140967205,
+  "BATCH_SIZE": 64,
+  "MAX_EPOCHS": 239,
+  "EARLY_STOPPING_PATIENCE": 40,
+  "NOISE_STD": 0.003211620748971475,
+  "TIME_SHIFT_RANGE": 14,
+  "LABEL_SMOOTHING": 0.12628254093917715,
+  "classifier": "SepConv1DLite",
+  "w_small_clip_max": 6.7325472806511595,
+  "lambda_mmd_base": 0.43585444162107195,
+  "gradient_clip_norm": 6.292454594948341,
+  "warmup_ratio": 0.17219465283219473
+}
+2025-09-24 10:44:15,682 - ERROR - Trial 0 failed with exception: cannot access local variable 'sys' where it is not associated with a value
+2025-09-24 10:44:15,682 - INFO - New best score: -1.0000 with params: {
+  "LEARNING_RATE": 0.0007702087684118544,
+  "WEIGHT_DECAY": 0.0017545075561992036,
+  "DROPOUT_RATE": 0.1842276140967205,
+  "BATCH_SIZE": 64,
+  "MAX_EPOCHS": 239,
+  "EARLY_STOPPING_PATIENCE": 40,
+  "NOISE_STD": 0.003211620748971475,
+  "TIME_SHIFT_RANGE": 14,
+  "LABEL_SMOOTHING": 0.12628254093917715,
+  "classifier": "SepConv1DLite",
+  "w_small_clip_max": 6.7325472806511595,
+  "lambda_mmd_base": 0.43585444162107195,
+  "gradient_clip_norm": 6.292454594948341,
+  "warmup_ratio": 0.17219465283219473
+}
+2025-09-24 10:44:15,683 - INFO - Starting trial 1 with params: {
+  "LEARNING_RATE": 0.000285545174575746,
+  "WEIGHT_DECAY": 0.008530631945270754,
+  "DROPOUT_RATE": 0.1479442712458186,
+  "BATCH_SIZE": 32,
+  "MAX_EPOCHS": 687,
+  "EARLY_STOPPING_PATIENCE": 56,
+  "NOISE_STD": 0.006130353741809796,
+  "TIME_SHIFT_RANGE": 11,
+  "LABEL_SMOOTHING": 0.15757350485219246,
+  "classifier": "EEGConformer",
+  "w_small_clip_max": 7.849305157281706,
+  "lambda_mmd_base": 0.3116272176396037,
+  "gradient_clip_norm": 2.386569227246533,
+  "warmup_ratio": 0.06667626168012611
+}
+2025-09-24 10:44:15,684 - ERROR - Trial 1 failed with exception: cannot access local variable 'sys' where it is not associated with a value
+2025-09-24 10:44:15,685 - INFO - Starting trial 2 with params: {
+  "LEARNING_RATE": 0.0006117753456297815,
+  "WEIGHT_DECAY": 0.001361501891199292,
+  "DROPOUT_RATE": 0.47831468894995555,
+  "BATCH_SIZE": 16,
+  "MAX_EPOCHS": 394,
+  "EARLY_STOPPING_PATIENCE": 62,
+  "NOISE_STD": 0.012980639940697484,
+  "TIME_SHIFT_RANGE": 8,
+  "LABEL_SMOOTHING": 0.0948832138381983,
+  "classifier": "ShallowFBCSPNet",
+  "w_small_clip_max": 3.0889402587653194,
+  "lambda_mmd_base": 0.27881207794139223,
+  "gradient_clip_norm": 1.5163096923942743,
+  "warmup_ratio": 0.05586906956556939
+}
+2025-09-24 10:44:15,685 - ERROR - Trial 2 failed with exception: cannot access local variable 'sys' where it is not associated with a value
+2025-09-24 10:44:15,686 - INFO - Starting trial 3 with params: {
+  "LEARNING_RATE": 0.022173389801645516,
+  "WEIGHT_DECAY": 1.8641796905323105e-06,
+  "DROPOUT_RATE": 0.3063602930423668,
+  "BATCH_SIZE": 16,
+  "MAX_EPOCHS": 566,
+  "EARLY_STOPPING_PATIENCE": 27,
+  "NOISE_STD": 0.014554880681703873,
+  "TIME_SHIFT_RANGE": 5,
+  "LABEL_SMOOTHING": 0.07918416773833088,
+  "classifier": "EEGConformer",
+  "w_small_clip_max": 2.6471683655310483,
+  "lambda_mmd_base": 0.24566213815843807,
+  "gradient_clip_norm": 4.589963187022957,
+  "warmup_ratio": 0.19370045241527317
+}
+2025-09-24 10:44:15,686 - ERROR - Trial 3 failed with exception: cannot access local variable 'sys' where it is not associated with a value
+2025-09-24 10:44:15,687 - INFO - Starting trial 4 with params: {
+  "LEARNING_RATE": 0.00039426195549663784,
+  "WEIGHT_DECAY": 2.4132209475973174e-06,
+  "DROPOUT_RATE": 0.36792974657491817,
+  "BATCH_SIZE": 64,
+  "MAX_EPOCHS": 603,
+  "EARLY_STOPPING_PATIENCE": 87,
+  "NOISE_STD": 0.006087062896024822,
+  "TIME_SHIFT_RANGE": 5,
+  "LABEL_SMOOTHING": 0.008562658740344675,
+  "classifier": "EEGConformer",
+  "w_small_clip_max": 2.42232594163839,
+  "lambda_mmd_base": 0.10137880069037536,
+  "gradient_clip_norm": 2.35679880243715,
+  "warmup_ratio": 0.12655607437048322
+}
+2025-09-24 10:44:15,688 - ERROR - Trial 4 failed with exception: cannot access local variable 'sys' where it is not associated with a value

@@ -160,6 +160,42 @@ class NestedCrossValidation:
         # Compile final results with confidence intervals
         final_results = self._compile_final_results(all_repeat_results, model_name)
 
+        # Add detailed fold results for CSV export (similar to main_tfdwt.py)
+        detailed_fold_results = []
+        for repeat_idx, repeat_result in enumerate(all_repeat_results):
+            for fold_result in repeat_result['fold_results']:
+                fold_idx = fold_result['fold']
+                metrics = fold_result['test_metrics']
+
+                # Extract dataset-specific metrics
+                p3_metrics = metrics.get('dataset_metrics', {}).get('P3', {
+                    'accuracy': 0.0, 'precision': 0.0, 'recall': 0.0, 'f1_score': 0.0, 'auc': 0.5, 'n_samples': 0
+                })
+                avo_metrics = metrics.get('dataset_metrics', {}).get('AVO', {
+                    'accuracy': 0.0, 'precision': 0.0, 'recall': 0.0, 'f1_score': 0.0, 'auc': 0.5, 'n_samples': 0
+                })
+
+                fold_detail = {
+                    'repeat': repeat_idx + 1,
+                    'fold': fold_idx + 1,
+                    'overall_accuracy': metrics['accuracy'],
+                    'p3_accuracy': p3_metrics['accuracy'],
+                    'avo_accuracy': avo_metrics['accuracy'],
+                    'p3_precision': p3_metrics['precision'],
+                    'p3_recall': p3_metrics['recall'],
+                    'p3_f1': p3_metrics['f1_score'],
+                    'p3_auc': p3_metrics['auc'],
+                    'avo_precision': avo_metrics['precision'],
+                    'avo_recall': avo_metrics['recall'],
+                    'avo_f1': avo_metrics['f1_score'],
+                    'avo_auc': avo_metrics['auc'],
+                    'p3_test_size': p3_metrics['n_samples'],
+                    'avo_test_size': avo_metrics['n_samples']
+                }
+                detailed_fold_results.append(fold_detail)
+
+        final_results['detailed_fold_results'] = detailed_fold_results
+
         self.logger.info(f"Cross-Validation completed for {model_name}")
         self.logger.info(f"Final accuracy: {final_results['mean_accuracy']:.4f} ± {final_results['std_accuracy']:.4f}")
         self.logger.info(f"95% CI: [{final_results['ci_lower']:.4f}, {final_results['ci_upper']:.4f}]")
