@@ -86,7 +86,31 @@ def main():
             dataset_name = "AVO"
         else:
             dataset_name = "ConfigurableExperiments"
-        
+
+        # Save detailed CSV results for t-test analysis (similar to main_tfdwt.py)
+        def save_csv_results(results_data, experiment_name):
+            import pandas as pd
+            import datetime
+
+            if 'detailed_fold_results' in results_data:
+                df = pd.DataFrame(results_data['detailed_fold_results'])
+                timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+                csv_filename = f'{experiment_name}_detailed_results_{timestamp}.csv'
+                df.to_csv(csv_filename, index=False)
+                logger.info(f"Detailed results saved to: {csv_filename}")
+                print(f"Detailed results saved to: {csv_filename}")
+
+                # Save summary statistics
+                summary_stats = {k: v for k, v in results_data.items() if k != 'detailed_fold_results'}
+                summary_df = pd.DataFrame([summary_stats])
+                summary_filename = f'{experiment_name}_summary_stats_{timestamp}.csv'
+                summary_df.to_csv(summary_filename, index=False)
+                logger.info(f"Summary statistics saved to: {summary_filename}")
+                print(f"Summary statistics saved to: {summary_filename}")
+            else:
+                logger.warning("No detailed fold results found for CSV export")
+                print("Warning: No detailed fold results found for CSV export")
+
         # Results will be saved in the log directory
         log_dir = './log_0908'
         
@@ -155,28 +179,6 @@ def main():
                     classifier=classifier,
                     seeds=seeds
                 )
-            
-            # Save detailed CSV results for t-test analysis (similar to main_tfdwt.py)
-            def save_csv_results(results_data, experiment_name):
-                import pandas as pd
-                import datetime
-
-                if 'detailed_fold_results' in results_data:
-                    df = pd.DataFrame(results_data['detailed_fold_results'])
-                    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-                    csv_filename = f'{experiment_name}_detailed_results_{timestamp}.csv'
-                    df.to_csv(csv_filename, index=False)
-                    logger.info(f"Detailed results saved to: {csv_filename}")
-                    print(f"Detailed results saved to: {csv_filename}")
-
-                    # Save summary statistics
-                    summary_stats = {k: v for k, v in results_data.items() if k != 'detailed_fold_results'}
-                    summary_df = pd.DataFrame([summary_stats])
-                    summary_filename = f'{experiment_name}_summary_stats_{timestamp}.csv'
-                    summary_df.to_csv(summary_filename, index=False)
-                    logger.info(f"Summary statistics saved to: {summary_filename}")
-                    print(f"Summary statistics saved to: {summary_filename}")
-
             # Handle variable return values based on experiment type
             if ELECTRODE_FUSION_METHOD != 'none' or DOMAIN_ADAPTATION_METHOD != 'none':
                 # 处理融合实验结果（字典格式）

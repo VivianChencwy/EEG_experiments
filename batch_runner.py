@@ -188,51 +188,51 @@ def main():
                 'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
             },
         ),
-        (
-            'main_combined_P3_200_AVO_20',
-            'main.py',
-            {
-                'use_combined_datasets': True,
-                'data_dir': 'P3_DATA_DIR',
-                'dataset': 'use_combined_datasets',
-                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 200,
-                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
-            },
-        ),
-        (
-            'main_combined_P3_20_AVO_200',
-            'main.py',
-            {
-                'use_combined_datasets': True,
-                'data_dir': 'P3_DATA_DIR',
-                'dataset': 'use_combined_datasets',
-                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 20,
-                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 200,
-            },
-        ),
-        # main_tfdwt.py (2 runs)
-        (
-            'tfdwt_combined_P3_200_AVO_20',
-            'main_tfdwt.py',
-            {
-                'use_combined_datasets': True,
-                'data_dir': 'P3_DATA_DIR',
-                'dataset': 'use_combined_datasets',
-                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 200,
-                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
-            },
-        ),
-        (
-            'tfdwt_combined_P3_20_AVO_200',
-            'main_tfdwt.py',
-            {
-                'use_combined_datasets': True,
-                'data_dir': 'P3_DATA_DIR',
-                'dataset': 'use_combined_datasets',
-                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 20,
-                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 200,
-            },
-        ),
+        # (
+        #     'main_combined_P3_200_AVO_20',
+        #     'main.py',
+        #     {
+        #         'use_combined_datasets': True,
+        #         'data_dir': 'P3_DATA_DIR',
+        #         'dataset': 'use_combined_datasets',
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 200,
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
+        #     },
+        # ),
+        # (
+        #     'main_combined_P3_20_AVO_200',
+        #     'main.py',
+        #     {
+        #         'use_combined_datasets': True,
+        #         'data_dir': 'P3_DATA_DIR',
+        #         'dataset': 'use_combined_datasets',
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 20,
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 200,
+        #     },
+        # ),
+        # # main_tfdwt.py (2 runs)
+        # (
+        #     'tfdwt_combined_P3_200_AVO_20',
+        #     'main_tfdwt.py',
+        #     {
+        #         'use_combined_datasets': True,
+        #         'data_dir': 'P3_DATA_DIR',
+        #         'dataset': 'use_combined_datasets',
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 200,
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
+        #     },
+        # ),
+        # (
+        #     'tfdwt_combined_P3_20_AVO_200',
+        #     'main_tfdwt.py',
+        #     {
+        #         'use_combined_datasets': True,
+        #         'data_dir': 'P3_DATA_DIR',
+        #         'dataset': 'use_combined_datasets',
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 20,
+        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 200,
+        #     },
+        # ),
     ]
 
     failures = 0
