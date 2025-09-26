@@ -100,7 +100,7 @@ TRIAL_STOP_OFFSET_SAMPLES = int(1.0 * 128)     # 1 second after event (128 sampl
 #######################
 
 # Model and training hyperparameters
-BATCH_SIZE = 32
+BATCH_SIZE = 128
 MAX_EPOCHS = 500
 
 # Dataset split ratios (must sum to ≤ 1.0)
@@ -186,7 +186,7 @@ N_CLASSES = 2
 LEARNING_RATE = 0.01   # Increased for SepConv1D models to improve learning
 WEIGHT_DECAY = 1e-4     # Moderate regularization
 GAMMA = 0.7  # Learning rate decay factor (less aggressive)
-EARLY_STOPPING_PATIENCE = 50 # Balanced patience
+EARLY_STOPPING_PATIENCE = 10 # Balanced patience
 DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
 
 # Data augmentation (enabled for better generalization)
@@ -204,7 +204,7 @@ ENABLE_SMALL_DATASET_PROTECTIONS = False # Enable automatic overfitting preventi
 SMALL_DATASET_DROPOUT_RATE = 0.2       # Lower dropout for small datasets (vs 0.3 default)
 SMALL_DATASET_LEARNING_RATE = 0.01    # Higher initial learning rate
 SMALL_DATASET_WEIGHT_DECAY = 1e-4      # Stronger L2 regularization  
-SMALL_DATASET_EARLY_STOPPING_PATIENCE = 20  # Lower patience to avoid overfitting
+SMALL_DATASET_EARLY_STOPPING_PATIENCE = 10  # Lower patience to avoid overfitting
 SMALL_DATASET_MAX_EPOCHS = 300          # Fewer max epochs
 SMALL_DATASET_BATCH_SIZE = 16           # Smaller batch size for better gradient estimates
 

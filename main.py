@@ -44,6 +44,29 @@ logging.getLogger('joblib').setLevel(logging.ERROR)
 warnings.filterwarnings('ignore')
 
 
+def save_csv_results(results_data, experiment_name, logger=None):
+    import pandas as pd
+    import datetime
+
+    if 'detailed_fold_results' in results_data:
+        df = pd.DataFrame(results_data['detailed_fold_results'])
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        csv_filename = f'{experiment_name}_detailed_results_{timestamp}.csv'
+        df.to_csv(csv_filename, index=False)
+        if logger:
+            logger.info(f"Detailed results saved to: {csv_filename}")
+        print(f"Detailed results saved to: {csv_filename}")
+
+        # Save summary statistics
+        summary_stats = {k: v for k, v in results_data.items() if k != 'detailed_fold_results'}
+        summary_df = pd.DataFrame([summary_stats])
+        summary_filename = f'{experiment_name}_summary_stats_{timestamp}.csv'
+        summary_df.to_csv(summary_filename, index=False)
+        if logger:
+            logger.info(f"Summary statistics saved to: {summary_filename}")
+        print(f"Summary statistics saved to: {summary_filename}")
+
+
 def main():
     # Reload config to get dynamic values from batch_runner
     import importlib.util
@@ -156,27 +179,6 @@ def main():
                     seeds=seeds
                 )
             
-            # Save detailed CSV results for t-test analysis (similar to main_tfdwt.py)
-            def save_csv_results(results_data, experiment_name):
-                import pandas as pd
-                import datetime
-
-                if 'detailed_fold_results' in results_data:
-                    df = pd.DataFrame(results_data['detailed_fold_results'])
-                    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-                    csv_filename = f'{experiment_name}_detailed_results_{timestamp}.csv'
-                    df.to_csv(csv_filename, index=False)
-                    logger.info(f"Detailed results saved to: {csv_filename}")
-                    print(f"Detailed results saved to: {csv_filename}")
-
-                    # Save summary statistics
-                    summary_stats = {k: v for k, v in results_data.items() if k != 'detailed_fold_results'}
-                    summary_df = pd.DataFrame([summary_stats])
-                    summary_filename = f'{experiment_name}_summary_stats_{timestamp}.csv'
-                    summary_df.to_csv(summary_filename, index=False)
-                    logger.info(f"Summary statistics saved to: {summary_filename}")
-                    print(f"Summary statistics saved to: {summary_filename}")
-
             # Handle variable return values based on experiment type
             if ELECTRODE_FUSION_METHOD != 'none' or DOMAIN_ADAPTATION_METHOD != 'none':
                 # 处理融合实验结果（字典格式）
@@ -235,7 +237,7 @@ def main():
 
                     # Save CSV results for t-test analysis
                     if nested_results is not None and isinstance(nested_results, dict):
-                        save_csv_results(nested_results, 'main_combined')
+                        save_csv_results(nested_results, 'main_combined', logger)
 
                     # Check if dataset-specific results are available from nested CV
                     if nested_results is not None and isinstance(nested_results, dict) and 'dataset_specific_results' in nested_results:
@@ -358,7 +360,7 @@ def main():
                     if len(results) == 6 and results[5] is not None:  # nested_results is available
                         nested_results_p3 = results[5]
                         if isinstance(nested_results_p3, dict):
-                            save_csv_results(nested_results_p3, 'main_P3')
+                            save_csv_results(nested_results_p3, 'main_P3', logger)
 
         elif 'ds005863' in config.dataset:
             log_section_header(logger, "Processing Active Visual Oddball Dataset")
@@ -414,7 +416,7 @@ def main():
                     if len(results) == 6 and results[5] is not None:  # nested_results is available
                         nested_results_avo = results[5]
                         if isinstance(nested_results_avo, dict):
-                            save_csv_results(nested_results_avo, 'main_AVO')
+                            save_csv_results(nested_results_avo, 'main_AVO', logger)
 
         print("\n--- Experiment Run Complete ---")
         

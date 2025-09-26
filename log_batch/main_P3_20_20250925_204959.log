@@ -1,0 +1,3622 @@
+2025-09-25 20:50:03 - 
+Experiment Configuration:
+2025-09-25 20:50:03 - --------------------------------------------------
+2025-09-25 20:50:03 - dataset: P3 Raw Data BIDS-Compatible
+2025-09-25 20:50:03 - use_combined_datasets: False
+2025-09-25 20:50:03 - electrode_list: all
+2025-09-25 20:50:03 - classifier: EEGConformer
+2025-09-25 20:50:03 - separate_subject_classification: False
+2025-09-25 20:50:03 - use_subject_layer: False
+2025-09-25 20:50:03 - seeds: [42, 123, 456, 789, 321]
+2025-09-25 20:50:03 - use_nested_cv: True
+2025-09-25 20:50:03 - electrode_fusion_method: none
+2025-09-25 20:50:03 - domain_adaptation_method: none
+2025-09-25 20:50:03 - enable_comprehensive_evaluation: True
+2025-09-25 20:50:03 - enable_domain_analysis: True
+2025-09-25 20:50:03 - enable_small_sample_analysis: False
+2025-09-25 20:50:03 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-25 20:50:03 - small_sample_subjects: [5, 10, 15]
+2025-09-25 20:50:03 - --------------------------------------------------
+2025-09-25 20:50:03 - 
+==================================================
+2025-09-25 20:50:03 - Processing P3 Dataset
+2025-09-25 20:50:03 - ==================================================
+2025-09-25 20:50:03 - Using Cross-Validation (simplified approach)
+2025-09-25 20:50:03 - Configuration: 5-fold CV, 5 repeats
+2025-09-25 20:50:03 - ============================================================
+2025-09-25 20:50:03 - CROSS-VALIDATION CONFIGURATION
+2025-09-25 20:50:03 - ============================================================
+2025-09-25 20:50:03 - Datasets: ['P3']
+2025-09-25 20:50:03 - CV folds: 5
+2025-09-25 20:50:03 - Repeats: 5
+2025-09-25 20:50:03 - Confidence level: 0.95
+2025-09-25 20:50:03 - ============================================================
+2025-09-25 20:50:03 - STRATIFIED SAMPLING CONFIGURATION
+2025-09-25 20:50:03 - ============================================================
+2025-09-25 20:50:03 - Nested CV Mode: Trial counts per subject by dataset
+2025-09-25 20:50:03 -   P3 dataset: 20 trials per subject
+2025-09-25 20:50:03 - Sampling strategy: Multi-level stratified sampling
+2025-09-25 20:50:03 -   - Subject-level: Stratified trial selection per subject
+2025-09-25 20:50:03 -   - Dataset-level: Stratified sampling when dataset trial counts differ
+2025-09-25 20:50:03 -   - Fold-level: StratifiedKFold for 5-fold CV
+2025-09-25 20:50:03 -   - Train/Val split: Stratified train_test_split within each fold
+2025-09-25 20:50:03 - ============================================================
+2025-09-25 20:50:03 - Subject sub-001: Sampled 20/80 trials
+2025-09-25 20:50:03 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:03 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:04 - Subject sub-002: Sampled 20/80 trials
+2025-09-25 20:50:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:04 - Subject sub-003: Sampled 20/80 trials
+2025-09-25 20:50:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:04 - Subject sub-004: Sampled 20/78 trials
+2025-09-25 20:50:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 - Subject sub-005: Sampled 20/80 trials
+2025-09-25 20:50:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 - Subject sub-006: Sampled 20/80 trials
+2025-09-25 20:50:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 - Subject sub-007: Sampled 20/80 trials
+2025-09-25 20:50:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 - Subject sub-008: Sampled 20/80 trials
+2025-09-25 20:50:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 - Subject sub-009: Sampled 20/80 trials
+2025-09-25 20:50:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 - Subject sub-010: Sampled 20/80 trials
+2025-09-25 20:50:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 - Subject sub-011: Sampled 20/80 trials
+2025-09-25 20:50:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 - Subject sub-012: Sampled 20/78 trials
+2025-09-25 20:50:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 - Subject sub-013: Sampled 20/80 trials
+2025-09-25 20:50:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 - Subject sub-014: Sampled 20/80 trials
+2025-09-25 20:50:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 - Subject sub-015: Sampled 20/80 trials
+2025-09-25 20:50:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 - Subject sub-016: Sampled 20/80 trials
+2025-09-25 20:50:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 - Subject sub-017: Sampled 20/80 trials
+2025-09-25 20:50:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 - Subject sub-018: Sampled 20/80 trials
+2025-09-25 20:50:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 - Subject sub-019: Sampled 20/80 trials
+2025-09-25 20:50:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 - Subject sub-020: Sampled 20/78 trials
+2025-09-25 20:50:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 - Subject sub-021: Sampled 20/80 trials
+2025-09-25 20:50:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 - Subject sub-022: Sampled 20/80 trials
+2025-09-25 20:50:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 - Subject sub-023: Sampled 20/78 trials
+2025-09-25 20:50:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 - Subject sub-024: Sampled 20/80 trials
+2025-09-25 20:50:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:10 - Subject sub-025: Sampled 20/80 trials
+2025-09-25 20:50:10 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:10 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:10 - Subject sub-026: Sampled 20/80 trials
+2025-09-25 20:50:10 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:10 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:10 - Subject sub-027: Sampled 20/80 trials
+2025-09-25 20:50:10 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:10 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:11 - Subject sub-028: Sampled 20/80 trials
+2025-09-25 20:50:11 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:11 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:11 - Subject sub-029: Sampled 20/80 trials
+2025-09-25 20:50:11 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:11 -   Sampled distribution: {0: 0.5, 1: 0.5}
+Using Enhanced Preprocessor with advanced features:
+  - Artifact removal (ICA): True
+  - Baseline correction: True
+  - Frequency features: True
+  - Notch filter: True
+Starting enhanced preprocessing...
+Checking cache for: sub-001_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-001 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-002_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-002 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-003_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-003 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-004_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-004 (P3): 78 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-005_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-005 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-006_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-006 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-007_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-007 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-008_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-008 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-009_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-009 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-010_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-010 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-011_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-011 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-012_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-012 (P3): 78 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-013_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-013 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-014_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-014 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-015_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-015 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-016_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-016 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-017_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-017 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-018_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-018 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-019_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-019 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-020_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-020 (P3): 78 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-021_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-021 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-022_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-022 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-023_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-023 (P3): 78 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-024_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-024 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-025_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-025 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-026_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-026 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-027_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-027 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-028_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-028 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-029_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-029 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-030_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-030 (P3): 80 total trials available2025-09-25 20:50:11 - Subject sub-030: Sampled 20/80 trials
+2025-09-25 20:50:11 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:11 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:11 - Subject sub-031: Sampled 20/80 trials
+2025-09-25 20:50:11 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:11 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 - Subject sub-032: Sampled 20/80 trials
+2025-09-25 20:50:12 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 - Subject sub-033: Sampled 20/80 trials
+2025-09-25 20:50:12 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 - Subject sub-034: Sampled 20/80 trials
+2025-09-25 20:50:12 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 - Subject sub-035: Sampled 20/78 trials
+2025-09-25 20:50:12 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:12 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 - Subject sub-036: Sampled 20/80 trials
+2025-09-25 20:50:13 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 - Subject sub-037: Sampled 20/78 trials
+2025-09-25 20:50:13 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 - Subject sub-038: Sampled 20/80 trials
+2025-09-25 20:50:13 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 - Subject sub-039: Sampled 20/80 trials
+2025-09-25 20:50:13 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:13 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:14 - Subject sub-040: Sampled 20/80 trials
+2025-09-25 20:50:14 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:14 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-25 20:50:14 - Nested CV dataset summary:
+2025-09-25 20:50:14 -   Total subjects: 40
+2025-09-25 20:50:14 -   Total trials: 800
+2025-09-25 20:50:14 -   Average trials per subject: 20.0
+2025-09-25 20:50:14 -   P3 dataset: 0 subjects, 800 trials (inf trials/subject)
+2025-09-25 20:50:14 -   Class distribution: {0: 400, 1: 400}
+2025-09-25 20:50:14 -   Class proportions: [0.5 0.5]
+2025-09-25 20:50:14 - Enhanced preprocessing increased channels from 8 to 40
+2025-09-25 20:50:14 - Starting Cross-Validation for EEGConformer
+2025-09-25 20:50:14 - Configuration: 5-fold CV, 5 repeats
+2025-09-25 20:50:14 - Data split ratios: Train=0.7, Val=0.1, Test=0.2
+2025-09-25 20:50:14 - Repeat 1/5
+2025-09-25 20:50:14 -   Fold 1/5
+2025-09-25 20:50:14 -     Fold split: Train=560, Val=80
+
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-031_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-031 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-032_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-032 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-033_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-033 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-034_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-034 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-035_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-035 (P3): 78 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-036_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-036 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-037_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-037 (P3): 78 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-038_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-038 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-039_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-039 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Starting enhanced preprocessing...
+Checking cache for: sub-040_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-040 (P3): 80 total trials available
+  Performing stratified sampling: 20 trials
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.9969 | Train Acc: 47.32%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7052 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6930 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6961 | Train Acc: 49.11%
+  Val Acc: 55.00% | LR: 0.009999
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6931 | Train Acc: 51.79%
+  Val Acc: 52.50% | LR: 0.009998
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6905 | Train Acc: 52.50%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6864 | Train Acc: 54.29%
+  Val Acc: 57.50% | LR: 0.009996
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 58.04%
+  Val Acc: 61.25% | LR: 0.009995
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6834 | Train Acc: 60.54%
+  Val Acc: 61.25% | LR: 0.009994
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6847 | Train Acc: 58.57%
+  Val Acc: 63.75% | LR: 0.009992
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6724 | Train Acc: 60.18%
+  Val Acc: 58.75% | LR: 0.009990
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  12/500 Summary:
+  Train Loss: 0.6814 | Train Acc: 57.50%
+  Val Acc: 68.75% | LR: 0.009988
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  13/500 Summary:
+  Train Loss: 0.6657 | Train Acc: 62.14%
+  Val Acc: 62.50% | LR: 0.009986
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  14/500 Summary:
+  Train Loss: 0.6625 | Train Acc: 61.79%
+  Val Acc: 62.50% | LR: 0.009983
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  15/500 Summary:
+  Train Loss: 0.6590 | Train Acc: 63.39%
+  Val Acc: 61.25% | LR: 0.009981
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  16/500 Summary:
+  Train Loss: 0.6648 | Train Acc: 60.54%
+  Val Acc: 62.50% | LR: 0.009978
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  17/500 Summary:
+  Train Loss: 0.6575 | Train Acc: 62.68%
+  Val Acc: 62.50% | LR: 0.009975
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  18/500 Summary:
+  Train Loss: 0.6449 | Train Acc: 63.39%
+  Val Acc: 60.00% | LR: 0.009972
+Patience remaining: 4/10
+  --------------------------------------------------2025-09-25 20:50:17 -     Test accuracy: 0.6375
+2025-09-25 20:50:17 -   Fold 2/5
+2025-09-25 20:50:17 -     Fold split: Train=560, Val=80
+2025-09-25 20:50:18 -     Test accuracy: 0.5000
+2025-09-25 20:50:18 -   Fold 3/5
+2025-09-25 20:50:18 -     Fold split: Train=560, Val=80
+
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  19/500 Summary:
+  Train Loss: 0.6564 | Train Acc: 61.61%
+  Val Acc: 60.00% | LR: 0.009968
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  20/500 Summary:
+  Train Loss: 0.6441 | Train Acc: 64.46%
+  Val Acc: 63.75% | LR: 0.009964
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  21/500 Summary:
+  Train Loss: 0.6418 | Train Acc: 65.36%
+  Val Acc: 62.50% | LR: 0.009961
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  22/500 Summary:
+  Train Loss: 0.6323 | Train Acc: 65.89%
+  Val Acc: 63.75% | LR: 0.009957
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 68.75%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 68.75%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0775 | Train Acc: 48.57%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7282 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7116 | Train Acc: 43.57%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7017 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.7003 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6972 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6947 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6929 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6936 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.1166 | Train Acc: 53.21%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7310 | Train Acc: 50.54%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6957 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6947 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6952 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6961 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6936 | Train Acc: 47.86%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6921 | Train Acc: 52.86%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6928 | Train Acc: 50.54%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6940 | Train Acc: 48.93%2025-09-25 20:50:20 -     Test accuracy: 0.5000
+2025-09-25 20:50:20 -   Fold 4/5
+2025-09-25 20:50:20 -     Fold split: Train=560, Val=80
+2025-09-25 20:50:22 -     Test accuracy: 0.5000
+2025-09-25 20:50:22 -   Fold 5/5
+2025-09-25 20:50:22 -     Fold split: Train=560, Val=80
+
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6952 | Train Acc: 49.46%
+  Val Acc: 56.25% | LR: 0.009990
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  12/500 Summary:
+  Train Loss: 0.6944 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009988
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  13/500 Summary:
+  Train Loss: 0.6929 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.009986
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  14/500 Summary:
+  Train Loss: 0.6932 | Train Acc: 49.11%
+  Val Acc: 50.00% | LR: 0.009983
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  15/500 Summary:
+  Train Loss: 0.6927 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009981
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  16/500 Summary:
+  Train Loss: 0.6932 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.009978
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  17/500 Summary:
+  Train Loss: 0.6938 | Train Acc: 48.75%
+  Val Acc: 50.00% | LR: 0.009975
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  18/500 Summary:
+  Train Loss: 0.6942 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009972
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  19/500 Summary:
+  Train Loss: 0.6913 | Train Acc: 54.11%
+  Val Acc: 50.00% | LR: 0.009968
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  20/500 Summary:
+  Train Loss: 0.6936 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009964
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  21/500 Summary:
+  Train Loss: 0.6921 | Train Acc: 53.39%
+  Val Acc: 50.00% | LR: 0.009961
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 56.25%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 56.25%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.8866 | Train Acc: 50.54%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.6996 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6942 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6932 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6959 | Train Acc: 47.32%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6981 | Train Acc: 47.86%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6957 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6981 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6906 | Train Acc: 53.39%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.8887 | Train Acc: 50.54%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.6956 | Train Acc: 51.96%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets2025-09-25 20:50:23 -     Test accuracy: 0.5062
+2025-09-25 20:50:23 -   Repeat 1 mean accuracy: 0.5288 ± 0.0544
+2025-09-25 20:50:23 - Repeat 2/5
+2025-09-25 20:50:23 -   Fold 1/5
+2025-09-25 20:50:23 -     Fold split: Train=560, Val=80
+2025-09-25 20:50:24 -     Test accuracy: 0.4875
+2025-09-25 20:50:24 -   Fold 2/5
+2025-09-25 20:50:24 -     Fold split: Train=560, Val=80
+
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7034 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6984 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6975 | Train Acc: 52.86%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6959 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6937 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6971 | Train Acc: 48.75%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6953 | Train Acc: 51.79%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6925 | Train Acc: 54.29%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6922 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0188 | Train Acc: 47.32%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7032 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7028 | Train Acc: 47.32%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6912 | Train Acc: 54.11%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6909 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6898 | Train Acc: 53.04%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.7009 | Train Acc: 43.75%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6956 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6951 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6940 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.9471 | Train Acc: 46.07%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7094 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7009 | Train Acc: 52.68%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6987 | Train Acc: 48.04%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6970 | Train Acc: 50.36%
+  Val Acc: 51.25% | LR: 0.009998
+New best validation accuracy!2025-09-25 20:50:26 -     Test accuracy: 0.5000
+2025-09-25 20:50:26 -   Fold 3/5
+2025-09-25 20:50:26 -     Fold split: Train=560, Val=80
+2025-09-25 20:50:27 -     Test accuracy: 0.5000
+2025-09-25 20:50:27 -   Fold 4/5
+2025-09-25 20:50:27 -     Fold split: Train=560, Val=80
+
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6932 | Train Acc: 51.07%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6913 | Train Acc: 50.36%
+  Val Acc: 51.25% | LR: 0.009995
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.7032 | Train Acc: 50.36%
+  Val Acc: 51.25% | LR: 0.009994
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6955 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6958 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009990
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  12/500 Summary:
+  Train Loss: 0.6945 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009988
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  13/500 Summary:
+  Train Loss: 0.6926 | Train Acc: 53.21%
+  Val Acc: 51.25% | LR: 0.009986
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  14/500 Summary:
+  Train Loss: 0.6944 | Train Acc: 47.14%
+  Val Acc: 50.00% | LR: 0.009983
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  15/500 Summary:
+  Train Loss: 0.6938 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009981
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 51.25%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 51.25%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.8688 | Train Acc: 53.04%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.6998 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7032 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6977 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6948 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6981 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6964 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6947 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6977 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6974 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6921 | Train Acc: 52.14%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0564 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7532 | Train Acc: 47.86%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6923 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:2025-09-25 20:50:29 -     Test accuracy: 0.5000
+2025-09-25 20:50:29 -   Fold 5/5
+2025-09-25 20:50:29 -     Fold split: Train=560, Val=80
+2025-09-25 20:50:30 -     Test accuracy: 0.5000
+2025-09-25 20:50:30 -   Repeat 2 mean accuracy: 0.4975 ± 0.0050
+2025-09-25 20:50:30 - Repeat 3/5
+2025-09-25 20:50:30 -   Fold 1/5
+2025-09-25 20:50:30 -     Fold split: Train=560, Val=80
+
+  Train Loss: 0.7062 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6987 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6946 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6970 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6966 | Train Acc: 52.50%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6980 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6987 | Train Acc: 48.75%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.1583 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7572 | Train Acc: 47.50%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7046 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6970 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6933 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6939 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6946 | Train Acc: 48.04%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6946 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6929 | Train Acc: 52.14%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6953 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.9375 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7139 | Train Acc: 48.04%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6994 | Train Acc: 46.61%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6983 | Train Acc: 48.57%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6932 | Train Acc: 49.11%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets2025-09-25 20:50:37 -     Test accuracy: 0.5000
+2025-09-25 20:50:37 -   Fold 2/5
+2025-09-25 20:50:37 -     Fold split: Train=560, Val=80
+2025-09-25 20:50:48 -     Test accuracy: 0.5000
+2025-09-25 20:50:48 -   Fold 3/5
+2025-09-25 20:50:48 -     Fold split: Train=560, Val=80
+
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6958 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6943 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6955 | Train Acc: 44.64%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6940 | Train Acc: 45.71%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6930 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0093 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7312 | Train Acc: 50.54%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7093 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6989 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6956 | Train Acc: 47.50%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6957 | Train Acc: 48.21%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.7002 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6959 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6912 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6986 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6968 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0319 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7226 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7085 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7007 | Train Acc: 48.39%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6979 | Train Acc: 51.07%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6930 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6953 | Train Acc: 48.39%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6964 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 51.96%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/102025-09-25 20:51:00 -     Test accuracy: 0.5000
+2025-09-25 20:51:00 -   Fold 4/5
+2025-09-25 20:51:00 -     Fold split: Train=560, Val=80
+2025-09-25 20:51:12 -     Test accuracy: 0.5000
+2025-09-25 20:51:12 -   Fold 5/5
+2025-09-25 20:51:12 -     Fold split: Train=560, Val=80
+
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6974 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6913 | Train Acc: 54.11%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.9066 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7374 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7119 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6986 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6968 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6909 | Train Acc: 53.39%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6989 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6966 | Train Acc: 46.96%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6976 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6939 | Train Acc: 52.68%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.9309 | Train Acc: 48.21%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7013 | Train Acc: 48.75%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6985 | Train Acc: 46.79%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6944 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6938 | Train Acc: 50.00%
+  Val Acc: 51.25% | LR: 0.009998
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6946 | Train Acc: 48.57%
+  Val Acc: 51.25% | LR: 0.009998
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.7010 | Train Acc: 48.75%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6926 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 50.36%
+  Val Acc: 61.25% | LR: 0.009994
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6908 | Train Acc: 51.61%
+  Val Acc: 52.50% | LR: 0.009992
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6800 | Train Acc: 58.93%
+  Val Acc: 62.50% | LR: 0.009990
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]2025-09-25 20:51:45 -     Test accuracy: 0.6188
+2025-09-25 20:51:45 -   Repeat 3 mean accuracy: 0.5237 ± 0.0475
+2025-09-25 20:51:45 - Repeat 4/5
+2025-09-25 20:51:45 -   Fold 1/5
+2025-09-25 20:51:45 -     Fold split: Train=560, Val=80
+
+
+Epoch  12/500 Summary:
+  Train Loss: 0.6776 | Train Acc: 58.21%
+  Val Acc: 56.25% | LR: 0.009988
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  13/500 Summary:
+  Train Loss: 0.6702 | Train Acc: 58.21%
+  Val Acc: 60.00% | LR: 0.009986
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  14/500 Summary:
+  Train Loss: 0.6628 | Train Acc: 62.14%
+  Val Acc: 60.00% | LR: 0.009983
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  15/500 Summary:
+  Train Loss: 0.6539 | Train Acc: 60.89%
+  Val Acc: 60.00% | LR: 0.009981
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  16/500 Summary:
+  Train Loss: 0.6464 | Train Acc: 63.39%
+  Val Acc: 58.75% | LR: 0.009978
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  17/500 Summary:
+  Train Loss: 0.6393 | Train Acc: 64.82%
+  Val Acc: 63.75% | LR: 0.009975
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  18/500 Summary:
+  Train Loss: 0.6404 | Train Acc: 65.36%
+  Val Acc: 62.50% | LR: 0.009972
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  19/500 Summary:
+  Train Loss: 0.6427 | Train Acc: 65.00%
+  Val Acc: 60.00% | LR: 0.009968
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  20/500 Summary:
+  Train Loss: 0.6311 | Train Acc: 65.54%
+  Val Acc: 61.25% | LR: 0.009964
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  21/500 Summary:
+  Train Loss: 0.6369 | Train Acc: 64.29%
+  Val Acc: 61.25% | LR: 0.009961
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  22/500 Summary:
+  Train Loss: 0.6537 | Train Acc: 63.75%
+  Val Acc: 61.25% | LR: 0.009957
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  23/500 Summary:
+  Train Loss: 0.6138 | Train Acc: 68.57%
+  Val Acc: 65.00% | LR: 0.009952
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  24/500 Summary:
+  Train Loss: 0.6097 | Train Acc: 67.86%
+  Val Acc: 61.25% | LR: 0.009948
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  25/500 Summary:
+  Train Loss: 0.6065 | Train Acc: 67.68%
+  Val Acc: 61.25% | LR: 0.009943
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  26/500 Summary:
+  Train Loss: 0.5897 | Train Acc: 70.36%
+  Val Acc: 61.25% | LR: 0.009938
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  27/500 Summary:
+  Train Loss: 0.5962 | Train Acc: 69.46%
+  Val Acc: 58.75% | LR: 0.009933
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  28/500 Summary:
+  Train Loss: 0.5794 | Train Acc: 70.18%
+  Val Acc: 63.75% | LR: 0.009928
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  29/500 Summary:
+  Train Loss: 0.5686 | Train Acc: 72.14%
+  Val Acc: 63.75% | LR: 0.009923
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  30/500 Summary:
+  Train Loss: 0.6224 | Train Acc: 67.50%
+  Val Acc: 62.50% | LR: 0.009917
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  31/500 Summary:
+  Train Loss: 0.5731 | Train Acc: 73.04%
+  Val Acc: 62.50% | LR: 0.009911
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  32/500 Summary:
+  Train Loss: 0.5573 | Train Acc: 71.43%
+  Val Acc: 62.50% | LR: 0.009905
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  33/500 Summary:
+  Train Loss: 0.5562 | Train Acc: 71.25%
+  Val Acc: 58.75% | LR: 0.009899
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 65.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 65.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.8778 | Train Acc: 52.14%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7079 | Train Acc: 51.07%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7202 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7116 | Train Acc: 48.04%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.7002 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------2025-09-25 20:52:08 -     Test accuracy: 0.6062
+2025-09-25 20:52:08 -   Fold 2/5
+2025-09-25 20:52:08 -     Fold split: Train=560, Val=80
+
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6950 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6924 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6917 | Train Acc: 53.93%
+  Val Acc: 46.25% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6878 | Train Acc: 61.96%
+  Val Acc: 48.75% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6840 | Train Acc: 59.64%
+  Val Acc: 52.50% | LR: 0.009992
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6852 | Train Acc: 59.46%
+  Val Acc: 55.00% | LR: 0.009990
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  12/500 Summary:
+  Train Loss: 0.6688 | Train Acc: 63.04%
+  Val Acc: 53.75% | LR: 0.009988
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  13/500 Summary:
+  Train Loss: 0.6676 | Train Acc: 61.96%
+  Val Acc: 52.50% | LR: 0.009986
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  14/500 Summary:
+  Train Loss: 0.6656 | Train Acc: 62.68%
+  Val Acc: 55.00% | LR: 0.009983
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  15/500 Summary:
+  Train Loss: 0.6538 | Train Acc: 61.43%
+  Val Acc: 61.25% | LR: 0.009981
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  16/500 Summary:
+  Train Loss: 0.6555 | Train Acc: 63.39%
+  Val Acc: 56.25% | LR: 0.009978
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  17/500 Summary:
+  Train Loss: 0.6577 | Train Acc: 62.68%
+  Val Acc: 58.75% | LR: 0.009975
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  18/500 Summary:
+  Train Loss: 0.6640 | Train Acc: 62.50%
+  Val Acc: 58.75% | LR: 0.009972
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  19/500 Summary:
+  Train Loss: 0.6494 | Train Acc: 65.18%
+  Val Acc: 55.00% | LR: 0.009968
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  20/500 Summary:
+  Train Loss: 0.6415 | Train Acc: 63.57%
+  Val Acc: 56.25% | LR: 0.009964
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  21/500 Summary:
+  Train Loss: 0.6399 | Train Acc: 62.32%
+  Val Acc: 55.00% | LR: 0.009961
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  22/500 Summary:
+  Train Loss: 0.6507 | Train Acc: 62.86%
+  Val Acc: 57.50% | LR: 0.009957
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  23/500 Summary:
+  Train Loss: 0.6352 | Train Acc: 66.61%
+  Val Acc: 60.00% | LR: 0.009952
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  24/500 Summary:
+  Train Loss: 0.6386 | Train Acc: 65.36%
+  Val Acc: 61.25% | LR: 0.009948
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  25/500 Summary:
+  Train Loss: 0.6351 | Train Acc: 63.75%
+  Val Acc: 56.25% | LR: 0.009943
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 61.25%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 61.25%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.9407 | Train Acc: 46.43%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7088 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7044 | Train Acc: 48.04%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6972 | Train Acc: 47.68%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6952 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6940 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6934 | Train Acc: 49.64%2025-09-25 20:52:20 -     Test accuracy: 0.5000
+2025-09-25 20:52:20 -   Fold 3/5
+2025-09-25 20:52:20 -     Fold split: Train=560, Val=80
+2025-09-25 20:52:32 -     Test accuracy: 0.5000
+2025-09-25 20:52:32 -   Fold 4/5
+2025-09-25 20:52:32 -     Fold split: Train=560, Val=80
+
+  Val Acc: 46.25% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6940 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6937 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6942 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 50.89%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0189 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7136 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7039 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7010 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6922 | Train Acc: 52.86%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6967 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6955 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6949 | Train Acc: 50.36%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 46.07%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6949 | Train Acc: 47.14%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0398 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7435 | Train Acc: 48.39%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6953 | Train Acc: 51.07%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7030 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6922 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6980 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6959 | Train Acc: 47.32%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6952 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6938 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]2025-09-25 20:52:43 -     Test accuracy: 0.5000
+2025-09-25 20:52:43 -   Fold 5/5
+2025-09-25 20:52:43 -     Fold split: Train=560, Val=80
+2025-09-25 20:52:59 -     Test accuracy: 0.5000
+2025-09-25 20:52:59 -   Repeat 4 mean accuracy: 0.5212 ± 0.0425
+2025-09-25 20:52:59 - Repeat 5/5
+2025-09-25 20:52:59 -   Fold 1/5
+2025-09-25 20:52:59 -     Fold split: Train=560, Val=80
+
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6939 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6929 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0537 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7239 | Train Acc: 49.46%
+  Val Acc: 48.75% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6964 | Train Acc: 51.07%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6973 | Train Acc: 50.36%
+  Val Acc: 52.50% | LR: 0.009999
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6938 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6946 | Train Acc: 47.86%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6946 | Train Acc: 48.04%
+  Val Acc: 51.25% | LR: 0.009996
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6948 | Train Acc: 48.39%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6940 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6928 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6942 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.009990
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  12/500 Summary:
+  Train Loss: 0.6944 | Train Acc: 47.32%
+  Val Acc: 50.00% | LR: 0.009988
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  13/500 Summary:
+  Train Loss: 0.6945 | Train Acc: 47.32%
+  Val Acc: 52.50% | LR: 0.009986
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  14/500 Summary:
+  Train Loss: 0.6979 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009983
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 52.50%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 52.50%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.8466 | Train Acc: 52.14%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.6930 | Train Acc: 51.07%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6979 | Train Acc: 51.07%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7107 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.7100 | Train Acc: 49.82%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6957 | Train Acc: 52.14%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.7000 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.7029 | Train Acc: 49.29%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6971 | Train Acc: 48.75%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------2025-09-25 20:53:11 -     Test accuracy: 0.5000
+2025-09-25 20:53:11 -   Fold 2/5
+2025-09-25 20:53:11 -     Fold split: Train=560, Val=80
+2025-09-25 20:53:22 -     Test accuracy: 0.5062
+2025-09-25 20:53:22 -   Fold 3/5
+2025-09-25 20:53:22 -     Fold split: Train=560, Val=80
+
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6969 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6943 | Train Acc: 48.39%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.1193 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7146 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6985 | Train Acc: 49.11%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6998 | Train Acc: 48.75%
+  Val Acc: 48.75% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6954 | Train Acc: 48.04%
+  Val Acc: 48.75% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6916 | Train Acc: 54.64%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6936 | Train Acc: 50.54%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.7005 | Train Acc: 46.96%
+  Val Acc: 48.75% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6961 | Train Acc: 50.71%
+  Val Acc: 48.75% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6921 | Train Acc: 51.96%
+  Val Acc: 48.75% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6954 | Train Acc: 50.18%
+  Val Acc: 48.75% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0 1], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 1.0755 | Train Acc: 48.39%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7516 | Train Acc: 48.21%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.7205 | Train Acc: 45.54%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7004 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6939 | Train Acc: 49.46%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6935 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6929 | Train Acc: 49.64%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6941 | Train Acc: 48.39%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6939 | Train Acc: 47.68%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6925 | Train Acc: 53.75%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6940 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================2025-09-25 20:53:32 -     Test accuracy: 0.5000
+2025-09-25 20:53:32 -   Fold 4/5
+2025-09-25 20:53:32 -     Fold split: Train=560, Val=80
+2025-09-25 20:53:43 -     Test accuracy: 0.5000
+2025-09-25 20:53:43 -   Fold 5/5
+2025-09-25 20:53:43 -     Fold split: Train=560, Val=80
+2025-09-25 20:53:55 -     Test accuracy: 0.5000
+2025-09-25 20:53:55 -   Repeat 5 mean accuracy: 0.5012 ± 0.0025
+2025-09-25 20:53:55 - Cross-Validation completed for EEGConformer
+2025-09-25 20:53:55 - Final accuracy: 0.5145 ± 0.0405
+2025-09-25 20:53:55 - 95% CI: [0.4978, 0.5312]
+2025-09-25 20:53:55 - 
+============================================================
+2025-09-25 20:53:55 - CROSS-VALIDATION RESULTS
+2025-09-25 20:53:55 - ============================================================
+2025-09-25 20:53:55 - Model: EEGConformer
+2025-09-25 20:53:55 - Overall accuracy: 0.5145 ± 0.0405
+2025-09-25 20:53:55 - 95% Confidence Interval: [0.4978, 0.5312]
+2025-09-25 20:53:55 - Statistical significance: 25 evaluations
+2025-09-25 20:53:55 - Precision: 0.2566 [0.1432, 0.3701]
+2025-09-25 20:53:55 - Recall: 0.4055 [0.2104, 0.6006]
+2025-09-25 20:53:55 - F1_Score: 0.2941 [0.1566, 0.4316]
+2025-09-25 20:53:55 - Auc: 0.5595 [0.5355, 0.5835]
+2025-09-25 20:53:55 - ============================================================
+2025-09-25 20:53:55 - Individual subject results skipped - using Nested Cross-Validation results
+Traceback (most recent call last):
+  File "<string>", line 8, in <module>
+  File "<frozen runpy>", line 291, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/vivian/eeg/EEG_experiments/main.py", line 434, in <module>
+    main()
+  File "/home/vivian/eeg/EEG_experiments/main.py", line 361, in main
+    save_csv_results(nested_results_p3, 'main_P3')
+    ^^^^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'save_csv_results' where it is not associated with a value
+
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.9886 | Train Acc: 51.61%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.6960 | Train Acc: 55.71%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6905 | Train Acc: 54.46%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.7128 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6982 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.7005 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6944 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6943 | Train Acc: 48.93%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6937 | Train Acc: 51.25%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6938 | Train Acc: 50.18%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6929 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+Training class distribution: [280, 280]
+
+============================================================
+Starting Training - Max Epochs: 500
+Model: EEGConformer
+Learning Rate: 0.01, Weight Decay: 0.0001
+Dropout: 0.25, Early Stopping Patience: 10
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   1/500 Summary:
+  Train Loss: 0.8933 | Train Acc: 53.04%
+  Val Acc: 50.00% | LR: 0.010000
+New best validation accuracy!
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   2/500 Summary:
+  Train Loss: 0.7036 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 9/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   3/500 Summary:
+  Train Loss: 0.6897 | Train Acc: 50.71%
+  Val Acc: 50.00% | LR: 0.010000
+Patience remaining: 8/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   4/500 Summary:
+  Train Loss: 0.6999 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009999
+Patience remaining: 7/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   5/500 Summary:
+  Train Loss: 0.6942 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 6/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   6/500 Summary:
+  Train Loss: 0.6915 | Train Acc: 55.18%
+  Val Acc: 50.00% | LR: 0.009998
+Patience remaining: 5/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   7/500 Summary:
+  Train Loss: 0.6973 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009996
+Patience remaining: 4/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch   8/500 Summary:
+  Train Loss: 0.6989 | Train Acc: 46.61%
+  Val Acc: 50.00% | LR: 0.009995
+Patience remaining: 3/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch   9/500 Summary:
+  Train Loss: 0.6997 | Train Acc: 46.61%
+  Val Acc: 50.00% | LR: 0.009994
+Patience remaining: 2/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [1], Unique targets: [0 1]
+
+Epoch  10/500 Summary:
+  Train Loss: 0.6993 | Train Acc: 50.00%
+  Val Acc: 50.00% | LR: 0.009992
+Patience remaining: 1/10
+  --------------------------------------------------
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+Epoch  11/500 Summary:
+  Train Loss: 0.6947 | Train Acc: 51.43%
+  Val Acc: 50.00% | LR: 0.009990
+Early stopping triggered! No improvement for 10 epochs
+Best validation accuracy: 50.00%
+
+============================================================
+Training Complete!
+Best Validation Accuracy: 50.00%
+============================================================
+DEBUG: Evaluate function - 80 predictions, 80 targets
+DEBUG: Unique predictions: [0], Unique targets: [0 1]
+
+--- Experiment Failed: cannot access local variable 'save_csv_results' where it is not associated with a value ---
+Cleaned up failed experiment log: ./log_0909/P3_clf-EEGConformer_sep-False_el-all_results_20250925_205003.log

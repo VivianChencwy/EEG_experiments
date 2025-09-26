@@ -1,0 +1,2 @@
+mean_accuracy,std_accuracy,other_metrics
+0.74,0.01,"{'precision': {'mean': 0.76, 'std': 0.02}, 'recall': {'mean': 0.72, 'std': 0.02}}"

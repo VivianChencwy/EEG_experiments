@@ -1,0 +1,345 @@
+2025-09-25 21:00:41 - 
+==================================================
+2025-09-25 21:00:41 - TF-DWT Joint Training (Auto-Adjusted)
+2025-09-25 21:00:41 - ==================================================
+2025-09-25 21:00:41 - 
+Experiment Configuration:
+2025-09-25 21:00:41 - --------------------------------------------------
+2025-09-25 21:00:41 - electrode_list: all
+2025-09-25 21:00:41 - fusion_method: none
+2025-09-25 21:00:41 - domain_adaptation: none
+2025-09-25 21:00:41 - use_enhanced_preprocessing: True
+2025-09-25 21:00:41 - batch_size: 128
+2025-09-25 21:00:41 - max_epochs: 100
+2025-09-25 21:00:41 - learning_rate: 0.012
+2025-09-25 21:00:41 - weight_decay: 0.0001
+2025-09-25 21:00:41 - dropout_rate: 0.25
+2025-09-25 21:00:41 - use_data_augmentation: True
+2025-09-25 21:00:41 - noise_std: 0.005
+2025-09-25 21:00:41 - time_shift_range: 5
+2025-09-25 21:00:41 - label_smoothing: 0.05
+2025-09-25 21:00:41 - trials_per_subject_P3: 20
+2025-09-25 21:00:41 - trials_per_subject_AVO: 200
+2025-09-25 21:00:41 - train/val/test: (0.7, 0.1, 0.2)
+2025-09-25 21:00:41 - device_mode: cuda
+2025-09-25 21:00:41 - --------------------------------------------------
+2025-09-25 21:00:41 - 
+==================================================
+2025-09-25 21:00:41 - Running Nested Cross-Validation with TF-DWT
+2025-09-25 21:00:41 - ==================================================
+2025-09-25 21:00:41 - Loading dataset for CV: P3
+2025-09-25 21:00:42 - Subject P3_sub-001: Sampled 20/80 trials
+2025-09-25 21:00:42 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:42 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:42 - Subject P3_sub-002: Sampled 20/80 trials
+2025-09-25 21:00:42 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:42 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:42 - Subject P3_sub-003: Sampled 20/80 trials
+2025-09-25 21:00:42 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:42 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 - Subject P3_sub-004: Sampled 20/78 trials
+2025-09-25 21:00:43 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 - Subject P3_sub-005: Sampled 20/80 trials
+2025-09-25 21:00:43 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 - Subject P3_sub-006: Sampled 20/80 trials
+2025-09-25 21:00:43 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 - Subject P3_sub-007: Sampled 20/80 trials
+2025-09-25 21:00:43 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:43 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:44 - Subject P3_sub-008: Sampled 20/80 trials
+2025-09-25 21:00:44 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:44 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:44 - Subject P3_sub-009: Sampled 20/80 trials
+2025-09-25 21:00:44 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:44 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:44 - Subject P3_sub-010: Sampled 20/80 trials
+2025-09-25 21:00:44 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:44 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 - Subject P3_sub-011: Sampled 20/80 trials
+2025-09-25 21:00:45 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 - Subject P3_sub-012: Sampled 20/78 trials
+2025-09-25 21:00:45 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 - Subject P3_sub-013: Sampled 20/80 trials
+2025-09-25 21:00:45 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 - Subject P3_sub-014: Sampled 20/80 trials
+2025-09-25 21:00:45 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:45 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 - Subject P3_sub-015: Sampled 20/80 trials
+2025-09-25 21:00:46 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 - Subject P3_sub-016: Sampled 20/80 trials
+2025-09-25 21:00:46 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 - Subject P3_sub-017: Sampled 20/80 trials
+2025-09-25 21:00:46 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 - Subject P3_sub-018: Sampled 20/80 trials
+2025-09-25 21:00:46 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:46 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 - Subject P3_sub-019: Sampled 20/80 trials
+2025-09-25 21:00:47 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 - Subject P3_sub-020: Sampled 20/78 trials
+2025-09-25 21:00:47 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 - Subject P3_sub-021: Sampled 20/80 trials
+2025-09-25 21:00:47 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 - Subject P3_sub-022: Sampled 20/80 trials
+2025-09-25 21:00:47 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 - Subject P3_sub-023: Sampled 20/78 trials
+2025-09-25 21:00:47 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 - Subject P3_sub-024: Sampled 20/80 trials
+2025-09-25 21:00:47 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:47 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 - Subject P3_sub-025: Sampled 20/80 trials
+2025-09-25 21:00:48 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 - Subject P3_sub-026: Sampled 20/80 trials
+2025-09-25 21:00:48 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 - Subject P3_sub-027: Sampled 20/80 trials
+2025-09-25 21:00:48 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 - Subject P3_sub-028: Sampled 20/80 trials
+2025-09-25 21:00:48 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 - Subject P3_sub-029: Sampled 20/80 trials
+2025-09-25 21:00:48 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:48 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 - Subject P3_sub-030: Sampled 20/80 trials
+2025-09-25 21:00:49 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 - Subject P3_sub-031: Sampled 20/80 trials
+2025-09-25 21:00:49 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 - Subject P3_sub-032: Sampled 20/80 trials
+2025-09-25 21:00:49 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 - Subject P3_sub-033: Sampled 20/80 trials
+2025-09-25 21:00:49 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 - Subject P3_sub-034: Sampled 20/80 trials
+2025-09-25 21:00:49 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 - Subject P3_sub-035: Sampled 20/78 trials
+2025-09-25 21:00:49 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:49 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 - Subject P3_sub-036: Sampled 20/80 trials
+2025-09-25 21:00:50 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 - Subject P3_sub-037: Sampled 20/78 trials
+2025-09-25 21:00:50 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 - Subject P3_sub-038: Sampled 20/80 trials
+2025-09-25 21:00:50 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 - Subject P3_sub-039: Sampled 20/80 trials
+2025-09-25 21:00:50 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:50 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:51 - Subject P3_sub-040: Sampled 20/80 trials
+2025-09-25 21:00:51 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:51 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-25 21:00:51 - Loading dataset for CV: AVO
+2025-09-25 21:00:56 - Combined dataset summary: total=3824, P3=800, AVO=3024
+2025-09-25 21:00:56 - Repeat 1/1
+2025-09-25 21:00:56 -   Fold 1/2
+2025-09-25 21:00:57 - Fold domains: small=P3 (n=332), large=AVO (n=1341)
+2025-09-25 21:00:57 - Auto adjustments (symmetric): w_small≈1.000, lambda_MMD_target=0.250, warmup_epochs=5
+2025-09-25 21:00:57 - Epoch 1/100 | LR=0.012000 | w_AVO=1.000 | w_P3=1.202 | lambda_MMD=0.050
+2025-09-25 21:00:58 - Epoch Summary: TrainLoss=1.5999 | TrainAcc=0.489 | Val(P3)=0.673 | Val(AVO)=0.497
+2025-09-25 21:00:58 - New best P3-val; checkpoint updated
+2025-09-25 21:00:58 - Epoch 2/100 | LR=0.011997 | w_AVO=1.000 | w_P3=1.404 | lambda_MMD=0.100
+2025-09-25 21:00:58 - Epoch Summary: TrainLoss=1.6326 | TrainAcc=0.534 | Val(P3)=0.596 | Val(AVO)=0.588
+2025-09-25 21:00:58 - No P3-val improvement; patience remaining: 19/20
+2025-09-25 21:00:58 - Epoch 3/100 | LR=0.011988 | w_AVO=1.000 | w_P3=1.606 | lambda_MMD=0.150
+2025-09-25 21:00:58 - Epoch Summary: TrainLoss=1.7389 | TrainAcc=0.588 | Val(P3)=0.635 | Val(AVO)=0.556
+2025-09-25 21:00:58 - No P3-val improvement; patience remaining: 18/20
+2025-09-25 21:00:58 - Epoch 4/100 | LR=0.011973 | w_AVO=1.000 | w_P3=1.808 | lambda_MMD=0.200
+2025-09-25 21:00:58 - Epoch Summary: TrainLoss=1.8559 | TrainAcc=0.573 | Val(P3)=0.654 | Val(AVO)=0.561
+2025-09-25 21:00:58 - No P3-val improvement; patience remaining: 17/20
+2025-09-25 21:00:58 - Epoch 5/100 | LR=0.011953 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:00:58 - Epoch Summary: TrainLoss=1.9573 | TrainAcc=0.596 | Val(P3)=0.615 | Val(AVO)=0.545
+2025-09-25 21:00:58 - No P3-val improvement; patience remaining: 16/20
+2025-09-25 21:00:58 - Epoch 6/100 | LR=0.011926 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:00:58 - Epoch Summary: TrainLoss=1.9239 | TrainAcc=0.615 | Val(P3)=0.596 | Val(AVO)=0.561
+2025-09-25 21:00:58 - No P3-val improvement; patience remaining: 15/20
+2025-09-25 21:00:58 - P3 val decreasing 3x. Reducing w_small to 1.608, lambda_MMD to 0.125
+2025-09-25 21:00:58 - Epoch 7/100 | LR=0.011894 | w_AVO=1.000 | w_P3=1.608 | lambda_MMD=0.125
+2025-09-25 21:00:58 - Epoch Summary: TrainLoss=1.6458 | TrainAcc=0.626 | Val(P3)=0.654 | Val(AVO)=0.545
+2025-09-25 21:00:58 - No P3-val improvement; patience remaining: 14/20
+2025-09-25 21:00:58 - Epoch 8/100 | LR=0.011856 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:00:59 - Epoch Summary: TrainLoss=1.8865 | TrainAcc=0.626 | Val(P3)=0.692 | Val(AVO)=0.583
+2025-09-25 21:00:59 - New best P3-val; checkpoint updated
+2025-09-25 21:00:59 - Epoch 9/100 | LR=0.011811 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:00:59 - Epoch Summary: TrainLoss=1.8485 | TrainAcc=0.641 | Val(P3)=0.673 | Val(AVO)=0.578
+2025-09-25 21:00:59 - No P3-val improvement; patience remaining: 19/20
+2025-09-25 21:00:59 - Epoch 10/100 | LR=0.011762 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:00:59 - Epoch Summary: TrainLoss=1.8040 | TrainAcc=0.648 | Val(P3)=0.673 | Val(AVO)=0.556
+2025-09-25 21:00:59 - No P3-val improvement; patience remaining: 18/20
+2025-09-25 21:00:59 - AVO val decreasing 3x. Reducing lambda_MMD to 0.175
+2025-09-25 21:00:59 - Epoch 11/100 | LR=0.011706 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.175
+2025-09-25 21:00:59 - Epoch Summary: TrainLoss=1.7922 | TrainAcc=0.650 | Val(P3)=0.654 | Val(AVO)=0.545
+2025-09-25 21:00:59 - No P3-val improvement; patience remaining: 17/20
+2025-09-25 21:00:59 - AVO val decreasing 3x. Reducing lambda_MMD to 0.175
+2025-09-25 21:00:59 - Epoch 12/100 | LR=0.011645 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.175
+2025-09-25 21:00:59 - Epoch Summary: TrainLoss=1.7647 | TrainAcc=0.645 | Val(P3)=0.673 | Val(AVO)=0.551
+2025-09-25 21:00:59 - No P3-val improvement; patience remaining: 16/20
+2025-09-25 21:00:59 - Epoch 13/100 | LR=0.011579 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:00:59 - Epoch Summary: TrainLoss=1.7200 | TrainAcc=0.640 | Val(P3)=0.673 | Val(AVO)=0.545
+2025-09-25 21:00:59 - No P3-val improvement; patience remaining: 15/20
+2025-09-25 21:00:59 - Epoch 14/100 | LR=0.011507 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:00 - Epoch Summary: TrainLoss=1.6931 | TrainAcc=0.648 | Val(P3)=0.654 | Val(AVO)=0.561
+2025-09-25 21:01:00 - No P3-val improvement; patience remaining: 14/20
+2025-09-25 21:01:00 - Epoch 15/100 | LR=0.011429 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:00 - Epoch Summary: TrainLoss=1.6610 | TrainAcc=0.645 | Val(P3)=0.654 | Val(AVO)=0.540
+2025-09-25 21:01:00 - No P3-val improvement; patience remaining: 13/20
+2025-09-25 21:01:00 - Epoch 16/100 | LR=0.011346 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:00 - Epoch Summary: TrainLoss=1.6364 | TrainAcc=0.659 | Val(P3)=0.615 | Val(AVO)=0.567
+2025-09-25 21:01:00 - No P3-val improvement; patience remaining: 12/20
+2025-09-25 21:01:00 - Epoch 17/100 | LR=0.011258 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:00 - Epoch Summary: TrainLoss=1.6134 | TrainAcc=0.657 | Val(P3)=0.673 | Val(AVO)=0.545
+2025-09-25 21:01:00 - No P3-val improvement; patience remaining: 11/20
+2025-09-25 21:01:00 - Epoch 18/100 | LR=0.011164 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:00 - Epoch Summary: TrainLoss=1.5719 | TrainAcc=0.663 | Val(P3)=0.635 | Val(AVO)=0.545
+2025-09-25 21:01:00 - No P3-val improvement; patience remaining: 10/20
+2025-09-25 21:01:00 - Epoch 19/100 | LR=0.011066 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:00 - Epoch Summary: TrainLoss=1.5575 | TrainAcc=0.659 | Val(P3)=0.577 | Val(AVO)=0.561
+2025-09-25 21:01:00 - No P3-val improvement; patience remaining: 9/20
+2025-09-25 21:01:00 - P3 val decreasing 3x. Reducing w_small to 1.608, lambda_MMD to 0.125
+2025-09-25 21:01:00 - Epoch 20/100 | LR=0.010962 | w_AVO=1.000 | w_P3=1.608 | lambda_MMD=0.125
+2025-09-25 21:01:00 - Epoch Summary: TrainLoss=1.3389 | TrainAcc=0.650 | Val(P3)=0.635 | Val(AVO)=0.572
+2025-09-25 21:01:00 - No P3-val improvement; patience remaining: 8/20
+2025-09-25 21:01:00 - Epoch 21/100 | LR=0.010854 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:01 - Epoch Summary: TrainLoss=1.4824 | TrainAcc=0.664 | Val(P3)=0.654 | Val(AVO)=0.572
+2025-09-25 21:01:01 - No P3-val improvement; patience remaining: 7/20
+2025-09-25 21:01:01 - Epoch 22/100 | LR=0.010741 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:01 - Epoch Summary: TrainLoss=1.4627 | TrainAcc=0.667 | Val(P3)=0.577 | Val(AVO)=0.556
+2025-09-25 21:01:01 - No P3-val improvement; patience remaining: 6/20
+2025-09-25 21:01:01 - Epoch 23/100 | LR=0.010623 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:01 - Epoch Summary: TrainLoss=1.4400 | TrainAcc=0.673 | Val(P3)=0.596 | Val(AVO)=0.551
+2025-09-25 21:01:01 - No P3-val improvement; patience remaining: 5/20
+2025-09-25 21:01:01 - AVO val decreasing 3x. Reducing lambda_MMD to 0.175
+2025-09-25 21:01:01 - Epoch 24/100 | LR=0.010501 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.175
+2025-09-25 21:01:01 - Epoch Summary: TrainLoss=1.3977 | TrainAcc=0.689 | Val(P3)=0.596 | Val(AVO)=0.556
+2025-09-25 21:01:01 - No P3-val improvement; patience remaining: 4/20
+2025-09-25 21:01:01 - Epoch 25/100 | LR=0.010374 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:01 - Epoch Summary: TrainLoss=1.3831 | TrainAcc=0.673 | Val(P3)=0.596 | Val(AVO)=0.535
+2025-09-25 21:01:01 - No P3-val improvement; patience remaining: 3/20
+2025-09-25 21:01:01 - Epoch 26/100 | LR=0.010243 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:01 - Epoch Summary: TrainLoss=1.3801 | TrainAcc=0.676 | Val(P3)=0.577 | Val(AVO)=0.529
+2025-09-25 21:01:01 - No P3-val improvement; patience remaining: 2/20
+2025-09-25 21:01:01 - AVO val decreasing 3x. Reducing lambda_MMD to 0.175
+2025-09-25 21:01:01 - Epoch 27/100 | LR=0.010107 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.175
+2025-09-25 21:01:01 - Epoch Summary: TrainLoss=1.3413 | TrainAcc=0.678 | Val(P3)=0.577 | Val(AVO)=0.572
+2025-09-25 21:01:01 - No P3-val improvement; patience remaining: 1/20
+2025-09-25 21:01:01 - Epoch 28/100 | LR=0.009968 | w_AVO=1.000 | w_P3=2.010 | lambda_MMD=0.250
+2025-09-25 21:01:02 - Epoch Summary: TrainLoss=1.3094 | TrainAcc=0.684 | Val(P3)=0.558 | Val(AVO)=0.567
+2025-09-25 21:01:02 - No P3-val improvement; patience remaining: 0/20
+2025-09-25 21:01:02 - Early stopping triggered (P3-val)
+2025-09-25 21:01:02 -     P3 Test | Acc=0.6130 P=0.6200 R=0.5933 F1=0.6064 AUC=0.6523 (n=416)
+2025-09-25 21:01:02 -     AVO Test | Acc=0.6016 P=0.8479 R=0.2463 F1=0.3817 AUC=0.7070 (n=1496)
+2025-09-25 21:01:02 -     Overall Test Acc=0.6041
+2025-09-25 21:01:02 -   Fold 2/2
+2025-09-25 21:01:02 - Fold domains: small=P3 (n=361), large=AVO (n=1312)
+2025-09-25 21:01:02 - Auto adjustments (symmetric): w_small≈1.000, lambda_MMD_target=0.250, warmup_epochs=5
+2025-09-25 21:01:02 - Epoch 1/100 | LR=0.012000 | w_AVO=1.000 | w_P3=1.181 | lambda_MMD=0.050
+2025-09-25 21:01:02 - Epoch Summary: TrainLoss=1.6011 | TrainAcc=0.536 | Val(P3)=0.655 | Val(AVO)=0.527
+2025-09-25 21:01:02 - New best P3-val; checkpoint updated
+2025-09-25 21:01:02 - Epoch 2/100 | LR=0.011997 | w_AVO=1.000 | w_P3=1.363 | lambda_MMD=0.100
+2025-09-25 21:01:02 - Epoch Summary: TrainLoss=1.5353 | TrainAcc=0.582 | Val(P3)=0.636 | Val(AVO)=0.543
+2025-09-25 21:01:02 - No P3-val improvement; patience remaining: 19/20
+2025-09-25 21:01:02 - Epoch 3/100 | LR=0.011988 | w_AVO=1.000 | w_P3=1.544 | lambda_MMD=0.150
+2025-09-25 21:01:02 - Epoch Summary: TrainLoss=1.6177 | TrainAcc=0.625 | Val(P3)=0.655 | Val(AVO)=0.576
+2025-09-25 21:01:02 - No P3-val improvement; patience remaining: 18/20
+2025-09-25 21:01:02 - Epoch 4/100 | LR=0.011973 | w_AVO=1.000 | w_P3=1.725 | lambda_MMD=0.200
+2025-09-25 21:01:02 - Epoch Summary: TrainLoss=1.7077 | TrainAcc=0.623 | Val(P3)=0.673 | Val(AVO)=0.609
+2025-09-25 21:01:02 - New best P3-val; checkpoint updated
+2025-09-25 21:01:02 - Epoch 5/100 | LR=0.011953 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:02 - Epoch Summary: TrainLoss=1.7981 | TrainAcc=0.644 | Val(P3)=0.655 | Val(AVO)=0.592
+2025-09-25 21:01:02 - No P3-val improvement; patience remaining: 19/20
+2025-09-25 21:01:02 - Epoch 6/100 | LR=0.011926 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:03 - Epoch Summary: TrainLoss=1.7842 | TrainAcc=0.627 | Val(P3)=0.636 | Val(AVO)=0.641
+2025-09-25 21:01:03 - No P3-val improvement; patience remaining: 18/20
+2025-09-25 21:01:03 - P3 val decreasing 3x. Reducing w_small to 1.525, lambda_MMD to 0.125
+2025-09-25 21:01:03 - Epoch 7/100 | LR=0.011894 | w_AVO=1.000 | w_P3=1.525 | lambda_MMD=0.125
+2025-09-25 21:01:03 - Epoch Summary: TrainLoss=1.5312 | TrainAcc=0.649 | Val(P3)=0.636 | Val(AVO)=0.603
+2025-09-25 21:01:03 - No P3-val improvement; patience remaining: 17/20
+2025-09-25 21:01:03 - Epoch 8/100 | LR=0.011856 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:03 - Epoch Summary: TrainLoss=1.7655 | TrainAcc=0.634 | Val(P3)=0.618 | Val(AVO)=0.663
+2025-09-25 21:01:03 - No P3-val improvement; patience remaining: 16/20
+2025-09-25 21:01:03 - Epoch 9/100 | LR=0.011811 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:03 - Epoch Summary: TrainLoss=1.7245 | TrainAcc=0.645 | Val(P3)=0.600 | Val(AVO)=0.565
+2025-09-25 21:01:03 - No P3-val improvement; patience remaining: 15/20
+2025-09-25 21:01:03 - P3 val decreasing 3x. Reducing w_small to 1.525, lambda_MMD to 0.125
+2025-09-25 21:01:03 - Epoch 10/100 | LR=0.011762 | w_AVO=1.000 | w_P3=1.525 | lambda_MMD=0.125
+2025-09-25 21:01:03 - Epoch Summary: TrainLoss=1.4740 | TrainAcc=0.636 | Val(P3)=0.636 | Val(AVO)=0.614
+2025-09-25 21:01:03 - No P3-val improvement; patience remaining: 14/20
+2025-09-25 21:01:03 - Epoch 11/100 | LR=0.011706 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:03 - Epoch Summary: TrainLoss=1.6667 | TrainAcc=0.645 | Val(P3)=0.600 | Val(AVO)=0.598
+2025-09-25 21:01:03 - No P3-val improvement; patience remaining: 13/20
+2025-09-25 21:01:03 - Epoch 12/100 | LR=0.011645 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:04 - Epoch Summary: TrainLoss=1.6540 | TrainAcc=0.649 | Val(P3)=0.636 | Val(AVO)=0.647
+2025-09-25 21:01:04 - No P3-val improvement; patience remaining: 12/20
+2025-09-25 21:01:04 - Epoch 13/100 | LR=0.011579 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:04 - Epoch Summary: TrainLoss=1.6219 | TrainAcc=0.645 | Val(P3)=0.600 | Val(AVO)=0.560
+2025-09-25 21:01:04 - No P3-val improvement; patience remaining: 11/20
+2025-09-25 21:01:04 - Epoch 14/100 | LR=0.011507 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:04 - Epoch Summary: TrainLoss=1.5891 | TrainAcc=0.665 | Val(P3)=0.600 | Val(AVO)=0.587
+2025-09-25 21:01:04 - No P3-val improvement; patience remaining: 10/20
+2025-09-25 21:01:04 - Epoch 15/100 | LR=0.011429 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:04 - Epoch Summary: TrainLoss=1.5517 | TrainAcc=0.665 | Val(P3)=0.618 | Val(AVO)=0.582
+2025-09-25 21:01:04 - No P3-val improvement; patience remaining: 9/20
+2025-09-25 21:01:04 - Epoch 16/100 | LR=0.011346 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:04 - Epoch Summary: TrainLoss=1.5271 | TrainAcc=0.657 | Val(P3)=0.600 | Val(AVO)=0.668
+2025-09-25 21:01:04 - No P3-val improvement; patience remaining: 8/20
+2025-09-25 21:01:04 - Epoch 17/100 | LR=0.011258 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:05 - Epoch Summary: TrainLoss=1.5371 | TrainAcc=0.667 | Val(P3)=0.582 | Val(AVO)=0.538
+2025-09-25 21:01:05 - No P3-val improvement; patience remaining: 7/20
+2025-09-25 21:01:05 - P3 val decreasing 3x. Reducing w_small to 1.525, lambda_MMD to 0.125
+2025-09-25 21:01:05 - Epoch 18/100 | LR=0.011164 | w_AVO=1.000 | w_P3=1.525 | lambda_MMD=0.125
+2025-09-25 21:01:05 - Epoch Summary: TrainLoss=1.3507 | TrainAcc=0.660 | Val(P3)=0.636 | Val(AVO)=0.582
+2025-09-25 21:01:05 - No P3-val improvement; patience remaining: 6/20
+2025-09-25 21:01:05 - Epoch 19/100 | LR=0.011066 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:05 - Epoch Summary: TrainLoss=1.4900 | TrainAcc=0.668 | Val(P3)=0.618 | Val(AVO)=0.576
+2025-09-25 21:01:05 - No P3-val improvement; patience remaining: 5/20
+2025-09-25 21:01:05 - Epoch 20/100 | LR=0.010962 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:05 - Epoch Summary: TrainLoss=1.4594 | TrainAcc=0.681 | Val(P3)=0.582 | Val(AVO)=0.554
+2025-09-25 21:01:05 - No P3-val improvement; patience remaining: 4/20
+2025-09-25 21:01:05 - P3 val decreasing 3x. Reducing w_small to 1.525, lambda_MMD to 0.125
+2025-09-25 21:01:05 - AVO val decreasing 3x. Reducing lambda_MMD to 0.087
+2025-09-25 21:01:05 - Epoch 21/100 | LR=0.010854 | w_AVO=1.000 | w_P3=1.525 | lambda_MMD=0.087
+2025-09-25 21:01:05 - Epoch Summary: TrainLoss=1.2726 | TrainAcc=0.675 | Val(P3)=0.636 | Val(AVO)=0.543
+2025-09-25 21:01:05 - No P3-val improvement; patience remaining: 3/20
+2025-09-25 21:01:05 - AVO val decreasing 3x. Reducing lambda_MMD to 0.175
+2025-09-25 21:01:05 - Epoch 22/100 | LR=0.010741 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.175
+2025-09-25 21:01:06 - Epoch Summary: TrainLoss=1.4307 | TrainAcc=0.682 | Val(P3)=0.564 | Val(AVO)=0.598
+2025-09-25 21:01:06 - No P3-val improvement; patience remaining: 2/20
+2025-09-25 21:01:06 - Epoch 23/100 | LR=0.010623 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:08 - Epoch Summary: TrainLoss=1.4140 | TrainAcc=0.678 | Val(P3)=0.600 | Val(AVO)=0.560
+2025-09-25 21:01:08 - No P3-val improvement; patience remaining: 1/20
+2025-09-25 21:01:08 - Epoch 24/100 | LR=0.010501 | w_AVO=1.000 | w_P3=1.906 | lambda_MMD=0.250
+2025-09-25 21:01:10 - Epoch Summary: TrainLoss=1.3813 | TrainAcc=0.704 | Val(P3)=0.618 | Val(AVO)=0.554
+2025-09-25 21:01:10 - No P3-val improvement; patience remaining: 0/20
+2025-09-25 21:01:10 - Early stopping triggered (P3-val)
+2025-09-25 21:01:12 -     P3 Test | Acc=0.5859 P=0.5909 R=0.5445 F1=0.5668 AUC=0.6048 (n=384)
+2025-09-25 21:01:12 -     AVO Test | Acc=0.5857 P=0.5553 R=0.8667 F1=0.6769 AUC=0.6632 (n=1528)
+2025-09-25 21:01:12 -     Overall Test Acc=0.5858
+2025-09-25 21:01:12 - 
+==================================================
+2025-09-25 21:01:12 - CROSS-VALIDATION RESULTS
+2025-09-25 21:01:12 - ==================================================
+2025-09-25 21:01:12 - Overall accuracy: 0.5949 ± 0.0129
+2025-09-25 21:01:12 - 95% Confidence Interval: [0.4786, 0.7112]
+2025-09-25 21:01:12 - P3 Dataset - Mean Accuracy: 0.5995 | 95% CI: [0.4277, 0.7713]
+2025-09-25 21:01:12 - AVO Dataset - Mean Accuracy: 0.5937 | 95% CI: [0.4928, 0.6945]
+2025-09-25 21:01:12 - Detailed results saved to: tfdwt_detailed_results_20250925_210112.csv
+2025-09-25 21:01:12 - Summary statistics saved to: tfdwt_summary_stats_20250925_210112.csv
