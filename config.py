@@ -186,7 +186,7 @@ N_CLASSES = 2
 LEARNING_RATE = 0.01   # Increased for SepConv1D models to improve learning
 WEIGHT_DECAY = 1e-4     # Moderate regularization
 GAMMA = 0.7  # Learning rate decay factor (less aggressive)
-EARLY_STOPPING_PATIENCE = 10 # Balanced patience
+EARLY_STOPPING_PATIENCE = 50 # Balanced patience
 DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
 
 # Data augmentation (enabled for better generalization)
