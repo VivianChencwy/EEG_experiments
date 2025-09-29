@@ -102,9 +102,39 @@ def get_dataset_subjects(dataset_type, dataset_obj):
     elif dataset_type == 'AVO':
         all_files = [str(f) for f in dataset_obj.get_files()]
         all_subjects = sorted(list(set([f.split('sub-')[1][:3] for f in all_files if 'sub-' in f])))
-        # Limit AVO dataset to configured maximum
-        if MAX_SUBJECTS_AVO is not None:
-            return all_subjects[:MAX_SUBJECTS_AVO]
+        
+        # If we need to limit to MAX_SUBJECTS_AVO, select subjects with most oddball events
+        if MAX_SUBJECTS_AVO is not None and len(all_subjects) > MAX_SUBJECTS_AVO:
+            # Create a temporary preprocessor to count oddball events
+            from constants_avo import AVO_CHANNELS
+            temp_preprocessor = create_preprocessor(AVO_CHANNELS, 'AVO')
+            
+            # Count oddball events for each subject
+            subject_oddball_counts = []
+            for subject_id in all_subjects:
+                try:
+                    from utils import process_subject_data
+                    data, labels = process_subject_data(subject_id, dataset_obj, temp_preprocessor, None, dataset_type='AVO')
+                    if data is not None and labels is not None:
+                        # Since data is already balanced (1:1 oddball:standard), oddball count = total / 2
+                        oddball_count = len(data) // 2
+                        subject_oddball_counts.append((subject_id, oddball_count))
+                        print(f"Subject sub-{subject_id}: {oddball_count} oddball trials")
+                except Exception as e:
+                    # If subject fails to process, assign 0 oddball count
+                    subject_oddball_counts.append((subject_id, 0))
+                    print(f"Subject sub-{subject_id}: Failed to process, assigned 0 oddball trials")
+            
+            # Sort by oddball count (descending) and select top MAX_SUBJECTS_AVO
+            subject_oddball_counts.sort(key=lambda x: x[1], reverse=True)
+            selected_subjects = [subj[0] for subj in subject_oddball_counts[:MAX_SUBJECTS_AVO]]
+            
+            print(f"\nSelected top {MAX_SUBJECTS_AVO} AVO subjects with most oddball trials:")
+            for i, (subj_id, count) in enumerate(subject_oddball_counts[:MAX_SUBJECTS_AVO]):
+                print(f"  {i+1:2d}. sub-{subj_id}: {count} oddball trials")
+            
+            return selected_subjects
+        
         return all_subjects
     else:
         raise ValueError(f"Unknown dataset_type: {dataset_type}")
