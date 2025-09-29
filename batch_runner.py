@@ -173,8 +173,8 @@ def main():
                 'data_dir': 'P3_DATA_DIR',
                 'dataset': 'P3 Raw Data BIDS-Compatible',
                 'use_combined_datasets': False,
-                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 20,
-                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,  # Keep consistent, but only P3 will be used
+                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 10,
+                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 0,  # Keep consistent, but only P3 will be used
             },
         ),
         (
@@ -185,54 +185,54 @@ def main():
                 'dataset': 'ds005863',
                 'use_combined_datasets': False,
                 'NESTED_CV_TRIALS_PER_SUBJECT_P3': 0,  # Keep consistent, but only AVO will be used
-                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
+                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 10,
             },
         ),
-        # (
-        #     'main_combined_P3_200_AVO_20',
-        #     'main.py',
-        #     {
-        #         'use_combined_datasets': True,
-        #         'data_dir': 'P3_DATA_DIR',
-        #         'dataset': 'use_combined_datasets',
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 200,
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
-        #     },
-        # ),
-        # (
-        #     'main_combined_P3_20_AVO_200',
-        #     'main.py',
-        #     {
-        #         'use_combined_datasets': True,
-        #         'data_dir': 'P3_DATA_DIR',
-        #         'dataset': 'use_combined_datasets',
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 20,
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 200,
-        #     },
-        # ),
-        # # main_tfdwt.py (2 runs)
-        # (
-        #     'tfdwt_combined_P3_200_AVO_20',
-        #     'main_tfdwt.py',
-        #     {
-        #         'use_combined_datasets': True,
-        #         'data_dir': 'P3_DATA_DIR',
-        #         'dataset': 'use_combined_datasets',
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 200,
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 20,
-        #     },
-        # ),
-        # (
-        #     'tfdwt_combined_P3_20_AVO_200',
-        #     'main_tfdwt.py',
-        #     {
-        #         'use_combined_datasets': True,
-        #         'data_dir': 'P3_DATA_DIR',
-        #         'dataset': 'use_combined_datasets',
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_P3': 20,
-        #         'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 200,
-        #     },
-        # ),
+        (
+            'main_combined_P3_200_AVO_20',
+            'main.py',
+            {
+                'use_combined_datasets': True,
+                'data_dir': 'P3_DATA_DIR',
+                'dataset': 'use_combined_datasets',
+                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 80,
+                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 10,
+            },
+        ),
+        (
+            'main_combined_P3_20_AVO_200',
+            'main.py',
+            {
+                'use_combined_datasets': True,
+                'data_dir': 'P3_DATA_DIR',
+                'dataset': 'use_combined_datasets',
+                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 10,
+                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 80,
+            },
+        ),
+        # main_tfdwt.py (2 runs)
+        (
+            'tfdwt_combined_P3_200_AVO_20',
+            'main_tfdwt.py',
+            {
+                'use_combined_datasets': True,
+                'data_dir': 'P3_DATA_DIR',
+                'dataset': 'use_combined_datasets',
+                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 80,
+                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 10,
+            },
+        ),
+        (
+            'tfdwt_combined_P3_20_AVO_200',
+            'main_tfdwt.py',
+            {
+                'use_combined_datasets': True,
+                'data_dir': 'P3_DATA_DIR',
+                'dataset': 'use_combined_datasets',
+                'NESTED_CV_TRIALS_PER_SUBJECT_P3': 10,
+                'NESTED_CV_TRIALS_PER_SUBJECT_AVO': 80,
+            },
+        ),
     ]
 
     failures = 0

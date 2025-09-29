@@ -1,0 +1,291 @@
+2025-09-28 18:31:29 - 
+Experiment Configuration:
+2025-09-28 18:31:29 - --------------------------------------------------
+2025-09-28 18:31:29 - dataset: use_combined_datasets
+2025-09-28 18:31:29 - use_combined_datasets: True
+2025-09-28 18:31:29 - electrode_list: common
+2025-09-28 18:31:29 - classifier: EEGConformer
+2025-09-28 18:31:29 - separate_subject_classification: False
+2025-09-28 18:31:29 - use_subject_layer: False
+2025-09-28 18:31:29 - seeds: [42, 123, 456, 789, 321]
+2025-09-28 18:31:29 - use_nested_cv: True
+2025-09-28 18:31:29 - electrode_fusion_method: none
+2025-09-28 18:31:29 - domain_adaptation_method: none
+2025-09-28 18:31:29 - enable_comprehensive_evaluation: True
+2025-09-28 18:31:29 - enable_domain_analysis: True
+2025-09-28 18:31:29 - enable_small_sample_analysis: False
+2025-09-28 18:31:29 - small_sample_sizes: [5, 10, 15, 20]
+2025-09-28 18:31:29 - small_sample_subjects: [5, 10, 15]
+2025-09-28 18:31:29 - --------------------------------------------------
+2025-09-28 18:31:29 - 
+==================================================
+2025-09-28 18:31:29 - Processing Combined P3 and AVO Datasets
+2025-09-28 18:31:29 - ==================================================
+2025-09-28 18:31:29 - 使用传统方法（无融合）
+2025-09-28 18:31:29 - Using Cross-Validation (simplified approach)
+2025-09-28 18:31:29 - Configuration: 5-fold CV, 5 repeats
+2025-09-28 18:31:29 - ============================================================
+2025-09-28 18:31:29 - CROSS-VALIDATION CONFIGURATION
+2025-09-28 18:31:29 - ============================================================
+2025-09-28 18:31:29 - Datasets: ['P3', 'AVO']
+2025-09-28 18:31:29 - CV folds: 5
+2025-09-28 18:31:29 - Repeats: 5
+2025-09-28 18:31:29 - Confidence level: 0.95
+2025-09-28 18:31:29 - ============================================================
+2025-09-28 18:31:29 - STRATIFIED SAMPLING CONFIGURATION
+2025-09-28 18:31:29 - ============================================================
+2025-09-28 18:31:29 - Nested CV Mode: Trial counts per subject by dataset
+2025-09-28 18:31:29 -   P3 dataset: 80 trials per subject
+2025-09-28 18:31:29 -   AVO dataset: 10 trials per subject
+2025-09-28 18:31:29 - Sampling strategy: Multi-level stratified sampling
+2025-09-28 18:31:29 -   - Subject-level: Stratified trial selection per subject
+2025-09-28 18:31:29 -   - Dataset-level: Stratified sampling when dataset trial counts differ
+2025-09-28 18:31:29 -   - Fold-level: StratifiedKFold for 5-fold CV
+2025-09-28 18:31:29 -   - Train/Val split: Stratified train_test_split within each fold
+2025-09-28 18:31:29 - ============================================================
+2025-09-28 18:31:50 - Subject AVO_038: Sampled 10/100 trials
+2025-09-28 18:31:50 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:50 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:50 - Subject AVO_032: Sampled 10/96 trials
+2025-09-28 18:31:50 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:50 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 - Subject AVO_024: Sampled 10/92 trials
+2025-09-28 18:31:51 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 - Subject AVO_047: Sampled 10/92 trials
+2025-09-28 18:31:51 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 - Subject AVO_003: Sampled 10/88 trials
+2025-09-28 18:31:51 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 - Subject AVO_031: Sampled 10/88 trials
+2025-09-28 18:31:51 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 - Subject AVO_035: Sampled 10/88 trials
+2025-09-28 18:31:51 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 - Subject AVO_048: Sampled 10/88 trials
+2025-09-28 18:31:51 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:51 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 - Subject AVO_037: Sampled 10/86 trials
+2025-09-28 18:31:52 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 - Subject AVO_041: Sampled 10/86 trials
+2025-09-28 18:31:52 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 - Subject AVO_004: Sampled 10/84 trials
+2025-09-28 18:31:52 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 - Subject AVO_028: Sampled 10/84 trials
+2025-09-28 18:31:52 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 - Subject AVO_029: Sampled 10/84 trials
+2025-09-28 18:31:52 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 - Subject AVO_036: Sampled 10/84 trials
+2025-09-28 18:31:52 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 - Subject AVO_040: Sampled 10/84 trials
+2025-09-28 18:31:52 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:52 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 - Subject AVO_051: Sampled 10/84 trials
+2025-09-28 18:31:53 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 - Subject AVO_021: Sampled 10/82 trials
+2025-09-28 18:31:53 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 - Subject AVO_026: Sampled 10/80 trials
+2025-09-28 18:31:53 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 - Subject AVO_007: Sampled 10/78 trials
+2025-09-28 18:31:53 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 - Subject AVO_023: Sampled 10/78 trials
+2025-09-28 18:31:53 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 - Subject AVO_033: Sampled 10/78 trials
+2025-09-28 18:31:53 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 - Subject AVO_009: Sampled 10/76 trials
+2025-09-28 18:31:53 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:53 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 - Subject AVO_019: Sampled 10/76 trials
+2025-09-28 18:31:54 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 - Subject AVO_020: Sampled 10/76 trials
+2025-09-28 18:31:54 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 - Subject AVO_006: Sampled 10/74 trials
+2025-09-28 18:31:54 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 - Subject AVO_017: Sampled 10/74 trials
+2025-09-28 18:31:54 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 - Subject AVO_008: Sampled 10/72 trials
+2025-09-28 18:31:54 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 - Subject AVO_012: Sampled 10/72 trials
+2025-09-28 18:31:54 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:54 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 - Subject AVO_013: Sampled 10/72 trials
+2025-09-28 18:31:55 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 - Subject AVO_014: Sampled 10/72 trials
+2025-09-28 18:31:55 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 - Subject AVO_022: Sampled 10/72 trials
+2025-09-28 18:31:55 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 - Subject AVO_030: Sampled 10/72 trials
+2025-09-28 18:31:55 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 - Subject AVO_034: Sampled 10/72 trials
+2025-09-28 18:31:55 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 - Subject AVO_042: Sampled 10/72 trials
+2025-09-28 18:31:55 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 - Subject AVO_043: Sampled 10/72 trials
+2025-09-28 18:31:55 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:55 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 - Subject AVO_001: Sampled 10/70 trials
+2025-09-28 18:31:56 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 - Subject AVO_002: Sampled 10/70 trials
+2025-09-28 18:31:56 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 - Subject AVO_005: Sampled 10/70 trials
+2025-09-28 18:31:56 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 - Subject AVO_010: Sampled 10/70 trials
+2025-09-28 18:31:56 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 - Subject AVO_016: Sampled 10/70 trials
+2025-09-28 18:31:56 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-09-28 18:31:56 - Nested CV dataset summary:
+2025-09-28 18:31:56 -   Total subjects: 80
+2025-09-28 18:31:56 -   Total trials: 3588
+2025-09-28 18:31:56 -   Average trials per subject: 44.9
+2025-09-28 18:31:56 -   P3 dataset: 40 subjects, 3188 trials (79.7 trials/subject)
+2025-09-28 18:31:56 -   AVO dataset: 40 subjects, 400 trials (10.0 trials/subject)
+2025-09-28 18:31:56 -   Class distribution: {0: 1794, 1: 1794}
+2025-09-28 18:31:56 -   Class proportions: [0.5 0.5]
+2025-09-28 18:31:56 -   NOTE: Datasets have different trial counts - StratifiedKFold will handle balanced sampling
+2025-09-28 18:31:56 - Enhanced preprocessing increased channels from 5 to 25
+2025-09-28 18:31:56 - Starting Cross-Validation for EEGConformer
+2025-09-28 18:31:56 - Configuration: 5-fold CV, 5 repeats
+2025-09-28 18:31:56 - Data split ratios: Train=0.7, Val=0.1, Test=0.2
+2025-09-28 18:31:56 - Repeat 1/5
+2025-09-28 18:31:56 -   Fold 1/5
+2025-09-28 18:31:56 -     Fold split: Train=2511, Val=359
+2025-09-28 18:32:33 -     Test accuracy: 0.6170
+2025-09-28 18:32:33 -   Fold 2/5
+2025-09-28 18:32:33 -     Fold split: Train=2511, Val=359
+2025-09-28 18:33:08 -     Test accuracy: 0.6476
+2025-09-28 18:33:08 -   Fold 3/5
+2025-09-28 18:33:08 -     Fold split: Train=2511, Val=359
+2025-09-28 18:33:22 -     Test accuracy: 0.5000
+2025-09-28 18:33:22 -   Fold 4/5
+2025-09-28 18:33:22 -     Fold split: Train=2512, Val=359
+2025-09-28 18:34:20 -     Test accuracy: 0.5969
+2025-09-28 18:34:20 -   Fold 5/5
+2025-09-28 18:34:20 -     Fold split: Train=2512, Val=359
+2025-09-28 18:35:01 -     Test accuracy: 0.6332
+2025-09-28 18:35:01 -   Repeat 1 mean accuracy: 0.5989 ± 0.0523
+2025-09-28 18:35:01 - Repeat 2/5
+2025-09-28 18:35:01 -   Fold 1/5
+2025-09-28 18:35:01 -     Fold split: Train=2511, Val=359
+2025-09-28 18:35:38 -     Test accuracy: 0.6908
+2025-09-28 18:35:38 -   Fold 2/5
+2025-09-28 18:35:38 -     Fold split: Train=2511, Val=359
+2025-09-28 18:36:15 -     Test accuracy: 0.6574
+2025-09-28 18:36:15 -   Fold 3/5
+2025-09-28 18:36:15 -     Fold split: Train=2511, Val=359
+2025-09-28 18:37:09 -     Test accuracy: 0.6448
+2025-09-28 18:37:09 -   Fold 4/5
+2025-09-28 18:37:09 -     Fold split: Train=2512, Val=359
+2025-09-28 18:37:37 -     Test accuracy: 0.6653
+2025-09-28 18:37:37 -   Fold 5/5
+2025-09-28 18:37:37 -     Fold split: Train=2512, Val=359
+2025-09-28 18:38:07 -     Test accuracy: 0.6485
+2025-09-28 18:38:07 -   Repeat 2 mean accuracy: 0.6614 ± 0.0163
+2025-09-28 18:38:07 - Repeat 3/5
+2025-09-28 18:38:07 -   Fold 1/5
+2025-09-28 18:38:07 -     Fold split: Train=2511, Val=359
+2025-09-28 18:38:37 -     Test accuracy: 0.6448
+2025-09-28 18:38:37 -   Fold 2/5
+2025-09-28 18:38:37 -     Fold split: Train=2511, Val=359
+2025-09-28 18:39:09 -     Test accuracy: 0.6212
+2025-09-28 18:39:09 -   Fold 3/5
+2025-09-28 18:39:09 -     Fold split: Train=2511, Val=359
+2025-09-28 18:39:39 -     Test accuracy: 0.6114
+2025-09-28 18:39:39 -   Fold 4/5
+2025-09-28 18:39:39 -     Fold split: Train=2512, Val=359
+2025-09-28 18:40:15 -     Test accuracy: 0.6416
+2025-09-28 18:40:15 -   Fold 5/5
+2025-09-28 18:40:15 -     Fold split: Train=2512, Val=359
+2025-09-28 18:40:55 -     Test accuracy: 0.6820
+2025-09-28 18:40:55 -   Repeat 3 mean accuracy: 0.6402 ± 0.0243
+2025-09-28 18:40:55 - Repeat 4/5
+2025-09-28 18:40:55 -   Fold 1/5
+2025-09-28 18:40:55 -     Fold split: Train=2511, Val=359
+2025-09-28 18:41:11 -     Test accuracy: 0.5000
+2025-09-28 18:41:11 -   Fold 2/5
+2025-09-28 18:41:11 -     Fold split: Train=2511, Val=359
+2025-09-28 18:41:55 -     Test accuracy: 0.6546
+2025-09-28 18:41:55 -   Fold 3/5
+2025-09-28 18:41:55 -     Fold split: Train=2511, Val=359
+2025-09-28 18:42:23 -     Test accuracy: 0.6267
+2025-09-28 18:42:23 -   Fold 4/5
+2025-09-28 18:42:23 -     Fold split: Train=2512, Val=359
+2025-09-28 18:43:10 -     Test accuracy: 0.6388
+2025-09-28 18:43:10 -   Fold 5/5
+2025-09-28 18:43:10 -     Fold split: Train=2512, Val=359
+2025-09-28 18:43:40 -     Test accuracy: 0.6220
+2025-09-28 18:43:40 -   Repeat 4 mean accuracy: 0.6084 ± 0.0554
+2025-09-28 18:43:40 - Repeat 5/5
+2025-09-28 18:43:40 -   Fold 1/5
+2025-09-28 18:43:40 -     Fold split: Train=2511, Val=359
+2025-09-28 18:43:55 -     Test accuracy: 0.5000
+2025-09-28 18:43:55 -   Fold 2/5
+2025-09-28 18:43:55 -     Fold split: Train=2511, Val=359
+2025-09-28 18:44:10 -     Test accuracy: 0.5000
+2025-09-28 18:44:10 -   Fold 3/5
+2025-09-28 18:44:10 -     Fold split: Train=2511, Val=359
+2025-09-28 18:44:53 -     Test accuracy: 0.6379
+2025-09-28 18:44:53 -   Fold 4/5
+2025-09-28 18:44:53 -     Fold split: Train=2512, Val=359
+2025-09-28 18:45:24 -     Test accuracy: 0.6290
+2025-09-28 18:45:24 -   Fold 5/5
+2025-09-28 18:45:24 -     Fold split: Train=2512, Val=359
+2025-09-28 18:45:39 -     Test accuracy: 0.4993
+2025-09-28 18:45:39 -   Repeat 5 mean accuracy: 0.5532 ± 0.0655
+2025-09-28 18:45:39 - Cross-Validation completed for EEGConformer
+2025-09-28 18:45:39 - Final accuracy: 0.6124 ± 0.0609
+2025-09-28 18:45:39 - 95% CI: [0.5873, 0.6376]
+2025-09-28 18:45:39 - 
+============================================================
+2025-09-28 18:45:39 - CROSS-VALIDATION RESULTS
+2025-09-28 18:45:39 - ============================================================
+2025-09-28 18:45:39 - Model: EEGConformer
+2025-09-28 18:45:39 - Overall accuracy: 0.6124 ± 0.0609
+2025-09-28 18:45:39 - 95% Confidence Interval: [0.5873, 0.6376]
+2025-09-28 18:45:39 - Statistical significance: 25 evaluations
+2025-09-28 18:45:39 - Precision: 0.5398 [0.4389, 0.6407]
+2025-09-28 18:45:39 - Recall: 0.5461 [0.4315, 0.6608]
+2025-09-28 18:45:39 - F1_Score: 0.5320 [0.4318, 0.6323]
+2025-09-28 18:45:39 - Auc: 0.6734 [0.6450, 0.7018]
+2025-09-28 18:45:39 - ============================================================
+2025-09-28 18:45:39 - Individual subject results skipped - using Nested Cross-Validation results
+2025-09-28 18:45:39 - Detailed results saved to: main_combined_detailed_results_20250928_184539.csv
+2025-09-28 18:45:39 - Summary statistics saved to: main_combined_summary_stats_20250928_184539.csv
+2025-09-28 18:45:39 - Dataset-specific results from Nested Cross-Validation:
+2025-09-28 18:45:39 - P3 Dataset - Nested CV Results:
+2025-09-28 18:45:39 -   Mean Accuracy: 0.6150 ± 0.0613
+2025-09-28 18:45:39 -   95% CI: [0.5897, 0.6403]
+2025-09-28 18:45:39 -   AUC: 0.6755 ± 0.0703
+2025-09-28 18:45:39 - AVO Dataset - Nested CV Results:
+2025-09-28 18:45:39 -   Mean Accuracy: 0.5927 ± 0.0743
+2025-09-28 18:45:39 -   95% CI: [0.5620, 0.6233]
+2025-09-28 18:45:39 -   AUC: 0.6610 ± 0.0795

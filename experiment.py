@@ -189,7 +189,9 @@ def stratified_sample_trials(data, labels, n_trials, subject_id, logger):
     """
     # Set random seed for reproducible sampling
     from config import RANDOM_SEED
-    np.random.seed(RANDOM_SEED + hash(subject_id) % 1000)  # Add subject-specific variation
+    # Use first element of RANDOM_SEED if it's a list, otherwise use as is
+    base_seed = RANDOM_SEED[0] if isinstance(RANDOM_SEED, (list, tuple)) else RANDOM_SEED
+    np.random.seed(base_seed + hash(subject_id) % 1000)  # Add subject-specific variation
     unique_labels = np.unique(labels)
     if len(unique_labels) < 2:
         logger.warning(f"Subject {subject_id}: Only one class found, using random sampling")
