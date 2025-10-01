@@ -6,7 +6,8 @@
       "Bash(python3:*)",
       "Bash(chmod:*)",
       "Bash(find:*)",
-      "Bash(nvidia-smi:*)"
+      "Bash(nvidia-smi:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
