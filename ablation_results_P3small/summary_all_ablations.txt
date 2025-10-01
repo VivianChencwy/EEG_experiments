@@ -1,0 +1,70 @@
+=====================================================
+ABLATION STUDY RESULTS SUMMARY
+=====================================================
+
+All experiments completed successfully.
+All CSV files saved in: ablation_results/
+
+---------------------------------------------------
+EXPERIMENT 1: Equal Weights (w_P3 = w_AVO = 1.0)
+---------------------------------------------------
+File: main_ablation1_equal_weights.py
+Modification: Both domains weighted equally (no domain weighting)
+Overall Accuracy: 0.6332
+
+Detailed results: ablation1_equal_weights_detailed_20250930_191928.csv
+Summary stats: ablation1_equal_weights_summary_20250930_191928.csv
+Full log: ablation1_run.log
+
+---------------------------------------------------
+EXPERIMENT 2: Fixed Weights (Non-Evolving)
+---------------------------------------------------
+File: main_ablation2_fixed_weights.py
+Modification: Weights fixed at sqrt(N_large/N_small), no warmup
+Overall Accuracy: 0.6165
+
+Detailed results: ablation2_fixed_weights_detailed_20250930_192607.csv
+Summary stats: ablation2_fixed_weights_summary_20250930_192607.csv
+Full log: ablation2_run.log
+
+---------------------------------------------------
+EXPERIMENT 3: No MMD Alignment (lambda_MMD = 0)
+---------------------------------------------------
+File: main_ablation3_no_mmd.py
+Modification: Remove RBF-MMD alignment loss
+Overall Accuracy: 0.5997
+
+Detailed results: ablation3_no_mmd_detailed_20250930_193652.csv
+Summary stats: ablation3_no_mmd_summary_20250930_193652.csv
+Full log: ablation3_run.log
+
+---------------------------------------------------
+EXPERIMENT 4: No Split-BN (Unified BN)
+---------------------------------------------------
+File: main_ablation4_no_split_bn.py
+Modification: Use standard unified BN across domains
+Overall Accuracy: 0.6442
+
+Detailed results: ablation4_no_split_bn_detailed_20250930_194307.csv
+Summary stats: ablation4_no_split_bn_summary_20250930_194307.csv
+Full log: ablation4_run.log
+
+=====================================================
+COMPARISON SUMMARY
+=====================================================
+
+Ablation 4 (No Split-BN):       0.6442  [Best among ablations]
+Ablation 1 (Equal Weights):     0.6332
+Ablation 2 (Fixed Weights):     0.6165
+Ablation 3 (No MMD):             0.5997  [Worst among ablations]
+
+Key Findings:
+1. Removing MMD alignment (Ablation 3) had the largest negative impact (-7.4% vs best)
+2. Using unified BN instead of Split-BN (Ablation 4) performed best
+3. Weight evolution (TF-DWT) vs fixed weights shows modest improvement
+4. Equal weights (Ablation 1) performed reasonably well
+
+All detailed fold results are available in CSV format for 
+statistical testing (e.g., paired t-tests).
+
+=====================================================

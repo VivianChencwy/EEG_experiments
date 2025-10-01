@@ -36,8 +36,8 @@ dataset = 'use_combined_datasets'
 # Nested Cross-Validation trial configuration (only used when USE_NESTED_CV = True)
 # Specify how many trials to use per subject for each dataset in nested CV
 # The 5-fold CV will automatically handle train/val/test splits, so you only need to specify total trials
-NESTED_CV_TRIALS_PER_SUBJECT_P3 = 10    
-NESTED_CV_TRIALS_PER_SUBJECT_AVO = 80 
+NESTED_CV_TRIALS_PER_SUBJECT_P3 = 80    
+NESTED_CV_TRIALS_PER_SUBJECT_AVO = 10 
 
 
 #######################

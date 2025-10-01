@@ -2,13 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(python:*)",
-      "Bash(timeout:*)",
-      "Bash(python3:*)",
-      "Bash(chmod:*)",
-      "Bash(find:*)",
-      "Bash(nvidia-smi:*)",
-      "Bash(grep:*)",
-      "Bash(mkdir:*)"
+      "Bash(pip install:*)",
+      "Bash(ls:*)",
+      "Bash(do [ -f \"$file\" ])",
+      "Bash(kill:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
