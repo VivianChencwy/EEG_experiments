@@ -253,3 +253,90 @@ Experiment Configuration:
 2025-09-30 18:36:16 -     Test accuracy: 0.7928
 2025-09-30 18:36:16 -   Fold 3/5
 2025-09-30 18:36:16 -     Fold split: Train=2413, Val=345
+2025-09-30 18:37:16 -     Test accuracy: 0.7754
+2025-09-30 18:37:16 -   Fold 4/5
+2025-09-30 18:37:16 -     Fold split: Train=2414, Val=345
+2025-09-30 18:38:32 -     Test accuracy: 0.7968
+2025-09-30 18:38:32 -   Fold 5/5
+2025-09-30 18:38:32 -     Fold split: Train=2414, Val=345
+2025-09-30 18:39:32 -     Test accuracy: 0.7779
+2025-09-30 18:39:32 -   Repeat 2 mean accuracy: 0.7938 ± 0.0181
+2025-09-30 18:39:32 - Repeat 3/5
+2025-09-30 18:39:32 -   Fold 1/5
+2025-09-30 18:39:32 -     Fold split: Train=2413, Val=345
+2025-09-30 18:40:18 -     Test accuracy: 0.7783
+2025-09-30 18:40:18 -   Fold 2/5
+2025-09-30 18:40:18 -     Fold split: Train=2413, Val=345
+2025-09-30 18:41:05 -     Test accuracy: 0.7681
+2025-09-30 18:41:05 -   Fold 3/5
+2025-09-30 18:41:05 -     Fold split: Train=2413, Val=345
+2025-09-30 18:42:07 -     Test accuracy: 0.8014
+2025-09-30 18:42:07 -   Fold 4/5
+2025-09-30 18:42:07 -     Fold split: Train=2414, Val=345
+2025-09-30 18:42:18 -     Test accuracy: 0.4993
+2025-09-30 18:42:18 -   Fold 5/5
+2025-09-30 18:42:18 -     Fold split: Train=2414, Val=345
+2025-09-30 18:43:05 -     Test accuracy: 0.7678
+2025-09-30 18:43:05 -   Repeat 3 mean accuracy: 0.7230 ± 0.1125
+2025-09-30 18:43:05 - Repeat 4/5
+2025-09-30 18:43:05 -   Fold 1/5
+2025-09-30 18:43:05 -     Fold split: Train=2413, Val=345
+2025-09-30 18:44:07 -     Test accuracy: 0.7928
+2025-09-30 18:44:07 -   Fold 2/5
+2025-09-30 18:44:07 -     Fold split: Train=2413, Val=345
+2025-09-30 18:45:27 -     Test accuracy: 0.7812
+2025-09-30 18:45:27 -   Fold 3/5
+2025-09-30 18:45:27 -     Fold split: Train=2413, Val=345
+2025-09-30 18:46:29 -     Test accuracy: 0.7667
+2025-09-30 18:46:29 -   Fold 4/5
+2025-09-30 18:46:29 -     Fold split: Train=2414, Val=345
+2025-09-30 18:47:37 -     Test accuracy: 0.7866
+2025-09-30 18:47:37 -   Fold 5/5
+2025-09-30 18:47:37 -     Fold split: Train=2414, Val=345
+2025-09-30 18:48:16 -     Test accuracy: 0.7852
+2025-09-30 18:48:16 -   Repeat 4 mean accuracy: 0.7825 ± 0.0087
+2025-09-30 18:48:16 - Repeat 5/5
+2025-09-30 18:48:16 -   Fold 1/5
+2025-09-30 18:48:16 -     Fold split: Train=2413, Val=345
+2025-09-30 18:49:46 -     Test accuracy: 0.7783
+2025-09-30 18:49:46 -   Fold 2/5
+2025-09-30 18:49:46 -     Fold split: Train=2413, Val=345
+2025-09-30 18:51:08 -     Test accuracy: 0.7609
+2025-09-30 18:51:08 -   Fold 3/5
+2025-09-30 18:51:08 -     Fold split: Train=2413, Val=345
+2025-09-30 18:52:16 -     Test accuracy: 0.7884
+2025-09-30 18:52:16 -   Fold 4/5
+2025-09-30 18:52:16 -     Fold split: Train=2414, Val=345
+2025-09-30 18:52:56 -     Test accuracy: 0.7460
+2025-09-30 18:52:56 -   Fold 5/5
+2025-09-30 18:52:56 -     Fold split: Train=2414, Val=345
+2025-09-30 18:53:58 -     Test accuracy: 0.7939
+2025-09-30 18:53:58 -   Repeat 5 mean accuracy: 0.7735 ± 0.0178
+2025-09-30 18:53:58 - Cross-Validation completed for EEGConformer
+2025-09-30 18:53:58 - Final accuracy: 0.7699 ± 0.0588
+2025-09-30 18:53:58 - 95% CI: [0.7457, 0.7942]
+2025-09-30 18:53:58 - 
+============================================================
+2025-09-30 18:53:58 - CROSS-VALIDATION RESULTS
+2025-09-30 18:53:58 - ============================================================
+2025-09-30 18:53:58 - Model: EEGConformer
+2025-09-30 18:53:58 - Overall accuracy: 0.7699 ± 0.0588
+2025-09-30 18:53:58 - 95% Confidence Interval: [0.7457, 0.7942]
+2025-09-30 18:53:58 - Statistical significance: 25 evaluations
+2025-09-30 18:53:58 - Precision: 0.7597 [0.7346, 0.7848]
+2025-09-30 18:53:58 - Recall: 0.8130 [0.7856, 0.8404]
+2025-09-30 18:53:58 - F1_Score: 0.7809 [0.7676, 0.7942]
+2025-09-30 18:53:58 - Auc: 0.8372 [0.8183, 0.8561]
+2025-09-30 18:53:58 - ============================================================
+2025-09-30 18:53:58 - Individual subject results skipped - using Nested Cross-Validation results
+2025-09-30 18:53:58 - Detailed results saved to: main_combined_detailed_results_20250930_185358.csv
+2025-09-30 18:53:58 - Summary statistics saved to: main_combined_summary_stats_20250930_185358.csv
+2025-09-30 18:53:58 - Dataset-specific results from Nested Cross-Validation:
+2025-09-30 18:53:58 - P3 Dataset - Nested CV Results:
+2025-09-30 18:53:58 -   Mean Accuracy: 0.5527 ± 0.0579
+2025-09-30 18:53:58 -   95% CI: [0.5288, 0.5766]
+2025-09-30 18:53:58 -   AUC: 0.5927 ± 0.0549
+2025-09-30 18:53:58 - AVO Dataset - Nested CV Results:
+2025-09-30 18:53:58 -   Mean Accuracy: 0.7982 ± 0.0630
+2025-09-30 18:53:58 -   95% CI: [0.7722, 0.8241]
+2025-09-30 18:53:58 -   AUC: 0.8655 ± 0.0490

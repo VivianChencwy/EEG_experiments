@@ -7,7 +7,8 @@
       "Bash(chmod:*)",
       "Bash(find:*)",
       "Bash(nvidia-smi:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
