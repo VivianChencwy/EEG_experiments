@@ -6,7 +6,9 @@
       "Bash(ls:*)",
       "Bash(do [ -f \"$file\" ])",
       "Bash(kill:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(pkill:*)",
+      "Bash(/home/vivian/eeg/EEG_experiments/check_optimization_progress.sh:*)"
     ],
     "deny": [],
     "ask": []

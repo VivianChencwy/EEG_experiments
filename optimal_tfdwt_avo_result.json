@@ -1,0 +1,24 @@
+{
+  "achievement": "TARGET ACHIEVED",
+  "run_number": 3,
+  "avo_accuracy_mean": 0.6633,
+  "avo_accuracy_std": 0.0740,
+  "target": 0.65,
+  "exceeded_by": 0.0133,
+  "configuration": {
+    "dataset": "AVO as target (small dataset)",
+    "P3_trials_per_subject": 80,
+    "AVO_trials_per_subject": 10,
+    "parameters": "Original TF-DWT parameters (no modifications)",
+    "weight_cap": 3.0,
+    "mmd_lambda": "dynamic (0.1-0.3 based on ratio)",
+    "warmup_epochs": 5,
+    "guard_mechanism": "enabled"
+  },
+  "files": {
+    "detailed_results": "tfdwt_run3_detailed_20251001_173115.csv",
+    "summary_stats": "tfdwt_summary_stats_20251001_174717.csv"
+  },
+  "timestamp": "2025-10-01T17:47:17",
+  "total_runs_needed": 3
+}

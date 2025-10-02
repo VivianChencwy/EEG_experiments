@@ -677,7 +677,7 @@ def main():
         if 'detailed_fold_results' in results:
             df = pd.DataFrame(results['detailed_fold_results'])
             timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-            csv_filename = f'ablation_results/ablation4_no_split_bn_detailed_{timestamp}.csv'
+            csv_filename = f'ablation_results_P3small/ablation4_no_split_bn_detailed_{timestamp}.csv'
             df.to_csv(csv_filename, index=False)
             logger.info(f"Detailed results saved to: {csv_filename}")
             print(f"Detailed results saved to: {csv_filename}")
@@ -685,7 +685,7 @@ def main():
             # Save summary statistics
             summary_stats = {k: v for k, v in results.items() if k != 'detailed_fold_results'}
             summary_df = pd.DataFrame([summary_stats])
-            summary_filename = f'ablation_results/ablation4_no_split_bn_summary_{timestamp}.csv'
+            summary_filename = f'ablation_results_P3small/ablation4_no_split_bn_summary_{timestamp}.csv'
             summary_df.to_csv(summary_filename, index=False)
             logger.info(f"Summary statistics saved to: {summary_filename}")
             print(f"Summary statistics saved to: {summary_filename}")

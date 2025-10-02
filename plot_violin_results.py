@@ -11,7 +11,7 @@ data_files = {
     'AVO': {
         'Single-dataset training': '0930/main_AVO_detailed_results_20250928_183126.csv',
         'Combined training': '0930/avo_main_combined_detailed_results_20250928_184539.csv',
-        'AS-MMD (Proposed)': '0930/avo_tfdwt_detailed_results_20250929_172704.csv'
+        'AS-MMD (Proposed)': '0930/avo_tfdwt_detailed_results_20251001_174717.csv'
     },
     'P3': {
         'Single-dataset training': '0930/main_P3_detailed_results_20250930_190550.csv',
@@ -45,7 +45,7 @@ def prepare_data():
 def create_violin_plots():
     data = prepare_data()
 
-    method_order = ['Single-dataset training', 'Combined training', 'AS-MMD (Proposed)']
+    method_order = ['AS-MMD (Proposed)', 'Combined training', 'Single-dataset training']
     colors = ['#8dd3c7', '#fb8072', '#80b1d3']
     palette = dict(zip(method_order, colors))
 
@@ -63,12 +63,12 @@ def create_violin_plots():
     sns.violinplot(
         data=data, x='Dataset', y='Accuracy', hue='Method',
         hue_order=method_order, palette=palette, ax=ax1,
-        inner='box', cut=0, density_norm='width'   # cut=0
+        inner='box', cut=0, density_norm='width', linewidth=1.5
     )
 
     handles, labels = ax1.get_legend_handles_labels()
     ax1.legend(handles[:3], labels[:3], title='Training Method',
-               fontsize=11, title_fontsize=12, loc='lower right')
+               fontsize=11, title_fontsize=12, loc='upper right')
 
     ax1.set_title('Accuracy Distribution', fontsize=18, fontweight='bold')
     ax1.set_xlabel('Dataset', fontsize=16)
@@ -76,7 +76,7 @@ def create_violin_plots():
     ax1.tick_params(axis='both', labelsize=14)
     ax1.grid(axis='y', alpha=0.3)
     ax1.set_ylim(acc_ylim)
-    ax1.axvline(x=0.5, color='gray', linestyle='--', linewidth=1.5, alpha=0.7)
+    ax1.axvline(x=0.5, color='gray', linestyle='--', linewidth=2, alpha=0.7)
 
     plt.tight_layout()
     plt.savefig('0930/violin_plot_accuracy.png', dpi=300, bbox_inches='tight')
@@ -88,12 +88,12 @@ def create_violin_plots():
     sns.violinplot(
         data=data, x='Dataset', y='AUC', hue='Method',
         hue_order=method_order, palette=palette, ax=ax2,
-        inner='box', cut=0, density_norm='width'   # cut=0
+        inner='box', cut=0, density_norm='width', linewidth=1.5
     )
 
     handles, labels = ax2.get_legend_handles_labels()
     ax2.legend(handles[:3], labels[:3], title='Training Method',
-               fontsize=11, title_fontsize=12, loc='lower right')
+               fontsize=11, title_fontsize=12, loc='upper right')
 
     ax2.set_title('AUC Distribution', fontsize=18, fontweight='bold')
     ax2.set_xlabel('Dataset', fontsize=16)
@@ -101,7 +101,7 @@ def create_violin_plots():
     ax2.tick_params(axis='both', labelsize=14)
     ax2.grid(axis='y', alpha=0.3)
     ax2.set_ylim(auc_ylim)
-    ax2.axvline(x=0.5, color='gray', linestyle='--', linewidth=1.5, alpha=0.7)
+    ax2.axvline(x=0.5, color='gray', linestyle='--', linewidth=2, alpha=0.7)
 
     plt.tight_layout()
     plt.savefig('0930/violin_plot_auc.png', dpi=300, bbox_inches='tight')
