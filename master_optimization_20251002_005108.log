@@ -1,0 +1,154 @@
+=== MASTER OVERNIGHT OPTIMIZATION ===
+Start time: Thu Oct  2 12:51:08 AM PDT 2025
+
+Waiting for AVO scenario experiments to complete...
+AVO scenario completed at: Thu Oct  2 02:21:10 AM PDT 2025
+
+=== AVO Scenario Results ===
+Log: ultra_aggressive_run1_20251002_004925.log
+Log: ultra_aggressive_run2_20251002_010738.log
+Log: ultra_aggressive_run3_20251002_012614.log
+Log: ultra_aggressive_run4_20251002_014351.log
+Log: ultra_aggressive_run5_20251002_020229.log
+
+=== Starting P3 Scenario ===
+Start time: Thu Oct  2 02:21:10 AM PDT 2025
+=== P3 Scenario Experiments ===
+Configuration: P3=10, AVO=80
+Target: P3 accuracy >= 0.62 for 5 consecutive runs
+
+Updated config: P3=10, AVO=80
+=== P3 Experiment 1/5 ===
+Start: Thu Oct  2 02:21:10 AM PDT 2025
+Results - P3: 0.5991963579415568, AVO: 0.6549530263632984
+✗ P3 below target
+End: Thu Oct  2 02:37:41 AM PDT 2025
+
+=== P3 Experiment 2/5 ===
+Start: Thu Oct  2 02:37:41 AM PDT 2025
+Results - P3: 0.5813826478904615, AVO: 0.6624966574116309
+✗ P3 below target
+End: Thu Oct  2 02:53:17 AM PDT 2025
+
+=== P3 Experiment 3/5 ===
+Start: Thu Oct  2 02:53:17 AM PDT 2025
+Results - P3: 0.5915039415868609, AVO: 0.6505865678883426
+✗ P3 below target
+End: Thu Oct  2 03:08:40 AM PDT 2025
+
+=== P3 Experiment 4/5 ===
+Start: Thu Oct  2 03:08:40 AM PDT 2025
+Results - P3: 0.5761651353068573, AVO: 0.6702408535658277
+✗ P3 below target
+End: Thu Oct  2 03:24:32 AM PDT 2025
+
+=== P3 Experiment 5/5 ===
+Start: Thu Oct  2 03:24:32 AM PDT 2025
+Results - P3: 0.5895137412846156, AVO: 0.6699520156155566
+✗ P3 below target
+End: Thu Oct  2 03:35:03 AM PDT 2025
+
+=== All P3 experiments completed ===
+
+P3 scenario completed at: Thu Oct  2 03:35:03 AM PDT 2025
+
+=== Generating Final Report ===
+================================================================================
+TF-DWT OPTIMIZATION FINAL REPORT
+================================================================================
+
+Generated: 2025-10-02 03:35:03
+Total experiments analyzed: 98
+
+================================================================================
+OVERALL STATISTICS
+================================================================================
+
+P3 Accuracy:  Mean=0.5859, Min=0.5222, Max=0.6498
+AVO Accuracy: Mean=0.6232, Min=0.5695, Max=0.6759
+Overall Acc:  Mean=0.6130, Min=0.5634, Max=0.6608
+
+================================================================================
+TARGET ACHIEVEMENT ANALYSIS
+================================================================================
+
+AVO Target (>= 0.66):
+  Passing experiments: 5/98
+  Best AVO accuracy: 0.6759
+  Best run: 20250925_212538
+  Max consecutive passes: 2
+
+P3 Target (>= 0.62):
+  Passing experiments: 5/98
+  Best P3 accuracy: 0.6498
+  Best run: 20250925_210959
+  Max consecutive passes: 2
+
+================================================================================
+DAILY PROGRESS
+================================================================================
+
+Date: 20250924
+  Experiments: 1
+  P3:  Mean=0.5884, Range=[0.5884, 0.5884]
+  AVO: Mean=0.6523, Range=[0.6523, 0.6523]
+
+Date: 20250925
+  Experiments: 23
+  P3:  Mean=0.5992, Range=[0.5562, 0.6498]
+  AVO: Mean=0.6245, Range=[0.5862, 0.6759]
+
+Date: 20250926
+  Experiments: 1
+  P3:  Mean=0.5872, Range=[0.5872, 0.5872]
+  AVO: Mean=0.6539, Range=[0.6539, 0.6539]
+
+Date: 20250927
+  Experiments: 3
+  P3:  Mean=0.6156, Range=[0.6030, 0.6297]
+  AVO: Mean=0.6496, Range=[0.6449, 0.6525]
+
+Date: 20250928
+  Experiments: 11
+  P3:  Mean=0.5807, Range=[0.5385, 0.6301]
+  AVO: Mean=0.6194, Range=[0.5868, 0.6450]
+
+Date: 20250929
+  Experiments: 42
+  P3:  Mean=0.5741, Range=[0.5222, 0.6128]
+  AVO: Mean=0.6161, Range=[0.5695, 0.6501]
+
+Date: 20251001
+  Experiments: 5
+  P3:  Mean=0.5749, Range=[0.5552, 0.6011]
+  AVO: Mean=0.6226, Range=[0.6107, 0.6391]
+
+Date: 20251002
+  Experiments: 12
+  P3:  Mean=0.6029, Range=[0.5762, 0.6284]
+  AVO: Mean=0.6375, Range=[0.5834, 0.6702]
+
+================================================================================
+RECENT RESULTS (Last 10)
+================================================================================
+
+20251002_010737: P3=0.6200, AVO=0.6226, Overall=0.6202
+20251002_012613: P3=0.6170, AVO=0.6272, Overall=0.6181
+20251002_014350: P3=0.6169, AVO=0.6323, Overall=0.6186
+20251002_020229: P3=0.6135, AVO=0.6272, Overall=0.6149
+20251002_022057: P3=0.6104, AVO=0.6299, Overall=0.6126
+20251002_023741: P3=0.5992, AVO=0.6550, Overall=0.6486
+20251002_025316: P3=0.5814, AVO=0.6625, Overall=0.6531
+20251002_030840: P3=0.5915, AVO=0.6506, Overall=0.6438
+20251002_032432: P3=0.5762, AVO=0.6702, Overall=0.6593
+20251002_033502: P3=0.5895, AVO=0.6700, Overall=0.6608
+
+================================================================================
+END OF REPORT
+================================================================================
+
+Report saved to: FINAL_OPTIMIZATION_REPORT_20251002_033503.txt
+Detailed results saved to: detailed_results_20251002_033503.json
+
+=== MASTER OPTIMIZATION COMPLETE ===
+End time: Thu Oct  2 03:35:03 AM PDT 2025

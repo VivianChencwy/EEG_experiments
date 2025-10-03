@@ -36,8 +36,8 @@ dataset = 'use_combined_datasets'
 # Nested Cross-Validation trial configuration (only used when USE_NESTED_CV = True)
 # Specify how many trials to use per subject for each dataset in nested CV
 # The 5-fold CV will automatically handle train/val/test splits, so you only need to specify total trials
-NESTED_CV_TRIALS_PER_SUBJECT_P3 = 80    
-NESTED_CV_TRIALS_PER_SUBJECT_AVO = 10 
+NESTED_CV_TRIALS_PER_SUBJECT_P3 = 10
+NESTED_CV_TRIALS_PER_SUBJECT_AVO = 80 
 
 
 #######################
@@ -100,8 +100,8 @@ TRIAL_STOP_OFFSET_SAMPLES = int(1.0 * 128)     # 1 second after event (128 sampl
 #######################
 
 # Model and training hyperparameters
-BATCH_SIZE = 128
-MAX_EPOCHS = 500
+BATCH_SIZE = 32  # EXTREME: Minimal batch for maximum few-shot precision
+MAX_EPOCHS = 1000  # EXTREME: Maximum epochs for complete convergence
 
 # Dataset split ratios (must sum to ≤ 1.0)
 TRAIN_SIZE = 0.7
@@ -133,16 +133,16 @@ FIXED_TRIALS_PER_SUBJECT_TEST = 10   # e.g., 30 for exactly 30 test trials per s
 # Examples for different experimental designs:
 #
 # Balanced design (same trials per subject for both datasets):
-# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 50
-# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 50
+# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 10
+# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 80
 #
 # Unbalanced design (different trials per subject - system handles stratification):
-# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 60    # P3 has more trials available
-# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 30   # AVO has fewer trials available
+# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 10    # P3 has more trials available
+# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 80   # AVO has fewer trials available
 #
 # Quick testing (small number of trials):
-# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 20
-# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 20
+# NESTED_CV_TRIALS_PER_SUBJECT_P3 = 10
+# NESTED_CV_TRIALS_PER_SUBJECT_AVO = 80
 
 # Example configurations:
 # 
@@ -183,11 +183,11 @@ INPUT_WINDOW_SAMPLES = TRIAL_STOP_OFFSET_SAMPLES - TRIAL_START_OFFSET_SAMPLES  #
 N_CLASSES = 2
 
 # Training hyperparameters
-LEARNING_RATE = 0.01   # Increased for SepConv1D models to improve learning
-WEIGHT_DECAY = 1e-4     # Moderate regularization
-GAMMA = 0.7  # Learning rate decay factor (less aggressive)
-EARLY_STOPPING_PATIENCE = 50 # Balanced patience
-DROPOUT_RATE = 0.25     # Reduced dropout for lightweight models
+LEARNING_RATE = 0.003   # EXTREME: Ultra-low LR for precise few-shot learning
+WEIGHT_DECAY = 5e-4     # EXTREME regularization
+GAMMA = 0.75  # Slower decay for stable learning
+EARLY_STOPPING_PATIENCE = 150 # EXTREME patience for absolute convergence
+DROPOUT_RATE = 0.1    # EXTREME: Minimal dropout to maximize learning
 
 # Data augmentation (enabled for better generalization)
 USE_DATA_AUGMENTATION = True

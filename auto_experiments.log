@@ -1,0 +1,14 @@
+======================================================================
+Automated Experiment Runner
+======================================================================
+Waiting for current experiment to complete...
+Experiment completed!
+
+Completed experiment results:
+Traceback (most recent call last):
+  File "/home/vivian/eeg/EEG_experiments/monitor_and_run_experiments.py", line 154, in <module>
+    main()
+  File "/home/vivian/eeg/EEG_experiments/monitor_and_run_experiments.py", line 94, in main
+    print(f"  P3: {p3_acc:.4f if p3_acc else 'N/A'}")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Invalid format specifier '.4f if p3_acc else 'N/A'' for object of type 'float'

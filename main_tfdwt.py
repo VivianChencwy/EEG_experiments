@@ -68,6 +68,105 @@ def set_global_torch_seed(seed: int):
     np.random.seed(seed)
 
 
+def mixup_data(x: torch.Tensor, y: torch.Tensor, alpha: float = 0.4) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, float]:
+    """Perform mixup augmentation on small-sample data.
+
+    Args:
+        x: Input features [batch, ...]
+        y: Labels [batch]
+        alpha: Mixup interpolation strength
+
+    Returns:
+        mixed_x, y_a, y_b, lam
+    """
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1.0
+
+    batch_size = x.size(0)
+    index = torch.randperm(batch_size, device=x.device)
+
+    mixed_x = lam * x + (1 - lam) * x[index]
+    y_a, y_b = y, y[index]
+
+    return mixed_x, y_a, y_b, lam
+
+
+def compute_focal_loss(scores: torch.Tensor, targets: torch.Tensor, gamma: float = 2.0, alpha: float = 0.25) -> torch.Tensor:
+    """Compute focal loss to handle class imbalance and hard examples.
+
+    Args:
+        scores: Model predictions (logits)
+        targets: Ground truth labels
+        gamma: Focusing parameter (higher = more focus on hard examples)
+        alpha: Weighting factor for positive class
+    """
+    ce_loss = F.cross_entropy(scores, targets, reduction='none')
+    pt = torch.exp(-ce_loss)
+    focal_loss = alpha * (1 - pt) ** gamma * ce_loss
+    return focal_loss.mean()
+
+
+def mixup_criterion(pred: torch.Tensor, y_a: torch.Tensor, y_b: torch.Tensor, lam: float, gamma: float = 3.6, alpha: float = 0.65) -> torch.Tensor:
+    """Compute mixup focal loss."""
+    loss_a = compute_focal_loss(pred, y_a, gamma=gamma, alpha=alpha)
+    loss_b = compute_focal_loss(pred, y_b, gamma=gamma, alpha=alpha)
+    return lam * loss_a + (1 - lam) * loss_b
+
+
+def compute_prototypes(features: torch.Tensor, labels: torch.Tensor, n_classes: int = 2) -> torch.Tensor:
+    """Compute class prototypes (mean features per class).
+
+    Args:
+        features: Feature vectors [batch, feature_dim]
+        labels: Class labels [batch]
+        n_classes: Number of classes
+
+    Returns:
+        prototypes: [n_classes, feature_dim]
+    """
+    if features.dim() > 2:
+        features = features.view(features.size(0), -1)
+
+    prototypes = []
+    for c in range(n_classes):
+        mask = (labels == c)
+        if mask.sum() > 0:
+            proto = features[mask].mean(dim=0)
+        else:
+            proto = torch.zeros(features.size(1), device=features.device)
+        prototypes.append(proto)
+
+    return torch.stack(prototypes)
+
+
+def compute_prototype_loss(features: torch.Tensor, labels: torch.Tensor, prototypes: torch.Tensor) -> torch.Tensor:
+    """Compute prototype alignment loss.
+
+    Args:
+        features: Feature vectors [batch, feature_dim]
+        labels: Class labels [batch]
+        prototypes: Class prototypes [n_classes, feature_dim]
+
+    Returns:
+        loss: Prototype alignment loss
+    """
+    if features.dim() > 2:
+        features = features.view(features.size(0), -1)
+
+    # Compute distance to correct prototype
+    loss = 0.0
+    n_samples = 0
+    for i, label in enumerate(labels):
+        proto = prototypes[label]
+        dist = F.mse_loss(features[i], proto)
+        loss += dist
+        n_samples += 1
+
+    return loss / max(1, n_samples)
+
+
 def compute_mmd_rbf(x: torch.Tensor, y: torch.Tensor, logger: logging.Logger, eps: float = 1e-8) -> torch.Tensor:
     """Compute unbiased RBF-MMD between two batches (features or logits).
     No trainable parameters; kernel bandwidth via median heuristic.
@@ -193,22 +292,34 @@ def load_combined_arrays(logger: logging.Logger, channels: List[str]) -> Tuple[n
     return X_all, y_all, src_all
 
 
-def get_symmetric_adjustments(n_train_a: int, n_train_b: int) -> Tuple[float, float, int]:
+def get_symmetric_adjustments(n_train_a: int, n_train_b: int) -> Tuple[float, float, float, int]:
     """Compute symmetric domain weights based purely on relative sizes.
-    Returns (w_small_target, lambda_mmd_target, warmup_epochs).
-    Each fold will compute domain-specific weights as:
-      w_A = max(1.0, sqrt(N_B/N_A)); w_B = max(1.0, sqrt(N_A/N_B))
+    Returns (w_small_target, lambda_mmd_target, lambda_proto_target, warmup_epochs).
+
+    NEW STRATEGY:
+    - Moderate domain weights (avoid over-emphasis)
+    - Reduced MMD (avoid over-alignment destroying features)
+    - Add prototype loss for discriminative transfer
     """
     n_train_a = max(1, n_train_a)
     n_train_b = max(1, n_train_b)
     ratio_ab = n_train_a / float(n_train_b)
-    # Representative target for logging; per-domain weights computed inside the loop
-    w_small = float(np.clip(math.sqrt(1.0 / max(ratio_ab, 1.0)), 1.0, 6.0))
-    # Alignment strength by overall imbalance magnitude
+
+    # PROTOTYPE-BASED: More conservative weights since we have prototype guidance
+    # Use sqrt of ratio for gentler scaling
+    w_small = float(np.clip(np.sqrt(max(ratio_ab, 1.0/ratio_ab)) * 3.0, 1.0, 12.0))
+
+    # Reduced MMD - let prototypes handle discriminative alignment
     overall_ratio = max(ratio_ab, 1.0 / ratio_ab)
-    lambda_mmd = 0.1 if overall_ratio < 2.0 else (0.2 if overall_ratio < 4.0 else 0.3)
-    warmup = max(2, min(5, int(0.1 * MAX_EPOCHS)))
-    return w_small, lambda_mmd, warmup
+    lambda_mmd = 0.2 if overall_ratio < 2.0 else (0.3 if overall_ratio < 4.0 else 0.4)
+
+    # Prototype loss weight - key for discriminative transfer
+    lambda_proto = 0.5 if overall_ratio < 4.0 else 0.8
+
+    # Longer warmup for stable learning
+    warmup = max(20, min(40, int(0.4 * MAX_EPOCHS)))
+
+    return w_small, lambda_mmd, lambda_proto, warmup
 
 
 def evaluate_domain(model: nn.Module, loader: DataLoader, device: torch.device) -> float:
@@ -268,12 +379,12 @@ def tfdwt_train_fold(
     # Automatic adjustments based on imbalance
     n_train_avo = len(Xtr_avo)
     n_train_p3 = len(Xtr_p3)
-    w_small, lambda_mmd_target, warmup_epochs = get_symmetric_adjustments(n_train_avo, n_train_p3)
+    w_small, lambda_mmd_target, lambda_proto_target, warmup_epochs = get_symmetric_adjustments(n_train_avo, n_train_p3)
     # Identify smaller domain for this fold
     small_domain = 'P3' if n_train_p3 <= n_train_avo else 'AVO'
     large_domain = 'AVO' if small_domain == 'P3' else 'P3'
     logger.info(f"Fold domains: small={small_domain} (n={min(n_train_p3, n_train_avo)}), large={large_domain} (n={max(n_train_p3, n_train_avo)})")
-    logger.info(f"Auto adjustments (symmetric): w_small≈{w_small:.3f}, lambda_MMD_target={lambda_mmd_target:.3f}, warmup_epochs={warmup_epochs}")
+    logger.info(f"Auto adjustments (PROTOTYPE-BASED): w_small≈{w_small:.3f}, lambda_MMD={lambda_mmd_target:.3f}, lambda_proto={lambda_proto_target:.3f}, warmup={warmup_epochs}")
 
     # Early stopping (P3-val)
     best_p3_val = 0.0
@@ -286,25 +397,34 @@ def tfdwt_train_fold(
         'P3': snapshot_bn_buffers(model),
     }
 
-    # Monitoring guards
+    # Monitoring guards - less aggressive to allow more optimization
     def guard_adjustments_small(val_history_small: List[float], cur_w: float, cur_lambda: float, domain_name: str) -> Tuple[float, float]:
-        if len(val_history_small) >= 3 and val_history_small[-1] < val_history_small[-2] < val_history_small[-3]:
-            # 3 consecutive drops on small-domain val -> back off both weight and alignment
-            new_w = max(1.0, cur_w * 0.8)
-            new_lambda = max(0.0, cur_lambda * 0.5)
-            logger.warning(f"{domain_name} val decreasing 3x. Reducing w_small to {new_w:.3f}, lambda_MMD to {new_lambda:.3f}")
-            return new_w, new_lambda
+        # Only trigger if 4 consecutive significant drops (>0.01)
+        if len(val_history_small) >= 4:
+            drops = [val_history_small[i-1] - val_history_small[i] > 0.01 for i in range(-3, 0)]
+            if all(drops):
+                # Less aggressive reduction
+                new_w = max(1.0, cur_w * 0.9)
+                new_lambda = max(0.0, cur_lambda * 0.8)
+                logger.warning(f"{domain_name} val decreasing 4x significantly. Reducing w_small to {new_w:.3f}, lambda_MMD to {new_lambda:.3f}")
+                return new_w, new_lambda
         return cur_w, cur_lambda
 
     def guard_adjustments_large(val_history_large: List[float], cur_lambda: float, domain_name: str) -> float:
-        if len(val_history_large) >= 3 and val_history_large[-1] < val_history_large[-2] < val_history_large[-3]:
-            # 3 consecutive drops on large-domain val -> back off alignment only
-            new_lambda = max(0.0, cur_lambda * 0.7)
-            logger.warning(f"{domain_name} val decreasing 3x. Reducing lambda_MMD to {new_lambda:.3f}")
-            return new_lambda
+        # Only trigger if 4 consecutive significant drops
+        if len(val_history_large) >= 4:
+            drops = [val_history_large[i-1] - val_history_large[i] > 0.01 for i in range(-3, 0)]
+            if all(drops):
+                # Less aggressive reduction
+                new_lambda = max(0.0, cur_lambda * 0.85)
+                logger.warning(f"{domain_name} val decreasing 4x significantly. Reducing lambda_MMD to {new_lambda:.3f}")
+                return new_lambda
         return cur_lambda
 
     val_hist: Dict[str, List[float]] = {'P3': [], 'AVO': []}
+
+    # PROTOTYPE INITIALIZATION: Compute initial prototypes from large domain
+    large_prototypes = None
 
     # Training loop
     for epoch in range(1, MAX_EPOCHS + 1):
@@ -314,22 +434,22 @@ def tfdwt_train_fold(
         alpha = min(1.0, epoch / max(1, warmup_epochs))
         n_small = n_train_p3 if small_domain == 'P3' else n_train_avo
         n_large = n_train_avo if small_domain == 'P3' else n_train_p3
-        # Emphasize the smaller domain; keep large at 1.0 (symmetric rule)
-        w_small_target = max(1.0, math.sqrt(max(1, n_large) / max(1, n_small)))
-        # Cap the max emphasis ratio to avoid suppressing large domain too much
-        w_small_target = min(w_small_target, 3.0)
+
+        # PROTOTYPE-BASED: Conservative scaling with sqrt
+        w_small_target = w_small  # Use pre-computed conservative weight
         w_large_target = 1.0
-        w_small = 1.0 + alpha * (w_small_target - 1.0)
-        w_large = 1.0 + alpha * (w_large_target - 1.0)
+        w_small_cur = 1.0 + alpha * (w_small_target - 1.0)
+        w_large_cur = 1.0 + alpha * (w_large_target - 1.0)
         lambda_mmd = alpha * lambda_mmd_target
+        lambda_proto = alpha * lambda_proto_target
 
         # Optionally apply guards based on domain-specific val history
-        w_small, lambda_mmd = guard_adjustments_small(val_hist[small_domain], w_small, lambda_mmd, small_domain)
+        w_small_cur, lambda_mmd = guard_adjustments_small(val_hist[small_domain], w_small_cur, lambda_mmd, small_domain)
         lambda_mmd = guard_adjustments_large(val_hist[large_domain], lambda_mmd, large_domain)
 
         # Log adjustments
         lr_cur = optimizer.param_groups[0]['lr']
-        logger.info(f"Epoch {epoch}/{MAX_EPOCHS} | LR={lr_cur:.6f} | w_{large_domain}={w_large:.3f} | w_{small_domain}={w_small:.3f} | lambda_MMD={lambda_mmd:.3f}")
+        logger.info(f"Epoch {epoch}/{MAX_EPOCHS} | LR={lr_cur:.6f} | w_{large_domain}={w_large_cur:.3f} | w_{small_domain}={w_small_cur:.3f} | λ_MMD={lambda_mmd:.3f} | λ_proto={lambda_proto:.3f}")
 
         # Iterators (oversample the smaller domain, full pass on larger domain)
         train_loaders = {'P3': train_loader_p3, 'AVO': train_loader_avo}
@@ -361,39 +481,65 @@ def tfdwt_train_fold(
             optimizer.zero_grad()
 
             # Forward on large domain
-            restore_bn_buffers(model, bn_store[large_domain])
+            # SHARED BN STRATEGY: Use shared BN stats for both domains to help small domain
             x_large = normalize_data(xb_large).to(device)
             y_large = yb_large.to(device)
             scores_large = model(x_large)
             if scores_large.ndim > 2:
                 scores_large = scores_large.view(scores_large.size(0), -1)
             loss_large = F.cross_entropy(scores_large, y_large)
-            bn_store[large_domain] = snapshot_bn_buffers(model)
 
-            # Forward on small domain
+            # Update prototypes from large domain (EMA style)
+            with torch.no_grad():
+                current_prototypes = compute_prototypes(scores_large.detach(), y_large, n_classes=2)
+                if large_prototypes is None:
+                    large_prototypes = current_prototypes
+                else:
+                    # EMA update: 0.9 * old + 0.1 * new
+                    large_prototypes = 0.9 * large_prototypes + 0.1 * current_prototypes
+
+            # Forward on small domain with MIXUP + prototype guidance
             loss_small = torch.tensor(0.0, device=device)
+            loss_proto = torch.tensor(0.0, device=device)
             scores_small = None
+
             if xb_small is not None:
-                restore_bn_buffers(model, bn_store[small_domain])
                 x_small = normalize_data(xb_small).to(device)
                 y_small = yb_small.to(device)
-                scores_small = model(x_small)
+
+                # MIXUP augmentation for small domain
+                x_mixed, y_a, y_b, lam = mixup_data(x_small, y_small, alpha=0.4)
+
+                scores_small = model(x_mixed)
                 if scores_small.ndim > 2:
                     scores_small = scores_small.view(scores_small.size(0), -1)
-                loss_small = F.cross_entropy(scores_small, y_small)
-                bn_store[small_domain] = snapshot_bn_buffers(model)
 
-            # Alignment loss on logits (no new params)
+                # Mixup focal loss
+                loss_small = mixup_criterion(scores_small, y_a, y_b, lam, gamma=2.0, alpha=0.5)
+
+                # PROTOTYPE LOSS: Guide small domain to learn from large domain prototypes
+                if large_prototypes is not None and lambda_proto > 0:
+                    # Use original (non-mixed) features for prototype alignment
+                    scores_orig = model(x_small)
+                    if scores_orig.ndim > 2:
+                        scores_orig = scores_orig.view(scores_orig.size(0), -1)
+                    loss_proto = compute_prototype_loss(scores_orig, y_small, large_prototypes)
+
+            # Alignment loss on logits (reduced weight)
             loss_align = torch.tensor(0.0, device=device)
             if (scores_small is not None) and (lambda_mmd > 0.0):
                 try:
-                    b = min(scores_large.size(0), scores_small.size(0))
-                    loss_align = compute_mmd_rbf(scores_large[:b].detach(), scores_small[:b].detach(), logger)
+                    # Use non-mixed scores for alignment
+                    scores_orig_small = model(normalize_data(xb_small).to(device))
+                    if scores_orig_small.ndim > 2:
+                        scores_orig_small = scores_orig_small.view(scores_orig_small.size(0), -1)
+                    b = min(scores_large.size(0), scores_orig_small.size(0))
+                    loss_align = compute_mmd_rbf(scores_large[:b].detach(), scores_orig_small[:b].detach(), logger)
                 except Exception as e:
                     logger.warning(f"MMD computation failed: {e}; skipping this step")
                     loss_align = torch.tensor(0.0, device=device)
 
-            total_loss = w_large * loss_large + w_small * loss_small + lambda_mmd * loss_align
+            total_loss = w_large_cur * loss_large + w_small_cur * loss_small + lambda_mmd * loss_align + lambda_proto * loss_proto
             if torch.isnan(total_loss) or torch.isinf(total_loss):
                 logger.warning("Encountered NaN/Inf loss; skipping step and reducing LR by 2x")
                 for pg in optimizer.param_groups:

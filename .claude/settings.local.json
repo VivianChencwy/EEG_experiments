@@ -8,7 +8,20 @@
       "Bash(kill:*)",
       "Bash(chmod:*)",
       "Bash(pkill:*)",
-      "Bash(/home/vivian/eeg/EEG_experiments/check_optimization_progress.sh:*)"
+      "Bash(/home/vivian/eeg/EEG_experiments/check_optimization_progress.sh:*)",
+      "Bash(conda run:*)",
+      "Bash(tee:*)",
+      "Bash(awk:*)",
+      "Bash(xargs cat:*)",
+      "Bash(/home/vivian/eeg/EEG_experiments/check_status.sh:*)",
+      "Bash(cat:*)",
+      "Bash(ps:*)",
+      "Bash(for f in tfdwt_summary_stats_20251002_164246.csv tfdwt_summary_stats_20251002_170829.csv tfdwt_summary_stats_20251002_173229.csv)",
+      "Bash(do echo \"$f:\")",
+      "Bash(tail:*)",
+      "Bash(done)",
+      "Bash(xargs -r kill -9)",
+      "Bash(./monitor_progress.sh:*)"
     ],
     "deny": [],
     "ask": []

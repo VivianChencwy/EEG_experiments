@@ -1,0 +1,23 @@
+=== Round 5: FINE-TUNED Enhancement (方案A) ===
+Settings:
+  - Weight multiplier: 2.0x → cap at 17x (was 1.75x → 15x)
+  - MMD: 0.68 for high ratio (was 0.65)
+  - Focal: gamma=3.6, alpha=0.65 (was 3.5, 0.6)
+  - Batch/LR/Epochs: Keep from Round 4
+
+Goal: 连续5次 AVO ≥ 0.66
+
+=== Run 1/5 ===
+Start: Thu Oct  2 05:42:11 PM PDT 2025
+AVO: 0.6642149644721553
+✓ TARGET MET
+End: Thu Oct  2 10:26:29 PM PDT 2025
+
+=== Run 2/5 ===
+Start: Thu Oct  2 10:26:29 PM PDT 2025
+AVO: 0.6642149644721553
+✓ TARGET MET
+End: Thu Oct  2 11:51:53 PM PDT 2025
+
+=== Run 3/5 ===
+Start: Thu Oct  2 11:51:53 PM PDT 2025
