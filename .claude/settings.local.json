@@ -21,7 +21,13 @@
       "Bash(tail:*)",
       "Bash(done)",
       "Bash(xargs -r kill -9)",
-      "Bash(./monitor_progress.sh:*)"
+      "Bash(./monitor_progress.sh:*)",
+      "Bash(python3:*)",
+      "Bash(sed:*)",
+      "Bash(mkdir:*)",
+      "Bash(lsof:*)",
+      "Bash(for f in tfdwt_summary_stats_20251004_104721.csv tfdwt_summary_stats_20251003_165244.csv tfdwt_summary_stats_20251002_173229.csv)",
+      "Bash(do echo \"=== $f ===\")"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,70 @@
+=== Monitoring experiment for completion ===
+Log file: log_0909/TF_DWT_results_20251003_003630.log
+Start time: Fri Oct  3 04:02:54 PM PDT 2025
+
+[16:02:54] Epoch 31/1000 | Val(AVO)=0.648 | patience remaining: 137/150
+[16:03:54] Epoch 67/1000 | Val(AVO)=0.652 | patience remaining: 101/150
+[16:04:54] Epoch 95/1000 | Val(AVO)=0.648 | patience remaining: 73/150
+[16:05:54] Epoch 122/1000 | Val(AVO)=0.648 | patience remaining: 46/150
+[16:06:54] Epoch 152/1000 | Val(AVO)=0.668 | patience remaining: 16/150
+[16:07:54] Epoch 12/1000 | Val(AVO)=0.650 | patience remaining: 146/150
+[16:08:54] Epoch 37/1000 | Val(AVO)=0.644 | patience remaining: 128/150
+[16:09:54] Epoch 67/1000 | Val(AVO)=0.631 | patience remaining: 123/150
+[16:10:54] Epoch 104/1000 | Val(AVO)=0.654 | patience remaining: 86/150
+[16:11:55] Epoch 146/1000 | Val(AVO)=0.621 | patience remaining: 44/150
+[16:12:55] Epoch 5/1000 | Val(AVO)=0.650 | patience remaining: 147/150
+[16:13:55] Epoch 43/1000 | Val(AVO)=0.656 | patience remaining: 109/150
+[16:14:55] Epoch 66/1000 | Val(AVO)=0.621 | patience remaining: 86/150
+[16:15:55] Epoch 104/1000 | Val(AVO)=0.653 | patience remaining: 48/150
+[16:16:55] Epoch 131/1000 | Val(AVO)=0.662 | patience remaining: 21/150
+[16:17:55] Epoch 19/1000 | Val(AVO)=0.670 | patience remaining: 137/150
+[16:18:55] Epoch 58/1000 | Val(AVO)=0.663 | patience remaining: 98/150
+[16:19:55] Epoch 100/1000 | Val(AVO)=0.715 | patience remaining: 133/150
+[16:20:55] Epoch 124/1000 | Val(AVO)=0.692 | patience remaining: 109/150
+[16:21:55] Epoch 157/1000 | Val(AVO)=0.683 | patience remaining: 76/150
+[16:22:55] Epoch 182/1000 | Val(AVO)=0.699 | patience remaining: 51/150
+[16:23:55] Epoch 216/1000 | Val(AVO)=0.702 | patience remaining: 17/150
+[16:24:55] Epoch 24/1000 | Val(AVO)=0.645 | patience remaining: 129/150
+[16:25:55] Epoch 60/1000 | Val(AVO)=0.642 | patience remaining: 93/150
+[16:26:55] Epoch 95/1000 | Val(AVO)=0.648 | patience remaining: 58/150
+[16:27:55] Epoch 131/1000 | Val(AVO)=0.642 | patience remaining: 22/150
+[16:28:55] Epoch 170/1000 | Val(AVO)=0.639 | patience remaining: 125/150
+[16:29:55] Epoch 195/1000 | Val(AVO)=0.652 | patience remaining: 100/150
+[16:30:55] Epoch 241/1000 | Val(AVO)=0.652 | patience remaining: 54/150
+[16:31:55] Epoch 279/1000 | Val(AVO)=0.632 | patience remaining: 16/150
+[16:32:55] Epoch 26/1000 | Val(AVO)=0.656 | patience remaining: 127/150
+[16:33:55] Epoch 54/1000 | Val(AVO)=0.656 | patience remaining: 99/150
+[16:34:55] Epoch 76/1000 | Val(AVO)=0.656 | patience remaining: 77/150
+[16:35:55] Epoch 94/1000 | Val(AVO)=0.637 | patience remaining: 59/150
+[16:36:55] Epoch 115/1000 | Val(AVO)=0.666 | patience remaining: 38/150
+[16:37:55] Epoch 134/1000 | Val(AVO)=0.653 | patience remaining: 19/150
+[16:38:55] Epoch 2/1000 | Val(AVO)=0.621 | 
+[16:39:55] Epoch 21/1000 | Val(AVO)=0.624 | patience remaining: 135/150
+[16:40:55] Epoch 41/1000 | Val(AVO)=0.650 | patience remaining: 115/150
+[16:41:55] Epoch 61/1000 | Val(AVO)=0.627 | patience remaining: 95/150
+[16:42:55] Epoch 81/1000 | Val(AVO)=0.643 | patience remaining: 75/150
+[16:43:55] Epoch 100/1000 | Val(AVO)=0.627 | patience remaining: 56/150
+[16:44:55] Epoch 119/1000 | Val(AVO)=0.653 | patience remaining: 37/150
+[16:45:55] Epoch 138/1000 | Val(AVO)=0.653 | patience remaining: 18/150
+[16:46:55] Epoch 2/1000 | Val(AVO)=0.606 | 
+[16:47:55] Epoch 23/1000 | Val(AVO)=0.652 | patience remaining: 137/150
+[16:48:55] Epoch 43/1000 | Val(AVO)=0.619 | patience remaining: 117/150
+[16:49:55] Epoch 64/1000 | Val(AVO)=0.639 | patience remaining: 96/150
+[16:50:55] Epoch 82/1000 | Val(AVO)=0.652 | patience remaining: 78/150
+[16:51:55] Epoch 120/1000 | Val(AVO)=0.632 | patience remaining: 40/150
+
+==========================================
+✓ EXPERIMENT COMPLETED!
+==========================================
+Completion time: Fri Oct  3 04:52:55 PM PDT 2025
+Result file: tfdwt_summary_stats_20251003_165244.csv
+
+=== RESULTS ===
+AVO accuracy: 0.6602723777917373
+P3 accuracy:  0.5733622314782812
+
+🎉 AVO TARGET MET! (≥0.66)
+
+Full results saved to: tfdwt_summary_stats_20251003_165244.csv
+
+Monitoring complete.

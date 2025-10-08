@@ -11840,3 +11840,219 @@ Experiment Configuration:
 2025-10-03 15:04:29 - Epoch Summary: TrainLoss=0.9261 | TrainAcc=0.677 | Val(P3)=0.686 | Val(AVO)=0.690
 2025-10-03 15:04:29 - No P3-val improvement; patience remaining: 147/150
 2025-10-03 15:04:29 - Epoch 25/1000 | LR=0.002996 | w_AVO=1.000 | w_P3=5.571 | λ_MMD=0.250 | λ_proto=0.500
+2025-10-03 15:04:56 - Epoch Summary: TrainLoss=0.9463 | TrainAcc=0.679 | Val(P3)=0.771 | Val(AVO)=0.652
+2025-10-03 15:04:56 - No P3-val improvement; patience remaining: 146/150
+2025-10-03 15:04:56 - Epoch 26/1000 | LR=0.002995 | w_AVO=1.000 | w_P3=5.754 | λ_MMD=0.260 | λ_proto=0.520
+2025-10-03 15:05:23 - Epoch Summary: TrainLoss=0.9419 | TrainAcc=0.683 | Val(P3)=0.714 | Val(AVO)=0.661
+2025-10-03 15:05:23 - No P3-val improvement; patience remaining: 145/150
+2025-10-03 15:05:23 - Epoch 27/1000 | LR=0.002995 | w_AVO=1.000 | w_P3=5.937 | λ_MMD=0.270 | λ_proto=0.540
+2025-10-03 15:05:50 - Epoch Summary: TrainLoss=0.9649 | TrainAcc=0.666 | Val(P3)=0.800 | Val(AVO)=0.687
+2025-10-03 15:05:50 - New best P3-val; checkpoint updated
+2025-10-03 15:05:50 - Epoch 28/1000 | LR=0.002995 | w_AVO=1.000 | w_P3=6.120 | λ_MMD=0.280 | λ_proto=0.560
+2025-10-03 15:06:17 - Epoch Summary: TrainLoss=0.9613 | TrainAcc=0.692 | Val(P3)=0.800 | Val(AVO)=0.703
+2025-10-03 15:06:17 - No P3-val improvement; patience remaining: 149/150
+2025-10-03 15:06:17 - Epoch 29/1000 | LR=0.002994 | w_AVO=1.000 | w_P3=6.302 | λ_MMD=0.290 | λ_proto=0.580
+2025-10-03 15:06:43 - Epoch Summary: TrainLoss=0.9898 | TrainAcc=0.664 | Val(P3)=0.771 | Val(AVO)=0.687
+2025-10-03 15:06:43 - No P3-val improvement; patience remaining: 148/150
+2025-10-03 15:06:43 - Epoch 30/1000 | LR=0.002994 | w_AVO=1.000 | w_P3=6.485 | λ_MMD=0.300 | λ_proto=0.600
+2025-10-03 15:07:10 - Epoch Summary: TrainLoss=0.9785 | TrainAcc=0.664 | Val(P3)=0.686 | Val(AVO)=0.694
+2025-10-03 15:07:10 - No P3-val improvement; patience remaining: 147/150
+2025-10-03 15:07:10 - Epoch 31/1000 | LR=0.002993 | w_AVO=1.000 | w_P3=6.668 | λ_MMD=0.310 | λ_proto=0.620
+2025-10-03 15:07:35 - Epoch Summary: TrainLoss=0.9651 | TrainAcc=0.686 | Val(P3)=0.714 | Val(AVO)=0.700
+2025-10-03 15:07:35 - No P3-val improvement; patience remaining: 146/150
+2025-10-03 15:07:35 - Epoch 32/1000 | LR=0.002993 | w_AVO=1.000 | w_P3=6.851 | λ_MMD=0.320 | λ_proto=0.640
+2025-10-03 15:08:01 - Epoch Summary: TrainLoss=1.0076 | TrainAcc=0.675 | Val(P3)=0.657 | Val(AVO)=0.703
+2025-10-03 15:08:01 - No P3-val improvement; patience remaining: 145/150
+2025-10-03 15:08:01 - Epoch 33/1000 | LR=0.002992 | w_AVO=1.000 | w_P3=7.034 | λ_MMD=0.330 | λ_proto=0.660
+2025-10-03 15:08:24 - Epoch Summary: TrainLoss=0.9840 | TrainAcc=0.676 | Val(P3)=0.686 | Val(AVO)=0.690
+2025-10-03 15:08:24 - No P3-val improvement; patience remaining: 144/150
+2025-10-03 15:08:24 - Epoch 34/1000 | LR=0.002992 | w_AVO=1.000 | w_P3=7.217 | λ_MMD=0.340 | λ_proto=0.680
+2025-10-03 15:08:49 - Epoch Summary: TrainLoss=1.0048 | TrainAcc=0.680 | Val(P3)=0.743 | Val(AVO)=0.697
+2025-10-03 15:08:49 - No P3-val improvement; patience remaining: 143/150
+2025-10-03 15:08:49 - Epoch 35/1000 | LR=0.002991 | w_AVO=1.000 | w_P3=7.400 | λ_MMD=0.350 | λ_proto=0.700
+2025-10-03 15:09:17 - Epoch Summary: TrainLoss=1.0124 | TrainAcc=0.672 | Val(P3)=0.714 | Val(AVO)=0.684
+2025-10-03 15:09:17 - No P3-val improvement; patience remaining: 142/150
+2025-10-03 15:09:17 - Epoch 36/1000 | LR=0.002991 | w_AVO=1.000 | w_P3=7.582 | λ_MMD=0.360 | λ_proto=0.720
+2025-10-03 15:09:44 - Epoch Summary: TrainLoss=1.0310 | TrainAcc=0.684 | Val(P3)=0.743 | Val(AVO)=0.681
+2025-10-03 15:09:44 - No P3-val improvement; patience remaining: 141/150
+2025-10-03 15:09:44 - Epoch 37/1000 | LR=0.002990 | w_AVO=1.000 | w_P3=7.765 | λ_MMD=0.370 | λ_proto=0.740
+2025-10-03 15:10:11 - Epoch Summary: TrainLoss=0.9971 | TrainAcc=0.686 | Val(P3)=0.657 | Val(AVO)=0.690
+2025-10-03 15:10:11 - No P3-val improvement; patience remaining: 140/150
+2025-10-03 15:10:11 - Epoch 38/1000 | LR=0.002990 | w_AVO=1.000 | w_P3=7.948 | λ_MMD=0.380 | λ_proto=0.760
+2025-10-03 15:10:39 - Epoch Summary: TrainLoss=1.0406 | TrainAcc=0.675 | Val(P3)=0.714 | Val(AVO)=0.687
+2025-10-03 15:10:39 - No P3-val improvement; patience remaining: 139/150
+2025-10-03 15:10:39 - Epoch 39/1000 | LR=0.002989 | w_AVO=1.000 | w_P3=8.131 | λ_MMD=0.390 | λ_proto=0.780
+2025-10-03 15:11:06 - Epoch Summary: TrainLoss=1.0543 | TrainAcc=0.684 | Val(P3)=0.714 | Val(AVO)=0.697
+2025-10-03 15:11:06 - No P3-val improvement; patience remaining: 138/150
+2025-10-03 15:11:06 - Epoch 40/1000 | LR=0.002989 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:11:33 - Epoch Summary: TrainLoss=1.0795 | TrainAcc=0.667 | Val(P3)=0.657 | Val(AVO)=0.690
+2025-10-03 15:11:33 - No P3-val improvement; patience remaining: 137/150
+2025-10-03 15:11:33 - Epoch 41/1000 | LR=0.002988 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:12:00 - Epoch Summary: TrainLoss=1.0384 | TrainAcc=0.687 | Val(P3)=0.743 | Val(AVO)=0.703
+2025-10-03 15:12:00 - No P3-val improvement; patience remaining: 136/150
+2025-10-03 15:12:00 - Epoch 42/1000 | LR=0.002988 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:12:27 - Epoch Summary: TrainLoss=1.0366 | TrainAcc=0.690 | Val(P3)=0.743 | Val(AVO)=0.677
+2025-10-03 15:12:27 - No P3-val improvement; patience remaining: 135/150
+2025-10-03 15:12:27 - Epoch 43/1000 | LR=0.002987 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:12:54 - Epoch Summary: TrainLoss=1.0461 | TrainAcc=0.688 | Val(P3)=0.686 | Val(AVO)=0.665
+2025-10-03 15:12:54 - No P3-val improvement; patience remaining: 134/150
+2025-10-03 15:12:54 - Epoch 44/1000 | LR=0.002986 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:13:20 - Epoch Summary: TrainLoss=1.0503 | TrainAcc=0.677 | Val(P3)=0.629 | Val(AVO)=0.700
+2025-10-03 15:13:20 - No P3-val improvement; patience remaining: 133/150
+2025-10-03 15:13:20 - Epoch 45/1000 | LR=0.002986 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:13:47 - Epoch Summary: TrainLoss=1.0507 | TrainAcc=0.685 | Val(P3)=0.686 | Val(AVO)=0.668
+2025-10-03 15:13:47 - No P3-val improvement; patience remaining: 132/150
+2025-10-03 15:13:47 - Epoch 46/1000 | LR=0.002985 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:14:14 - Epoch Summary: TrainLoss=1.0280 | TrainAcc=0.689 | Val(P3)=0.714 | Val(AVO)=0.674
+2025-10-03 15:14:14 - No P3-val improvement; patience remaining: 131/150
+2025-10-03 15:14:14 - Epoch 47/1000 | LR=0.002984 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:14:40 - Epoch Summary: TrainLoss=1.0477 | TrainAcc=0.685 | Val(P3)=0.657 | Val(AVO)=0.677
+2025-10-03 15:14:40 - No P3-val improvement; patience remaining: 130/150
+2025-10-03 15:14:40 - Epoch 48/1000 | LR=0.002984 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:15:07 - Epoch Summary: TrainLoss=1.0615 | TrainAcc=0.681 | Val(P3)=0.686 | Val(AVO)=0.681
+2025-10-03 15:15:07 - No P3-val improvement; patience remaining: 129/150
+2025-10-03 15:15:07 - Epoch 49/1000 | LR=0.002983 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:15:34 - Epoch Summary: TrainLoss=1.0486 | TrainAcc=0.679 | Val(P3)=0.714 | Val(AVO)=0.677
+2025-10-03 15:15:34 - No P3-val improvement; patience remaining: 128/150
+2025-10-03 15:15:34 - Epoch 50/1000 | LR=0.002982 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:16:01 - Epoch Summary: TrainLoss=1.0283 | TrainAcc=0.680 | Val(P3)=0.657 | Val(AVO)=0.642
+2025-10-03 15:16:01 - No P3-val improvement; patience remaining: 127/150
+2025-10-03 15:16:01 - Epoch 51/1000 | LR=0.002982 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:16:24 - Epoch Summary: TrainLoss=1.0473 | TrainAcc=0.689 | Val(P3)=0.686 | Val(AVO)=0.697
+2025-10-03 15:16:24 - No P3-val improvement; patience remaining: 126/150
+2025-10-03 15:16:24 - Epoch 52/1000 | LR=0.002981 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:16:48 - Epoch Summary: TrainLoss=1.0339 | TrainAcc=0.676 | Val(P3)=0.686 | Val(AVO)=0.671
+2025-10-03 15:16:48 - No P3-val improvement; patience remaining: 125/150
+2025-10-03 15:16:48 - Epoch 53/1000 | LR=0.002980 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:17:13 - Epoch Summary: TrainLoss=1.0235 | TrainAcc=0.692 | Val(P3)=0.629 | Val(AVO)=0.674
+2025-10-03 15:17:13 - No P3-val improvement; patience remaining: 124/150
+2025-10-03 15:17:13 - Epoch 54/1000 | LR=0.002979 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:17:39 - Epoch Summary: TrainLoss=1.0578 | TrainAcc=0.684 | Val(P3)=0.714 | Val(AVO)=0.652
+2025-10-03 15:17:39 - No P3-val improvement; patience remaining: 123/150
+2025-10-03 15:17:39 - Epoch 55/1000 | LR=0.002978 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:18:03 - Epoch Summary: TrainLoss=1.0534 | TrainAcc=0.688 | Val(P3)=0.686 | Val(AVO)=0.684
+2025-10-03 15:18:03 - No P3-val improvement; patience remaining: 122/150
+2025-10-03 15:18:03 - Epoch 56/1000 | LR=0.002978 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:18:29 - Epoch Summary: TrainLoss=1.0474 | TrainAcc=0.676 | Val(P3)=0.714 | Val(AVO)=0.690
+2025-10-03 15:18:29 - No P3-val improvement; patience remaining: 121/150
+2025-10-03 15:18:29 - Epoch 57/1000 | LR=0.002977 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:18:53 - Epoch Summary: TrainLoss=1.0428 | TrainAcc=0.679 | Val(P3)=0.686 | Val(AVO)=0.665
+2025-10-03 15:18:53 - No P3-val improvement; patience remaining: 120/150
+2025-10-03 15:18:53 - Epoch 58/1000 | LR=0.002976 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:19:18 - Epoch Summary: TrainLoss=1.0449 | TrainAcc=0.680 | Val(P3)=0.714 | Val(AVO)=0.687
+2025-10-03 15:19:18 - No P3-val improvement; patience remaining: 119/150
+2025-10-03 15:19:18 - Epoch 59/1000 | LR=0.002975 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:19:43 - Epoch Summary: TrainLoss=1.0640 | TrainAcc=0.686 | Val(P3)=0.629 | Val(AVO)=0.665
+2025-10-03 15:19:43 - No P3-val improvement; patience remaining: 118/150
+2025-10-03 15:19:43 - Epoch 60/1000 | LR=0.002974 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:20:09 - Epoch Summary: TrainLoss=1.0360 | TrainAcc=0.690 | Val(P3)=0.686 | Val(AVO)=0.684
+2025-10-03 15:20:09 - No P3-val improvement; patience remaining: 117/150
+2025-10-03 15:20:09 - Epoch 61/1000 | LR=0.002973 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:20:35 - Epoch Summary: TrainLoss=1.0501 | TrainAcc=0.693 | Val(P3)=0.686 | Val(AVO)=0.668
+2025-10-03 15:20:35 - No P3-val improvement; patience remaining: 116/150
+2025-10-03 15:20:35 - Epoch 62/1000 | LR=0.002973 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:21:00 - Epoch Summary: TrainLoss=1.0487 | TrainAcc=0.683 | Val(P3)=0.657 | Val(AVO)=0.677
+2025-10-03 15:21:00 - No P3-val improvement; patience remaining: 115/150
+2025-10-03 15:21:00 - Epoch 63/1000 | LR=0.002972 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:21:25 - Epoch Summary: TrainLoss=1.0405 | TrainAcc=0.679 | Val(P3)=0.657 | Val(AVO)=0.677
+2025-10-03 15:21:25 - No P3-val improvement; patience remaining: 114/150
+2025-10-03 15:21:25 - Epoch 64/1000 | LR=0.002971 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:21:51 - Epoch Summary: TrainLoss=1.0198 | TrainAcc=0.681 | Val(P3)=0.657 | Val(AVO)=0.687
+2025-10-03 15:21:51 - No P3-val improvement; patience remaining: 113/150
+2025-10-03 15:21:51 - Epoch 65/1000 | LR=0.002970 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:22:17 - Epoch Summary: TrainLoss=1.0423 | TrainAcc=0.693 | Val(P3)=0.657 | Val(AVO)=0.687
+2025-10-03 15:22:17 - No P3-val improvement; patience remaining: 112/150
+2025-10-03 15:22:17 - Epoch 66/1000 | LR=0.002969 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:22:43 - Epoch Summary: TrainLoss=1.0428 | TrainAcc=0.692 | Val(P3)=0.657 | Val(AVO)=0.716
+2025-10-03 15:22:43 - No P3-val improvement; patience remaining: 111/150
+2025-10-03 15:22:43 - Epoch 67/1000 | LR=0.002968 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:23:08 - Epoch Summary: TrainLoss=1.0443 | TrainAcc=0.689 | Val(P3)=0.657 | Val(AVO)=0.690
+2025-10-03 15:23:08 - No P3-val improvement; patience remaining: 110/150
+2025-10-03 15:23:08 - Epoch 68/1000 | LR=0.002967 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:23:33 - Epoch Summary: TrainLoss=1.0552 | TrainAcc=0.698 | Val(P3)=0.600 | Val(AVO)=0.661
+2025-10-03 15:23:33 - No P3-val improvement; patience remaining: 109/150
+2025-10-03 15:23:33 - Epoch 69/1000 | LR=0.002966 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:23:58 - Epoch Summary: TrainLoss=1.0239 | TrainAcc=0.682 | Val(P3)=0.686 | Val(AVO)=0.677
+2025-10-03 15:23:58 - No P3-val improvement; patience remaining: 108/150
+2025-10-03 15:23:58 - Epoch 70/1000 | LR=0.002965 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:24:23 - Epoch Summary: TrainLoss=1.0235 | TrainAcc=0.689 | Val(P3)=0.686 | Val(AVO)=0.694
+2025-10-03 15:24:23 - No P3-val improvement; patience remaining: 107/150
+2025-10-03 15:24:23 - Epoch 71/1000 | LR=0.002964 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:24:47 - Epoch Summary: TrainLoss=1.0347 | TrainAcc=0.686 | Val(P3)=0.629 | Val(AVO)=0.671
+2025-10-03 15:24:47 - No P3-val improvement; patience remaining: 106/150
+2025-10-03 15:24:47 - Epoch 72/1000 | LR=0.002963 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:25:13 - Epoch Summary: TrainLoss=1.0179 | TrainAcc=0.687 | Val(P3)=0.629 | Val(AVO)=0.658
+2025-10-03 15:25:13 - No P3-val improvement; patience remaining: 105/150
+2025-10-03 15:25:13 - Epoch 73/1000 | LR=0.002962 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:25:38 - Epoch Summary: TrainLoss=1.0093 | TrainAcc=0.692 | Val(P3)=0.657 | Val(AVO)=0.697
+2025-10-03 15:25:38 - No P3-val improvement; patience remaining: 104/150
+2025-10-03 15:25:38 - Epoch 74/1000 | LR=0.002961 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:26:03 - Epoch Summary: TrainLoss=1.0320 | TrainAcc=0.680 | Val(P3)=0.657 | Val(AVO)=0.674
+2025-10-03 15:26:03 - No P3-val improvement; patience remaining: 103/150
+2025-10-03 15:26:03 - Epoch 75/1000 | LR=0.002960 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:26:30 - Epoch Summary: TrainLoss=1.0480 | TrainAcc=0.688 | Val(P3)=0.686 | Val(AVO)=0.726
+2025-10-03 15:26:30 - No P3-val improvement; patience remaining: 102/150
+2025-10-03 15:26:30 - Epoch 76/1000 | LR=0.002959 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:26:55 - Epoch Summary: TrainLoss=1.0240 | TrainAcc=0.686 | Val(P3)=0.657 | Val(AVO)=0.668
+2025-10-03 15:26:55 - No P3-val improvement; patience remaining: 101/150
+2025-10-03 15:26:55 - Epoch 77/1000 | LR=0.002957 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:27:20 - Epoch Summary: TrainLoss=1.0145 | TrainAcc=0.691 | Val(P3)=0.686 | Val(AVO)=0.674
+2025-10-03 15:27:20 - No P3-val improvement; patience remaining: 100/150
+2025-10-03 15:27:20 - Epoch 78/1000 | LR=0.002956 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:27:46 - Epoch Summary: TrainLoss=1.0248 | TrainAcc=0.682 | Val(P3)=0.629 | Val(AVO)=0.681
+2025-10-03 15:27:46 - No P3-val improvement; patience remaining: 99/150
+2025-10-03 15:27:46 - Epoch 79/1000 | LR=0.002955 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:28:11 - Epoch Summary: TrainLoss=0.9898 | TrainAcc=0.689 | Val(P3)=0.686 | Val(AVO)=0.668
+2025-10-03 15:28:11 - No P3-val improvement; patience remaining: 98/150
+2025-10-03 15:28:11 - Epoch 80/1000 | LR=0.002954 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:28:36 - Epoch Summary: TrainLoss=1.0314 | TrainAcc=0.681 | Val(P3)=0.686 | Val(AVO)=0.668
+2025-10-03 15:28:36 - No P3-val improvement; patience remaining: 97/150
+2025-10-03 15:28:36 - Epoch 81/1000 | LR=0.002953 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:29:01 - Epoch Summary: TrainLoss=1.0586 | TrainAcc=0.685 | Val(P3)=0.743 | Val(AVO)=0.694
+2025-10-03 15:29:01 - No P3-val improvement; patience remaining: 96/150
+2025-10-03 15:29:01 - Epoch 82/1000 | LR=0.002952 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:29:26 - Epoch Summary: TrainLoss=1.0471 | TrainAcc=0.696 | Val(P3)=0.657 | Val(AVO)=0.661
+2025-10-03 15:29:26 - No P3-val improvement; patience remaining: 95/150
+2025-10-03 15:29:26 - Epoch 83/1000 | LR=0.002951 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:29:51 - Epoch Summary: TrainLoss=1.0283 | TrainAcc=0.683 | Val(P3)=0.686 | Val(AVO)=0.677
+2025-10-03 15:29:51 - No P3-val improvement; patience remaining: 94/150
+2025-10-03 15:29:51 - Epoch 84/1000 | LR=0.002949 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:30:16 - Epoch Summary: TrainLoss=1.0061 | TrainAcc=0.687 | Val(P3)=0.571 | Val(AVO)=0.658
+2025-10-03 15:30:16 - No P3-val improvement; patience remaining: 93/150
+2025-10-03 15:30:16 - Epoch 85/1000 | LR=0.002948 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:30:41 - Epoch Summary: TrainLoss=1.0277 | TrainAcc=0.684 | Val(P3)=0.657 | Val(AVO)=0.690
+2025-10-03 15:30:41 - No P3-val improvement; patience remaining: 92/150
+2025-10-03 15:30:41 - Epoch 86/1000 | LR=0.002947 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:31:06 - Epoch Summary: TrainLoss=1.0133 | TrainAcc=0.690 | Val(P3)=0.657 | Val(AVO)=0.716
+2025-10-03 15:31:06 - No P3-val improvement; patience remaining: 91/150
+2025-10-03 15:31:06 - Epoch 87/1000 | LR=0.002946 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:31:31 - Epoch Summary: TrainLoss=1.0561 | TrainAcc=0.692 | Val(P3)=0.657 | Val(AVO)=0.684
+2025-10-03 15:31:31 - No P3-val improvement; patience remaining: 90/150
+2025-10-03 15:31:31 - Epoch 88/1000 | LR=0.002944 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:32:01 - Epoch Summary: TrainLoss=1.0223 | TrainAcc=0.697 | Val(P3)=0.657 | Val(AVO)=0.694
+2025-10-03 15:32:01 - No P3-val improvement; patience remaining: 89/150
+2025-10-03 15:32:01 - Epoch 89/1000 | LR=0.002943 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:32:29 - Epoch Summary: TrainLoss=1.0266 | TrainAcc=0.680 | Val(P3)=0.657 | Val(AVO)=0.703
+2025-10-03 15:32:29 - No P3-val improvement; patience remaining: 88/150
+2025-10-03 15:32:29 - Epoch 90/1000 | LR=0.002942 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:32:55 - Epoch Summary: TrainLoss=1.0245 | TrainAcc=0.696 | Val(P3)=0.600 | Val(AVO)=0.716
+2025-10-03 15:32:55 - No P3-val improvement; patience remaining: 87/150
+2025-10-03 15:32:55 - Epoch 91/1000 | LR=0.002940 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:33:20 - Epoch Summary: TrainLoss=1.0148 | TrainAcc=0.685 | Val(P3)=0.629 | Val(AVO)=0.706
+2025-10-03 15:33:20 - No P3-val improvement; patience remaining: 86/150
+2025-10-03 15:33:20 - Epoch 92/1000 | LR=0.002939 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:33:46 - Epoch Summary: TrainLoss=1.0150 | TrainAcc=0.702 | Val(P3)=0.657 | Val(AVO)=0.674
+2025-10-03 15:33:46 - No P3-val improvement; patience remaining: 85/150
+2025-10-03 15:33:46 - Epoch 93/1000 | LR=0.002938 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:34:14 - Epoch Summary: TrainLoss=1.0425 | TrainAcc=0.688 | Val(P3)=0.629 | Val(AVO)=0.690
+2025-10-03 15:34:14 - No P3-val improvement; patience remaining: 84/150
+2025-10-03 15:34:14 - Epoch 94/1000 | LR=0.002936 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:34:39 - Epoch Summary: TrainLoss=1.0186 | TrainAcc=0.690 | Val(P3)=0.629 | Val(AVO)=0.703
+2025-10-03 15:34:39 - No P3-val improvement; patience remaining: 83/150
+2025-10-03 15:34:39 - Epoch 95/1000 | LR=0.002935 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:35:05 - Epoch Summary: TrainLoss=1.0381 | TrainAcc=0.702 | Val(P3)=0.657 | Val(AVO)=0.687
+2025-10-03 15:35:05 - No P3-val improvement; patience remaining: 82/150
+2025-10-03 15:35:05 - Epoch 96/1000 | LR=0.002934 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800
+2025-10-03 15:35:30 - Epoch Summary: TrainLoss=1.0212 | TrainAcc=0.692 | Val(P3)=0.629 | Val(AVO)=0.681
+2025-10-03 15:35:30 - No P3-val improvement; patience remaining: 81/150
+2025-10-03 15:35:30 - Epoch 97/1000 | LR=0.002932 | w_AVO=1.000 | w_P3=8.314 | λ_MMD=0.400 | λ_proto=0.800

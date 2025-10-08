@@ -186,8 +186,8 @@ N_CLASSES = 2
 LEARNING_RATE = 0.003   # EXTREME: Ultra-low LR for precise few-shot learning
 WEIGHT_DECAY = 5e-4     # EXTREME regularization
 GAMMA = 0.75  # Slower decay for stable learning
-EARLY_STOPPING_PATIENCE = 200 # P3-OPTIMIZED: Extended patience for better convergence
-DROPOUT_RATE = 0.15   # P3-OPTIMIZED: Increased dropout for better generalization
+EARLY_STOPPING_PATIENCE = 150 # EXTREME patience for absolute convergence
+DROPOUT_RATE = 0.1    # EXTREME: Minimal dropout to maximize learning
 
 # Data augmentation (enabled for better generalization)
 USE_DATA_AUGMENTATION = True

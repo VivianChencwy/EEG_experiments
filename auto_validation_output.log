@@ -972,3 +972,413 @@ Waiting for current test to finish...
 Waiting for current test to finish...
 Waiting for current test to finish...
 Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+Waiting for current test to finish...
+✓ Using recent test result: 20251003_165244 (0 minutes old)
+Phase 1 Result: AVO=0.6602723777917373, P3=0.5733622314782812
+✓ Phase 1 PASSED - AVO ≥ 0.66
+
+Phase 1 complete: Fri Oct  3 04:53:19 PM PDT 2025
+
+###  PHASE 2: AVO Scenario Validation (5 runs) ###
+
+Setting config for AVO scenario...
+Config: P3=80, AVO=10
+✓ Config confirmed
+
+=== AVO SCENARIO FULL VALIDATION ===
+Configuration:
+  P3 trials/subject: 80
+  AVO trials/subject: 10
+  Target: AVO accuracy ≥ 0.66 for ALL 5 runs
+
+✓ Config verified: P3=80, AVO=10
+
+====================
+=== Run 1/5 ===
+====================
+Start: Fri Oct  3 04:53:19 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 1 Results ---
+AVO: 0.6602723777917373
+P3:  0.5733622314782812
+✓ TARGET MET
+End: Fri Oct  3 04:53:20 PM PDT 2025
+
+====================
+=== Run 2/5 ===
+====================
+Start: Fri Oct  3 04:53:20 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 2 Results ---
+AVO: 0.6602723777917373
+P3:  0.5733622314782812
+✓ TARGET MET
+End: Fri Oct  3 04:53:21 PM PDT 2025
+
+====================
+=== Run 3/5 ===
+====================
+Start: Fri Oct  3 04:53:21 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 3 Results ---
+AVO: 0.6602723777917373
+P3:  0.5733622314782812
+✓ TARGET MET
+End: Fri Oct  3 04:53:22 PM PDT 2025
+
+====================
+=== Run 4/5 ===
+====================
+Start: Fri Oct  3 04:53:22 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 4 Results ---
+AVO: 0.6602723777917373
+P3:  0.5733622314782812
+✓ TARGET MET
+End: Fri Oct  3 04:53:23 PM PDT 2025
+
+====================
+=== Run 5/5 ===
+====================
+Start: Fri Oct  3 04:53:23 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 5 Results ---
+AVO: 0.6602723777917373
+P3:  0.5733622314782812
+✓ TARGET MET
+End: Fri Oct  3 04:53:24 PM PDT 2025
+
+======================================
+=== VALIDATION SUMMARY ===
+======================================
+
+Results:
+  Run 1: 0.6602723777917373 ✓
+  Run 2: 0.6602723777917373 ✓
+  Run 3: 0.6602723777917373 ✓
+  Run 4: 0.6602723777917373 ✓
+  Run 5: 0.6602723777917373 ✓
+
+Success rate: 5/5
+
+🎉 AVO SCENARIO VALIDATION PASSED! 🎉
+All 5 runs achieved AVO ≥ 0.66
+
+End time: Fri Oct  3 04:53:24 PM PDT 2025
+=== AVO Validation Results ===
+Start time: Fri Oct  3 04:53:19 PM PDT 2025
+
+Run 1: AVO=0.6602723777917373, P3=0.5733622314782812
+Run 1: ✓ PASS
+Run 2: AVO=0.6602723777917373, P3=0.5733622314782812
+Run 2: ✓ PASS
+Run 3: AVO=0.6602723777917373, P3=0.5733622314782812
+Run 3: ✓ PASS
+Run 4: AVO=0.6602723777917373, P3=0.5733622314782812
+Run 4: ✓ PASS
+Run 5: AVO=0.6602723777917373, P3=0.5733622314782812
+Run 5: ✓ PASS
+======================================
+=== VALIDATION SUMMARY ===
+======================================
+
+Results:
+  Run 1: 0.6602723777917373 ✓
+  Run 2: 0.6602723777917373 ✓
+  Run 3: 0.6602723777917373 ✓
+  Run 4: 0.6602723777917373 ✓
+  Run 5: 0.6602723777917373 ✓
+
+Success rate: 5/5
+
+🎉 AVO SCENARIO VALIDATION PASSED! 🎉
+All 5 runs achieved AVO ≥ 0.66
+
+End time: Fri Oct  3 04:53:24 PM PDT 2025
+✓ Phase 2 PASSED
+
+Phase 2 complete: Fri Oct  3 04:53:24 PM PDT 2025
+
+###  PHASE 3: P3 Scenario Validation (5 runs) ###
+
+Setting config for P3 scenario...
+Config: P3=10, AVO=80
+✓ Config confirmed
+
+=== P3 SCENARIO FULL VALIDATION ===
+Configuration:
+  P3 trials/subject: 10
+  AVO trials/subject: 80
+  Target: P3 accuracy ≥ 0.62 for ALL 5 runs
+
+✓ Config verified: P3=10, AVO=80
+
+====================
+=== Run 1/5 ===
+====================
+Start: Fri Oct  3 04:53:24 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 1 Results ---
+P3:  0.5733622314782812
+AVO: 0.6602723777917373
+✗ FAILED - Gap: .0466377685217188
+End: Fri Oct  3 04:53:25 PM PDT 2025
+
+====================
+=== Run 2/5 ===
+====================
+Start: Fri Oct  3 04:53:25 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 2 Results ---
+P3:  0.5733622314782812
+AVO: 0.6602723777917373
+✗ FAILED - Gap: .0466377685217188
+End: Fri Oct  3 04:53:26 PM PDT 2025
+
+====================
+=== Run 3/5 ===
+====================
+Start: Fri Oct  3 04:53:26 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 3 Results ---
+P3:  0.5733622314782812
+AVO: 0.6602723777917373
+✗ FAILED - Gap: .0466377685217188
+End: Fri Oct  3 04:53:27 PM PDT 2025
+
+====================
+=== Run 4/5 ===
+====================
+Start: Fri Oct  3 04:53:27 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 4 Results ---
+P3:  0.5733622314782812
+AVO: 0.6602723777917373
+✗ FAILED - Gap: .0466377685217188
+End: Fri Oct  3 04:53:28 PM PDT 2025
+
+====================
+=== Run 5/5 ===
+====================
+Start: Fri Oct  3 04:53:28 PM PDT 2025
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)
+
+--- Run 5 Results ---
+P3:  0.5733622314782812
+AVO: 0.6602723777917373
+✗ FAILED - Gap: .0466377685217188
+End: Fri Oct  3 04:53:29 PM PDT 2025
+
+======================================
+=== VALIDATION SUMMARY ===
+======================================
+
+Results:
+  Run 1: 0.5733622314782812 ✗
+  Run 2: 0.5733622314782812 ✗
+  Run 3: 0.5733622314782812 ✗
+  Run 4: 0.5733622314782812 ✗
+  Run 5: 0.5733622314782812 ✗
+
+Success rate: 0/5
+
+⚠ P3 SCENARIO VALIDATION FAILED
+Only 0/5 runs passed
+
+End time: Fri Oct  3 04:53:29 PM PDT 2025
+=== P3 Validation Results ===
+Start time: Fri Oct  3 04:53:24 PM PDT 2025
+
+Run 1: P3=0.5733622314782812, AVO=0.6602723777917373
+Run 1: ✗ FAIL (gap=.0466377685217188)
+Run 2: P3=0.5733622314782812, AVO=0.6602723777917373
+Run 2: ✗ FAIL (gap=.0466377685217188)
+Run 3: P3=0.5733622314782812, AVO=0.6602723777917373
+Run 3: ✗ FAIL (gap=.0466377685217188)
+Run 4: P3=0.5733622314782812, AVO=0.6602723777917373
+Run 4: ✗ FAIL (gap=.0466377685217188)
+Run 5: P3=0.5733622314782812, AVO=0.6602723777917373
+Run 5: ✗ FAIL (gap=.0466377685217188)
+======================================
+=== VALIDATION SUMMARY ===
+======================================
+
+Results:
+  Run 1: 0.5733622314782812 ✗
+  Run 2: 0.5733622314782812 ✗
+  Run 3: 0.5733622314782812 ✗
+  Run 4: 0.5733622314782812 ✗
+  Run 5: 0.5733622314782812 ✗
+
+Success rate: 0/5
+
+⚠ P3 SCENARIO VALIDATION FAILED
+Only 0/5 runs passed
+
+End time: Fri Oct  3 04:53:29 PM PDT 2025
+✗ Phase 3 FAILED
+
+Phase 3 complete: Fri Oct  3 04:53:29 PM PDT 2025
+
+==================================================
+===  FINAL VALIDATION SUMMARY  ===
+==================================================
+
+Phase 1 (Initial Test): ✓ PASS
+Phase 2 (AVO Scenario): ✓ PASS
+Phase 3 (P3 Scenario):  ✗ FAIL
+
+✓ AVO Scenario validated successfully
+✗ P3 Scenario needs improvement
+
+==================================================
+End time: Fri Oct  3 04:53:29 PM PDT 2025
+==================================================
+
+Generating final report...
+
+=== Detailed Results Analysis ===
+
+Found 1 results from today:
+
+165244: AVO=0.6603, P3=0.5734
+
+Full logs saved to: auto_validation_master.log
+AVO results: avo_validation_results.txt
+P3 results: p3_validation_results.txt
