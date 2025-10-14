@@ -305,19 +305,20 @@ def get_symmetric_adjustments(n_train_a: int, n_train_b: int) -> Tuple[float, fl
     n_train_b = max(1, n_train_b)
     ratio_ab = n_train_a / float(n_train_b)
 
-    # P3-OPTIMIZED V3: Fine-tuned based on baseline + extended training
-    # Slightly higher than baseline for P3, but not too aggressive
-    w_small = float(np.clip(np.sqrt(max(ratio_ab, 1.0/ratio_ab)) * 3.1, 1.0, 12.5))
+    # P3-OPTIMIZED V5: Reduced warmup to avoid overfitting
+    # V4 showed overfitting: Val(P3) peaked at epoch 2 then declined
+    # Strategy: Shorter warmup + lower weights
+    w_small = float(np.clip(np.sqrt(max(ratio_ab, 1.0/ratio_ab)) * 2.2, 1.0, 10.0))
 
-    # Slightly stronger MMD than V2, but gentler than V1
+    # Gentle MMD and Proto (lower than V2/V4)
     overall_ratio = max(ratio_ab, 1.0 / ratio_ab)
-    lambda_mmd = 0.2 if overall_ratio < 2.0 else (0.32 if overall_ratio < 4.0 else 0.42)
+    lambda_mmd = 0.2 if overall_ratio < 2.0 else (0.25 if overall_ratio < 4.0 else 0.30)
 
-    # Balanced prototype loss
-    lambda_proto = 0.5 if overall_ratio < 4.0 else 0.75
+    # Reduced prototype loss
+    lambda_proto = 0.4 if overall_ratio < 4.0 else 0.60
 
-    # Extended warmup for P3 - more gradual learning
-    warmup = max(30, min(80, int(0.5 * MAX_EPOCHS)))
+    # V5: Drastically reduced warmup (10 epochs vs V4's 40)
+    warmup = max(5, min(10, int(0.1 * MAX_EPOCHS)))
 
     return w_small, lambda_mmd, lambda_proto, warmup
 
@@ -507,15 +508,15 @@ def tfdwt_train_fold(
                 x_small = normalize_data(xb_small).to(device)
                 y_small = yb_small.to(device)
 
-                # MIXUP augmentation for small domain (P3-OPTIMIZED V3: balanced)
-                x_mixed, y_a, y_b, lam = mixup_data(x_small, y_small, alpha=0.35)
+                # MIXUP augmentation for small domain (P3-OPTIMIZED V5: back to V2)
+                x_mixed, y_a, y_b, lam = mixup_data(x_small, y_small, alpha=0.30)
 
                 scores_small = model(x_mixed)
                 if scores_small.ndim > 2:
                     scores_small = scores_small.view(scores_small.size(0), -1)
 
-                # Mixup focal loss (P3-OPTIMIZED V3: balanced focal)
-                loss_small = mixup_criterion(scores_small, y_a, y_b, lam, gamma=2.2, alpha=0.5)
+                # Mixup focal loss (P3-OPTIMIZED V5: back to V2)
+                loss_small = mixup_criterion(scores_small, y_a, y_b, lam, gamma=1.8, alpha=0.5)
 
                 # PROTOTYPE LOSS: Guide small domain to learn from large domain prototypes
                 if large_prototypes is not None and lambda_proto > 0:

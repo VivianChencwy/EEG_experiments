@@ -104,8 +104,9 @@ BATCH_SIZE = 32  # EXTREME: Minimal batch for maximum few-shot precision
 MAX_EPOCHS = 1000  # EXTREME: Maximum epochs for complete convergence
 
 # Dataset split ratios (must sum to ≤ 1.0)
-TRAIN_SIZE = 0.7
-VAL_SIZE = 0.1
+# V5改进版: 增大VAL_SIZE以减少Val-Test gap
+TRAIN_SIZE = 0.6  # 从0.7降到0.6
+VAL_SIZE = 0.2    # 从0.1增到0.2 (关键修改: 40→80 trials)
 TEST_SIZE = 0.2
 
 #######################
@@ -186,8 +187,8 @@ N_CLASSES = 2
 LEARNING_RATE = 0.003   # EXTREME: Ultra-low LR for precise few-shot learning
 WEIGHT_DECAY = 5e-4     # EXTREME regularization
 GAMMA = 0.75  # Slower decay for stable learning
-EARLY_STOPPING_PATIENCE = 200 # P3-OPTIMIZED: Extended patience for better convergence
-DROPOUT_RATE = 0.15   # P3-OPTIMIZED: Increased dropout for better generalization
+EARLY_STOPPING_PATIENCE = 50 # P3-OPTIMIZED V5: Early stop to prevent overfitting
+DROPOUT_RATE = 0.1   # P3-OPTIMIZED V5: Keep V2's dropout
 
 # Data augmentation (enabled for better generalization)
 USE_DATA_AUGMENTATION = True
