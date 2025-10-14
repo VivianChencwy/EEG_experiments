@@ -1,0 +1,3 @@
+python: can't open file '/home/vivian/eeg/EEG_experiments/main_tfdwt.py': [Errno 2] No such file or directory
+
+ERROR conda.cli.main_run:execute(127): `conda run python main_tfdwt.py` failed. (See above for error)

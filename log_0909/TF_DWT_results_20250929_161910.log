@@ -1,0 +1,208 @@
+2025-09-29 16:19:10 - 
+==================================================
+2025-09-29 16:19:10 - TF-DWT Joint Training (Auto-Adjusted)
+2025-09-29 16:19:10 - ==================================================
+2025-09-29 16:19:10 - 
+Experiment Configuration:
+2025-09-29 16:19:10 - --------------------------------------------------
+2025-09-29 16:19:10 - electrode_list: all
+2025-09-29 16:19:10 - fusion_method: none
+2025-09-29 16:19:10 - domain_adaptation: none
+2025-09-29 16:19:10 - use_enhanced_preprocessing: True
+2025-09-29 16:19:10 - batch_size: 128
+2025-09-29 16:19:10 - max_epochs: 500
+2025-09-29 16:19:10 - learning_rate: 0.01
+2025-09-29 16:19:10 - weight_decay: 0.0001
+2025-09-29 16:19:10 - dropout_rate: 0.25
+2025-09-29 16:19:10 - use_data_augmentation: True
+2025-09-29 16:19:10 - noise_std: 0.005
+2025-09-29 16:19:10 - time_shift_range: 5
+2025-09-29 16:19:10 - label_smoothing: 0.05
+2025-09-29 16:19:10 - trials_per_subject_P3: 10
+2025-09-29 16:19:10 - trials_per_subject_AVO: 80
+2025-09-29 16:19:10 - train/val/test: (0.7, 0.1, 0.2)
+2025-09-29 16:19:10 - device_mode: cuda
+2025-09-29 16:19:10 - --------------------------------------------------
+2025-09-29 16:19:10 - 
+==================================================
+2025-09-29 16:19:10 - Running Nested Cross-Validation with TF-DWT
+2025-09-29 16:19:10 - ==================================================
+2025-09-29 16:19:10 - Loading dataset for CV: P3
+2025-09-29 16:19:11 - Subject P3_sub-001: Sampled 10/80 trials
+2025-09-29 16:19:11 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 - Subject P3_sub-002: Sampled 10/80 trials
+2025-09-29 16:19:11 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 - Subject P3_sub-003: Sampled 10/80 trials
+2025-09-29 16:19:11 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 - Subject P3_sub-004: Sampled 10/78 trials
+2025-09-29 16:19:11 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 - Subject P3_sub-005: Sampled 10/80 trials
+2025-09-29 16:19:11 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:11 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 - Subject P3_sub-006: Sampled 10/80 trials
+2025-09-29 16:19:12 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 - Subject P3_sub-007: Sampled 10/80 trials
+2025-09-29 16:19:12 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 - Subject P3_sub-008: Sampled 10/80 trials
+2025-09-29 16:19:12 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 - Subject P3_sub-009: Sampled 10/80 trials
+2025-09-29 16:19:12 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 - Subject P3_sub-010: Sampled 10/80 trials
+2025-09-29 16:19:12 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 - Subject P3_sub-011: Sampled 10/80 trials
+2025-09-29 16:19:12 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 - Subject P3_sub-012: Sampled 10/78 trials
+2025-09-29 16:19:12 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:12 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 - Subject P3_sub-013: Sampled 10/80 trials
+2025-09-29 16:19:13 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 - Subject P3_sub-014: Sampled 10/80 trials
+2025-09-29 16:19:13 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 - Subject P3_sub-015: Sampled 10/80 trials
+2025-09-29 16:19:13 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 - Subject P3_sub-016: Sampled 10/80 trials
+2025-09-29 16:19:13 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 - Subject P3_sub-017: Sampled 10/80 trials
+2025-09-29 16:19:13 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 - Subject P3_sub-018: Sampled 10/80 trials
+2025-09-29 16:19:13 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 - Subject P3_sub-019: Sampled 10/80 trials
+2025-09-29 16:19:13 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:13 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 - Subject P3_sub-020: Sampled 10/78 trials
+2025-09-29 16:19:14 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 - Subject P3_sub-021: Sampled 10/80 trials
+2025-09-29 16:19:14 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 - Subject P3_sub-022: Sampled 10/80 trials
+2025-09-29 16:19:14 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 - Subject P3_sub-023: Sampled 10/78 trials
+2025-09-29 16:19:14 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 - Subject P3_sub-024: Sampled 10/80 trials
+2025-09-29 16:19:14 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 - Subject P3_sub-025: Sampled 10/80 trials
+2025-09-29 16:19:14 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 - Subject P3_sub-026: Sampled 10/80 trials
+2025-09-29 16:19:14 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:14 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 - Subject P3_sub-027: Sampled 10/80 trials
+2025-09-29 16:19:15 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 - Subject P3_sub-028: Sampled 10/80 trials
+2025-09-29 16:19:15 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 - Subject P3_sub-029: Sampled 10/80 trials
+2025-09-29 16:19:15 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 - Subject P3_sub-030: Sampled 10/80 trials
+2025-09-29 16:19:15 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 - Subject P3_sub-031: Sampled 10/80 trials
+2025-09-29 16:19:15 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 - Subject P3_sub-032: Sampled 10/80 trials
+2025-09-29 16:19:15 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 - Subject P3_sub-033: Sampled 10/80 trials
+2025-09-29 16:19:15 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:15 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 - Subject P3_sub-034: Sampled 10/80 trials
+2025-09-29 16:19:16 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 - Subject P3_sub-035: Sampled 10/78 trials
+2025-09-29 16:19:16 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 - Subject P3_sub-036: Sampled 10/80 trials
+2025-09-29 16:19:16 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 - Subject P3_sub-037: Sampled 10/78 trials
+2025-09-29 16:19:16 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 - Subject P3_sub-038: Sampled 10/80 trials
+2025-09-29 16:19:16 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 - Subject P3_sub-039: Sampled 10/80 trials
+2025-09-29 16:19:16 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:16 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:17 - Subject P3_sub-040: Sampled 10/80 trials
+2025-09-29 16:19:17 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:17 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:17 - Loading dataset for CV: AVO
+2025-09-29 16:19:28 - Subject AVO_038: Sampled 80/100 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 - Subject AVO_032: Sampled 80/96 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 - Subject AVO_047: Sampled 80/94 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 - Subject AVO_024: Sampled 80/92 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 - Subject AVO_003: Sampled 80/88 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 - Subject AVO_031: Sampled 80/88 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 - Subject AVO_035: Sampled 80/88 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 - Subject AVO_048: Sampled 80/88 trials
+2025-09-29 16:19:28 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:28 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_037: Sampled 80/86 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_041: Sampled 80/86 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_004: Sampled 80/84 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_029: Sampled 80/84 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_036: Sampled 80/84 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_040: Sampled 80/84 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_051: Sampled 80/84 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 - Subject AVO_026: Sampled 80/82 trials
+2025-09-29 16:19:29 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:29 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:30 - Subject AVO_028: Sampled 80/82 trials
+2025-09-29 16:19:30 -   Original distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:30 -   Sampled distribution: {np.int64(0): np.float64(0.5), np.int64(1): np.float64(0.5)}
+2025-09-29 16:19:32 - Combined dataset summary: total=3450, P3=400, AVO=3050
+2025-09-29 16:19:32 - Repeat 1/5
+2025-09-29 16:19:32 -   Fold 1/5
+2025-09-29 16:19:33 - Fold domains: small=P3 (n=279), large=AVO (n=2136)
+2025-09-29 16:19:33 - Auto adjustments (symmetric): w_small≈1.000, lambda_MMD_target=0.300, warmup_epochs=5
+2025-09-29 16:19:33 - Epoch 1/500 | LR=0.010000 | w_AVO=1.000 | w_P3=1.353 | lambda_MMD=0.060

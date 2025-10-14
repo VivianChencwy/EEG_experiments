@@ -1,0 +1,73 @@
+{
+  "optimization_date": "20250929_172704",
+  "dataset_config": "P3_80_AVO_10",
+  "target_metric": "avo_accuracy",
+  "target_value": 0.62,
+  "achieved": true,
+  "best_config": {
+    "name": "AVO_ULTRA",
+    "params": {
+      "w_small_cap": 18.0,
+      "mmd_thresholds": [
+        0.18,
+        0.45,
+        0.002,
+        0.012,
+        0.035
+      ],
+      "guard_factors": [
+        0.01,
+        0.03
+      ],
+      "warmup_config": {
+        "warmup_epochs": 38,
+        "warmup_lr_scale": 0.14,
+        "warmup_weight_scale": 0.24
+      },
+      "learning_rate": 0.03,
+      "batch_size": 5
+    },
+    "avo_accuracy": 0.6395484943676724,
+    "p3_accuracy": 0.5474210346051214,
+    "overall_accuracy": 0.628695652173913,
+    "result_file": "tfdwt_detailed_results_20250929_172224.csv"
+  },
+  "all_results": [
+    {
+      "name": "AVO_ULTRA",
+      "avo_accuracy": 0.6395484943676724,
+      "p3_accuracy": 0.5474210346051214,
+      "overall_accuracy": 0.628695652173913
+    },
+    {
+      "name": "AVO_AGGRESSIVE",
+      "avo_accuracy": 0.6362006580843501,
+      "p3_accuracy": 0.5741661322727225,
+      "overall_accuracy": 0.6291014492753623
+    },
+    {
+      "name": "AVO_MODERATE",
+      "avo_accuracy": 0.6351018660444883,
+      "p3_accuracy": 0.5624613493217612,
+      "overall_accuracy": 0.6266086956521739
+    },
+    {
+      "name": "AVO_BALANCED_PLUS",
+      "avo_accuracy": 0.6312555945565136,
+      "p3_accuracy": 0.6128014164819143,
+      "overall_accuracy": 0.6289855072463768
+    },
+    {
+      "name": "AVO_EXTREME",
+      "avo_accuracy": 0.6186681878319532,
+      "p3_accuracy": 0.5629835913959733,
+      "overall_accuracy": 0.6121739130434782
+    },
+    {
+      "name": "AVO_STRONG",
+      "avo_accuracy": 0.6136883973296368,
+      "p3_accuracy": 0.5763690605225463,
+      "overall_accuracy": 0.6092753623188406
+    }
+  ]
+}

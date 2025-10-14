@@ -6,16 +6,294 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from braindecode.models import ShallowFBCSPNet
+from typing import Dict, List, Tuple, Optional, Union, Any
+try:
+    from braindecode.models import ShallowFBCSPNet
+    BRAINDECODE_AVAILABLE = True
+except (ImportError, AttributeError, Exception):
+    BRAINDECODE_AVAILABLE = False
+    # Define a dummy ShallowFBCSPNet to avoid reference errors
+    ShallowFBCSPNet = None
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
+import math
 
 from config import (
     INPUT_WINDOW_SAMPLES, use_subject_layer, EARLY_STOPPING_PATIENCE,
     LEARNING_RATE, WEIGHT_DECAY, GAMMA, MAX_EPOCHS, N_CLASSES,
-    USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING, DROPOUT_RATE
+    USE_DATA_AUGMENTATION, NOISE_STD, TIME_SHIFT_RANGE, LABEL_SMOOTHING, DROPOUT_RATE,
+    ELECTRODE_FUSION_METHOD, DOMAIN_ADAPTATION_METHOD
 )
+# Import small dataset protection settings
+try:
+    from config import (
+        SMALL_DATASET_THRESHOLD, ENABLE_SMALL_DATASET_PROTECTIONS,
+        SMALL_DATASET_DROPOUT_RATE, SMALL_DATASET_LEARNING_RATE,
+        SMALL_DATASET_WEIGHT_DECAY, SMALL_DATASET_EARLY_STOPPING_PATIENCE,
+        SMALL_DATASET_MAX_EPOCHS, SMALL_DATASET_BATCH_SIZE
+    )
+except ImportError:
+    # Default values if not defined in config
+    SMALL_DATASET_THRESHOLD = 1000
+    ENABLE_SMALL_DATASET_PROTECTIONS = True
+    SMALL_DATASET_DROPOUT_RATE = 0.2
+    SMALL_DATASET_LEARNING_RATE = 0.001
+    SMALL_DATASET_WEIGHT_DECAY = 1e-4
+    SMALL_DATASET_EARLY_STOPPING_PATIENCE = 20
+    SMALL_DATASET_MAX_EPOCHS = 300
+    SMALL_DATASET_BATCH_SIZE = 16
 from constants import NORMALIZATION_EPSILON
+
+
+class WarmupCosineAnnealingLR:
+    """Learning rate scheduler with warmup followed by cosine annealing.
+    
+    Designed specifically for SepConv1D models to improve training stability.
+    """
+    def __init__(self, optimizer, warmup_epochs, total_epochs, warmup_factor=0.1):
+        self.optimizer = optimizer
+        self.warmup_epochs = warmup_epochs
+        self.total_epochs = total_epochs
+        self.warmup_factor = warmup_factor
+        self.base_lr = optimizer.param_groups[0]['lr']
+        self.current_epoch = 0
+        
+        # Initialize with warmup learning rate
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = self.base_lr * warmup_factor
+    
+    def step(self):
+        self.current_epoch += 1
+        
+        if self.current_epoch <= self.warmup_epochs:
+            # Warmup phase: linear increase
+            lr = self.base_lr * (self.warmup_factor + 
+                               (1 - self.warmup_factor) * self.current_epoch / self.warmup_epochs)
+        else:
+            # Cosine annealing phase
+            progress = (self.current_epoch - self.warmup_epochs) / (self.total_epochs - self.warmup_epochs)
+            lr = self.base_lr * 0.5 * (1 + math.cos(math.pi * progress))
+        
+        for param_group in self.optimizer.param_groups:
+            param_group['lr'] = lr
+        
+        return lr
+
+
+class CustomShallowFBCSPNet(nn.Module):
+    """Custom implementation of ShallowFBCSPNet."""
+    def __init__(self, n_chans, n_outputs, n_times, final_conv_length='auto'):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        
+        # Temporal convolution
+        self.temporal_conv = nn.Conv2d(1, 40, (1, 25), padding=(0, 12))
+        
+        # Spatial convolution
+        self.spatial_conv = nn.Conv2d(40, 40, (n_chans, 1), bias=False)
+        self.bn = nn.BatchNorm2d(40)
+        
+        # Pooling
+        self.pool = nn.AvgPool2d((1, 75), (1, 15))
+        
+        # Calculate output size
+        self._calculate_final_conv_length()
+        
+        # Final classification layer
+        self.classifier = nn.Linear(self.final_length, n_outputs)
+        
+    def _calculate_final_conv_length(self):
+        # Calculate the final convolution length
+        with torch.no_grad():
+            x = torch.zeros(1, 1, self.n_chans, self.n_times)
+            x = self.temporal_conv(x)  
+            x = self.spatial_conv(x)   
+            x = self.bn(x)             
+            x = F.elu(x)               
+            x = self.pool(x)           
+            self.final_length = x.numel() // x.size(0)
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        x = self.temporal_conv(x)
+        x = self.spatial_conv(x)
+        x = self.bn(x)
+        x = F.elu(x)
+        x = self.pool(x)
+        
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        
+        return x
+
+
+class EEGNet(nn.Module):
+    """EEGNet implementation for EEG classification."""
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 F1=8, F2=16, D=2, dropout=0.5):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.F1 = F1
+        self.F2 = F2
+        self.D = D
+        
+        # Block 1
+        self.conv1 = nn.Conv2d(1, F1, (1, 64), padding=(0, 32), bias=False)
+        self.bn1 = nn.BatchNorm2d(F1)
+        
+        # Depthwise convolution
+        self.depthwise_conv = nn.Conv2d(F1, F1*D, (n_chans, 1), groups=F1, bias=False)
+        self.bn2 = nn.BatchNorm2d(F1*D)
+        
+        self.pool1 = nn.AvgPool2d((1, 4))
+        self.dropout1 = nn.Dropout(dropout)
+        
+        # Block 2
+        # Separable convolution
+        self.separable_conv = nn.Conv2d(F1*D, F2, (1, 16), padding=(0, 8), bias=False)
+        self.bn3 = nn.BatchNorm2d(F2)
+        
+        self.pool2 = nn.AvgPool2d((1, 8))
+        self.dropout2 = nn.Dropout(dropout)
+        
+        # Calculate final dimensions
+        self._calculate_final_dims(n_times)
+        
+        # Classification
+        self.classifier = nn.Linear(self.final_length, n_outputs)
+        
+    def _calculate_final_dims(self, n_times):
+        with torch.no_grad():
+            x = torch.zeros(1, 1, self.n_chans, n_times)
+            x = self.conv1(x)
+            x = self.bn1(x)
+            x = self.depthwise_conv(x)
+            x = self.bn2(x)
+            x = F.elu(x)
+            x = self.pool1(x)
+            x = self.dropout1(x)
+            
+            x = self.separable_conv(x)
+            x = self.bn3(x)
+            x = F.elu(x)
+            x = self.pool2(x)
+            x = self.dropout2(x)
+            
+            self.final_length = x.numel() // x.size(0)
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        # Block 1
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.depthwise_conv(x)
+        x = self.bn2(x)
+        x = F.elu(x)
+        x = self.pool1(x)
+        x = self.dropout1(x)
+        
+        # Block 2
+        x = self.separable_conv(x)
+        x = self.bn3(x)
+        x = F.elu(x)
+        x = self.pool2(x)
+        x = self.dropout2(x)
+        
+        # Classification
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        
+        return x
+
+
+class DeepConvNet(nn.Module):
+    """Deep Convolutional Network for EEG."""
+    def __init__(self, n_chans, n_outputs, n_times, dropout=0.5):
+        super().__init__()
+        
+        # Block 1
+        self.conv1 = nn.Conv2d(1, 25, (1, 10))
+        self.conv2 = nn.Conv2d(25, 25, (n_chans, 1))
+        self.bn1 = nn.BatchNorm2d(25)
+        self.pool1 = nn.MaxPool2d((1, 3))
+        
+        # Block 2
+        self.conv3 = nn.Conv2d(25, 50, (1, 10))
+        self.bn2 = nn.BatchNorm2d(50)
+        self.pool2 = nn.MaxPool2d((1, 3))
+        
+        # Block 3
+        self.conv4 = nn.Conv2d(50, 100, (1, 10))
+        self.bn3 = nn.BatchNorm2d(100)
+        self.pool3 = nn.MaxPool2d((1, 3))
+        
+        # Block 4
+        self.conv5 = nn.Conv2d(100, 200, (1, 10))
+        self.bn4 = nn.BatchNorm2d(200)
+        self.pool4 = nn.MaxPool2d((1, 3))
+        
+        self.dropout = nn.Dropout(dropout)
+        
+        # Calculate final dimensions
+        self._calculate_final_dims(n_times)
+        
+        # Classification
+        self.classifier = nn.Linear(self.final_length, n_outputs)
+        
+    def _calculate_final_dims(self, n_times):
+        with torch.no_grad():
+            x = torch.zeros(1, 1, self.n_chans, n_times)
+            x = self._forward_features(x)
+            self.final_length = x.numel() // x.size(0)
+    
+    def _forward_features(self, x):
+        # Block 1
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.bn1(x)
+        x = F.elu(x)
+        x = self.pool1(x)
+        x = self.dropout(x)
+        
+        # Block 2
+        x = self.conv3(x)
+        x = self.bn2(x)
+        x = F.elu(x)
+        x = self.pool2(x)
+        x = self.dropout(x)
+        
+        # Block 3
+        x = self.conv4(x)
+        x = self.bn3(x)
+        x = F.elu(x)
+        x = self.pool3(x)
+        x = self.dropout(x)
+        
+        # Block 4
+        x = self.conv5(x)
+        x = self.bn4(x)
+        x = F.elu(x)
+        x = self.pool4(x)
+        x = self.dropout(x)
+        
+        return x
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        x = self._forward_features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        
+        return x
 
 
 class FocalLoss(nn.Module):
@@ -109,7 +387,402 @@ class ShallowFBCSPNetWithSubjectLayer(nn.Module):
         return self.base_model(x)
 
 
-def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None):
+class EEGConformer(nn.Module):
+    """EEGConformer: Combining CNN and Transformer for EEG classification."""
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 conv_spatial_dim=40, conv_temporal_dim=25,
+                 embedding_dim=40, num_heads=10, num_layers=3,
+                 dropout=0.5, activation='gelu'):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        self.embedding_dim = embedding_dim
+        
+        # Temporal convolution
+        self.temporal_conv = nn.Conv2d(1, conv_temporal_dim, (1, 25), padding=(0, 12))
+        self.temporal_bn = nn.BatchNorm2d(conv_temporal_dim)
+        
+        # Spatial convolution  
+        self.spatial_conv = nn.Conv2d(conv_temporal_dim, conv_spatial_dim, (n_chans, 1))
+        self.spatial_bn = nn.BatchNorm2d(conv_spatial_dim)
+        
+        # Pooling and dropout
+        self.avg_pool = nn.AvgPool2d((1, 4), (1, 4))
+        self.dropout = nn.Dropout(dropout)
+        
+        # Calculate sequence length after convolutions
+        seq_length = self._get_sequence_length()
+        
+        # Projection to embedding dimension
+        self.projection = nn.Linear(conv_spatial_dim, embedding_dim)
+        
+        # Positional encoding
+        self.pos_encoding = PositionalEncoding(embedding_dim, max_len=seq_length)
+        
+        # Transformer layers
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=embedding_dim,
+            nhead=num_heads,
+            dim_feedforward=embedding_dim * 4,
+            dropout=dropout,
+            activation=activation,
+            batch_first=True
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        
+        # Classification head
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Flatten(),
+            nn.Linear(embedding_dim, n_outputs)
+        )
+    
+    def _get_sequence_length(self):
+        # Calculate sequence length after convolutions
+        # After temporal conv: n_times (same due to padding)
+        # After avg pool: n_times // 4
+        return self.n_times // 4
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        # Temporal convolution
+        x = self.temporal_conv(x)  # (batch, conv_temporal_dim, n_chans, n_times)
+        x = self.temporal_bn(x)
+        x = F.elu(x)
+        
+        # Spatial convolution
+        x = self.spatial_conv(x)  # (batch, conv_spatial_dim, 1, n_times)
+        x = self.spatial_bn(x)
+        x = F.elu(x)
+        x = self.dropout(x)
+        
+        # Pooling
+        x = self.avg_pool(x)  # (batch, conv_spatial_dim, 1, n_times//4)
+        
+        # Reshape for transformer
+        x = x.squeeze(2).transpose(1, 2)  # (batch, seq_len, conv_spatial_dim)
+        
+        # Project to embedding dimension
+        x = self.projection(x)  # (batch, seq_len, embedding_dim)
+        
+        # Add positional encoding
+        x = self.pos_encoding(x)
+        
+        # Transformer
+        x = self.transformer(x)  # (batch, seq_len, embedding_dim)
+        
+        # Classification
+        x = x.transpose(1, 2)  # (batch, embedding_dim, seq_len)
+        x = self.classifier(x)  # (batch, n_outputs)
+        
+        return x
+
+
+class PositionalEncoding(nn.Module):
+    """Positional encoding for transformer."""
+    def __init__(self, d_model, max_len=5000):
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len).unsqueeze(1).float()
+        
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() *
+                           -(math.log(10000.0) / d_model))
+        
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0)  # (1, max_len, d_model)
+        
+        self.register_buffer('pe', pe)
+    
+    def forward(self, x):
+        return x + self.pe[:, :x.size(1)]
+
+
+class EEGChannelNet(nn.Module):
+    """Advanced EEG model with channel-wise attention."""
+    def __init__(self, n_chans, n_outputs, n_times, dropout=0.5):
+        super().__init__()
+        
+        # Channel-wise convolution
+        self.channel_conv = nn.ModuleList([
+            nn.Conv1d(1, 8, kernel_size=64, padding=32) for _ in range(n_chans)
+        ])
+        
+        # Channel attention
+        self.channel_attention = nn.Sequential(
+            nn.Linear(n_chans * 8, n_chans),
+            nn.Sigmoid()
+        )
+        
+        # Temporal convolution layers
+        self.conv1 = nn.Conv2d(1, 16, (n_chans, 1))
+        self.bn1 = nn.BatchNorm2d(16)
+        self.conv2 = nn.Conv2d(16, 32, (1, 3), padding=(0, 1))
+        self.bn2 = nn.BatchNorm2d(32)
+        self.conv3 = nn.Conv2d(32, 64, (1, 3), padding=(0, 1))
+        self.bn3 = nn.BatchNorm2d(64)
+        
+        self.pool = nn.AdaptiveAvgPool2d((1, 16))
+        self.dropout = nn.Dropout(dropout)
+        
+        # Classification layers
+        self.classifier = nn.Sequential(
+            nn.Linear(64 * 16, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(128, n_outputs)
+        )
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        batch_size = x.size(0)
+        
+        # Channel-wise processing
+        channel_features = []
+        for i, conv in enumerate(self.channel_conv):
+            chan_out = conv(x[:, i:i+1, :])  # (batch, 8, n_times)
+            channel_features.append(chan_out.mean(dim=2))  # (batch, 8)
+        
+        # Channel attention
+        channel_features = torch.stack(channel_features, dim=1)  # (batch, n_chans, 8)
+        channel_features = channel_features.view(batch_size, -1)  # (batch, n_chans*8)
+        attention_weights = self.channel_attention(channel_features)  # (batch, n_chans)
+        
+        # Apply attention to input
+        x = x * attention_weights.unsqueeze(2)  # (batch, n_chans, n_times)
+        
+        # Main processing
+        x = x.unsqueeze(1)  # (batch, 1, n_chans, n_times)
+        
+        x = self.conv1(x)  # (batch, 16, 1, n_times)
+        x = self.bn1(x)
+        x = F.elu(x)
+        
+        x = self.conv2(x)  # (batch, 32, 1, n_times)
+        x = self.bn2(x)
+        x = F.elu(x)
+        
+        x = self.conv3(x)  # (batch, 64, 1, n_times)
+        x = self.bn3(x)
+        x = F.elu(x)
+        
+        x = self.pool(x)  # (batch, 64, 1, 16)
+        x = self.dropout(x)
+        
+        x = x.view(x.size(0), -1)  # (batch, 64*16)
+        x = self.classifier(x)
+        
+        return x
+
+
+class SepConv1D(nn.Module):
+    """Enhanced PyTorch implementation of SepConv1D model from P300-CNNT.
+    
+    A lightweight separable convolution model designed for small datasets
+    to prevent overfitting in EEG P300 classification tasks.
+    
+    Improvements over original:
+    - Multi-scale temporal feature extraction
+    - Residual connections for better gradient flow
+    - ELU activation for better learning dynamics
+    - Improved feature fusion
+    """
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 filters=32, kernel_size=16, stride=8, padding=4, dropout=0.3):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        
+        # Multi-scale temporal convolution branches
+        self.temporal_branches = nn.ModuleList([
+            # Branch 1: Short-term patterns (high frequency)
+            nn.Sequential(
+                nn.Conv1d(n_chans, n_chans, kernel_size=8, stride=4, padding=2, groups=n_chans, bias=False),
+                nn.BatchNorm1d(n_chans),
+                nn.ELU(),
+            ),
+            # Branch 2: Medium-term patterns 
+            nn.Sequential(
+                nn.Conv1d(n_chans, n_chans, kernel_size=16, stride=8, padding=4, groups=n_chans, bias=False),
+                nn.BatchNorm1d(n_chans),
+                nn.ELU(),
+            ),
+            # Branch 3: Long-term patterns (low frequency)
+            nn.Sequential(
+                nn.Conv1d(n_chans, n_chans, kernel_size=32, stride=16, padding=8, groups=n_chans, bias=False),
+                nn.BatchNorm1d(n_chans),
+                nn.ELU(),
+            )
+        ])
+        
+        # Channel-wise attention for multi-scale fusion
+        self.channel_attention = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Conv1d(n_chans * 3, n_chans * 3, kernel_size=1, bias=False),
+            nn.Sigmoid()
+        )
+        
+        # Pointwise convolution for feature integration
+        self.pointwise_conv = nn.Sequential(
+            nn.Conv1d(n_chans * 3, filters, kernel_size=1, bias=False),
+            nn.BatchNorm1d(filters),
+            nn.ELU(),
+            nn.Dropout(dropout * 0.5)  # Lighter dropout in middle layers
+        )
+        
+        # Additional feature enhancement (still lightweight)
+        self.feature_enhance = nn.Sequential(
+            nn.Conv1d(filters, filters, kernel_size=3, padding=1, groups=filters, bias=False),
+            nn.BatchNorm1d(filters),
+            nn.ELU(),
+            nn.Dropout(dropout)
+        )
+        
+        # Classification head with intermediate layer for better learning
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Flatten(),
+            nn.Linear(filters, filters // 2),
+            nn.ELU(),
+            nn.Dropout(dropout),
+            nn.Linear(filters // 2, n_outputs)
+        )
+        
+        # Initialize weights
+        self._init_weights()
+    
+    def _init_weights(self):
+        """Initialize weights for better learning."""
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+    
+    def forward(self, x):
+        # x shape: (batch, n_chans, n_times)
+        batch_size = x.size(0)
+        
+        # Multi-scale temporal feature extraction
+        branch_outputs = []
+        for branch in self.temporal_branches:
+            branch_out = branch(x)
+            branch_outputs.append(branch_out)
+        
+        # Concatenate multi-scale features
+        # Need to match temporal dimensions via adaptive pooling
+        min_time = min(out.size(-1) for out in branch_outputs)
+        aligned_outputs = []
+        for out in branch_outputs:
+            if out.size(-1) != min_time:
+                out = F.adaptive_avg_pool1d(out, min_time)
+            aligned_outputs.append(out)
+        
+        multi_scale_features = torch.cat(aligned_outputs, dim=1)  # (batch, n_chans*3, time)
+        
+        # Channel attention for feature selection
+        attention = self.channel_attention(multi_scale_features)
+        attended_features = multi_scale_features * attention
+        
+        # Feature integration
+        x = self.pointwise_conv(attended_features)
+        
+        # Feature enhancement with residual connection
+        residual = x
+        x = self.feature_enhance(x)
+        x = x + residual  # Residual connection
+        
+        # Classification
+        x = self.classifier(x)
+        
+        return x
+
+
+class SepConv1DLite(nn.Module):
+    """Ultra-lightweight version with better learning dynamics."""
+    def __init__(self, n_chans, n_outputs, n_times, 
+                 filters=32, kernel_size=16, stride=8, padding=4, dropout=0.3):
+        super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
+        self.n_times = n_times
+        
+        # Improved separable convolution with better activation
+        self.depthwise_conv = nn.Conv1d(
+            n_chans, n_chans, kernel_size=kernel_size, stride=stride, 
+            padding=padding, groups=n_chans, bias=False
+        )
+        self.bn1 = nn.BatchNorm1d(n_chans)
+        
+        self.pointwise_conv = nn.Conv1d(n_chans, filters, kernel_size=1, bias=False)
+        self.bn2 = nn.BatchNorm1d(filters)
+        
+        # Additional small conv for feature refinement
+        self.refine_conv = nn.Conv1d(filters, filters, kernel_size=3, padding=1, 
+                                   groups=filters, bias=False)
+        self.bn3 = nn.BatchNorm1d(filters)
+        
+        self.dropout = nn.Dropout(dropout)
+        
+        # Better classifier
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Flatten(),
+            nn.Linear(filters, filters // 2),
+            nn.ELU(),
+            nn.Dropout(dropout * 0.5),
+            nn.Linear(filters // 2, n_outputs)
+        )
+        
+        self._init_weights()
+    
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+    
+    def forward(self, x):
+        # Depthwise convolution
+        x = self.depthwise_conv(x)
+        x = self.bn1(x)
+        x = F.elu(x)
+        
+        # Pointwise convolution
+        residual = x  # Save for residual connection
+        x = self.pointwise_conv(x)
+        x = self.bn2(x)
+        x = F.elu(x)
+        x = self.dropout(x)
+        
+        # Feature refinement with residual
+        x_refined = self.refine_conv(x)
+        x_refined = self.bn3(x_refined)
+        x_refined = F.elu(x_refined)
+        x = x + x_refined  # Residual connection
+        
+        # Classification
+        x = self.classifier(x)
+        
+        return x
+
+
+def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, enable_subject_layer=None, model_name='ShallowFBCSPNet', input_channels=None):
     """Create a new model based on configuration.
     
     Parameters
@@ -118,6 +791,10 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
     is_lda : bool, default False
     n_subjects : int, optional
     enable_subject_layer : bool, optional
+    model_name : str, default 'ShallowFBCSPNet'
+        Options: 'ShallowFBCSPNet', 'EEGNetv4', 'Deep4Net', 'EEGConformer', 'EEGChannelNet'
+    input_channels : int, optional
+        Actual number of input channels (may differ from n_channels if features were added)
         
     Returns
     -------
@@ -129,16 +806,129 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
         # Determine if subject layer should be enabled
         if enable_subject_layer is None:
             enable_subject_layer = use_subject_layer
+
+        # Use input_channels if provided, otherwise use n_channels
+        actual_channels = input_channels if input_channels is not None else n_channels
         
-        base_model = ShallowFBCSPNet(
-            n_chans=n_channels,
-            n_outputs=N_CLASSES,
-            n_times=INPUT_WINDOW_SAMPLES,
-            final_conv_length='auto'  
-        )
+        # Create base model based on model_name
+        if model_name == 'ShallowFBCSPNet':
+            if BRAINDECODE_AVAILABLE:
+                base_model = ShallowFBCSPNet(
+                    n_chans=actual_channels,
+                    n_outputs=N_CLASSES,
+                    n_times=INPUT_WINDOW_SAMPLES,
+                    final_conv_length='auto'
+                )
+            else:
+                base_model = CustomShallowFBCSPNet(
+                    n_chans=actual_channels,
+                    n_outputs=N_CLASSES,
+                    n_times=INPUT_WINDOW_SAMPLES
+                )
+        elif model_name == 'EEGNet' or model_name == 'EEGNetv4':
+            base_model = EEGNet(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                dropout=DROPOUT_RATE
+            )
+        elif model_name == 'DeepConvNet' or model_name == 'Deep4Net':
+            base_model = DeepConvNet(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                dropout=DROPOUT_RATE
+            )
+        elif model_name == 'EEGConformer':
+            # Get EEGConformer parameters from config if available
+            try:
+                from config import (
+                    CONFORMER_CONV_SPATIAL_DIM, CONFORMER_CONV_TEMPORAL_DIM,
+                    CONFORMER_EMBEDDING_DIM, CONFORMER_NUM_HEADS,
+                    CONFORMER_NUM_LAYERS, CONFORMER_ACTIVATION
+                )
+            except ImportError:
+                # Default parameters
+                CONFORMER_CONV_SPATIAL_DIM = 40
+                CONFORMER_CONV_TEMPORAL_DIM = 25
+                CONFORMER_EMBEDDING_DIM = 40
+                CONFORMER_NUM_HEADS = 10
+                CONFORMER_NUM_LAYERS = 3
+                CONFORMER_ACTIVATION = 'gelu'
+
+            base_model = EEGConformer(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                conv_spatial_dim=CONFORMER_CONV_SPATIAL_DIM,
+                conv_temporal_dim=CONFORMER_CONV_TEMPORAL_DIM,
+                embedding_dim=CONFORMER_EMBEDDING_DIM,
+                num_heads=CONFORMER_NUM_HEADS,
+                num_layers=CONFORMER_NUM_LAYERS,
+                dropout=DROPOUT_RATE,
+                activation=CONFORMER_ACTIVATION
+            )
+        elif model_name == 'EEGChannelNet':
+            base_model = EEGChannelNet(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                dropout=DROPOUT_RATE
+            )
+        elif model_name == 'SepConv1D':
+            # Get SepConv1D parameters from config if available
+            try:
+                from config import (
+                    SEPCONV1D_FILTERS, SEPCONV1D_KERNEL_SIZE, SEPCONV1D_STRIDE, 
+                    SEPCONV1D_PADDING
+                )
+            except ImportError:
+                # Default parameters optimized for small datasets
+                SEPCONV1D_FILTERS = 32
+                SEPCONV1D_KERNEL_SIZE = 16  
+                SEPCONV1D_STRIDE = 8
+                SEPCONV1D_PADDING = 4
+                
+            base_model = SepConv1D(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                filters=SEPCONV1D_FILTERS,
+                kernel_size=SEPCONV1D_KERNEL_SIZE,
+                stride=SEPCONV1D_STRIDE,
+                padding=SEPCONV1D_PADDING,
+                dropout=DROPOUT_RATE
+            )
+        elif model_name == 'SepConv1DLite':
+            # Ultra-lightweight version with better learning
+            try:
+                from config import (
+                    SEPCONV1D_FILTERS, SEPCONV1D_KERNEL_SIZE, SEPCONV1D_STRIDE, 
+                    SEPCONV1D_PADDING
+                )
+            except ImportError:
+                SEPCONV1D_FILTERS = 32
+                SEPCONV1D_KERNEL_SIZE = 16  
+                SEPCONV1D_STRIDE = 8
+                SEPCONV1D_PADDING = 4
+                
+            base_model = SepConv1DLite(
+                n_chans=actual_channels,
+                n_outputs=N_CLASSES,
+                n_times=INPUT_WINDOW_SAMPLES,
+                filters=SEPCONV1D_FILTERS,
+                kernel_size=SEPCONV1D_KERNEL_SIZE,
+                stride=SEPCONV1D_STRIDE,
+                padding=SEPCONV1D_PADDING,
+                dropout=DROPOUT_RATE
+            )
+        else:
+            raise ValueError(f"Unknown model name: {model_name}")
         
         # Add subject layer if enabled and we have subject information
-        if enable_subject_layer and n_subjects is not None and n_subjects > 1:
+        # Note: Subject layer only works with ShallowFBCSPNet for now
+        if (enable_subject_layer and n_subjects is not None and n_subjects > 1 
+            and model_name == 'ShallowFBCSPNet'):
             subject_layer = SubjectInputLayer(n_subjects, n_channels)
             return ShallowFBCSPNetWithSubjectLayer(subject_layer, base_model)
         else:
@@ -147,30 +937,43 @@ def create_model(n_channels, is_lda=False, random_state=None, n_subjects=None, e
 
 def normalize_data(x):
     """
-    Normalize data by z-score normalization across time dimension.
+    Normalize data with robust handling of constant channels and enhanced features.
+    Normalizes across time dimension (dim=2) for each channel independently.
     """
     # Debug: Check input data
     if torch.all(x == 0):
         print("WARNING: All input data to normalize_data is zero!")
         return x
-    
+
     mean = x.mean(dim=2, keepdim=True)
     std = x.std(dim=2, keepdim=True)
-    
-    # Check for zero standard deviation
-    if torch.any(std == 0):
-        print("WARNING: Some channels have zero standard deviation!")
-        # For channels with zero std, set std to 1 to avoid division by zero
-        std = torch.where(std == 0, torch.ones_like(std), std)
-    
+
+    # More robust handling of zero standard deviation
+    zero_std_mask = (std <= NORMALIZATION_EPSILON)
+    num_zero_std = torch.sum(zero_std_mask).item()
+
+    if num_zero_std > 0:
+        # Only warn once per batch if many channels have zero std
+        # if num_zero_std > x.shape[1] * 0.1:  # More than 10% of channels
+        #     print(f"INFO: {num_zero_std}/{x.shape[1]} channels have near-zero variance (likely constant features)")
+
+        # For constant channels, keep them as-is (subtract mean, but don't divide by std)
+        # This is better than setting std=1 which can create artificial scaling
+        std = torch.where(zero_std_mask, torch.ones_like(std), std)
+
+    # Apply normalization
     std = std + NORMALIZATION_EPSILON
     normalized = (x - mean) / std
-    
-    # Final check
+
+    # For originally constant channels, set them to zero (mean-centered)
+    normalized = torch.where(zero_std_mask.expand_as(normalized),
+                           torch.zeros_like(normalized), normalized)
+
+    # Final check for numerical issues
     if torch.any(torch.isnan(normalized)) or torch.any(torch.isinf(normalized)):
-        print("WARNING: NaN or Inf values after normalization!")
+        print("WARNING: NaN or Inf values after normalization, cleaning...")
         normalized = torch.nan_to_num(normalized, nan=0.0, posinf=1.0, neginf=-1.0)
-    
+
     return normalized
 
 
@@ -206,9 +1009,6 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
         X = np.concatenate(X)
         y = np.concatenate(y)
         predictions = model.predict(X)
-        correct_count = np.sum(predictions == y)
-        total_count = len(y)
-        accuracy = correct_count / total_count
         
         if return_details:
             try:
@@ -217,10 +1017,29 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             except:
                 y_proba = predictions  # Fallback to binary predictions if probabilities not available
             
-            # Calculate metrics
-            precision = precision_score(y, predictions, average='binary', zero_division=0)
-            recall = recall_score(y, predictions, average='binary', zero_division=0)
-            f1 = f1_score(y, predictions, average='binary', zero_division=0)
+            # Calculate confusion matrix first
+            cm = confusion_matrix(y, predictions)
+            
+            # Handle different confusion matrix shapes
+            if cm.shape == (1, 1):
+                # Only one class present
+                tp = cm[0, 0] if predictions[0] == y[0] else 0
+                tn = fp = fn = 0
+                accuracy = 1.0 if tp > 0 else 0.0
+                precision = recall = f1 = 1.0 if tp > 0 else 0.0
+            elif cm.shape == (2, 2):
+                # Standard 2x2 confusion matrix
+                tn, fp, fn, tp = cm.ravel()
+                accuracy = (tp + tn) / (tp + tn + fp + fn)
+                precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+                recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+                f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+            else:
+                # Fallback: calculate metrics directly
+                correct = np.sum(predictions == y)
+                accuracy = correct / len(y)
+                tp = tn = fp = fn = 0
+                precision = recall = f1 = 0.0
             try:
                 # Check if we have both classes in the true labels
                 unique_labels = np.unique(y)
@@ -243,15 +1062,34 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             
             return {
                 'accuracy': accuracy,
-                'correct_count': correct_count,
-                'incorrect_count': total_count - correct_count,
-                'total_count': total_count,
+                'correct_count': tp + tn,
+                'incorrect_count': fp + fn,
+                'total_count': tp + tn + fp + fn,
                 'precision': precision,
                 'recall': recall,
                 'f1_score': f1,
-                'auc': auc
+                'auc': auc,
+                'tp': int(tp),
+                'tn': int(tn),
+                'fp': int(fp),
+                'fn': int(fn)
             }
-        return accuracy
+        # For LDA without details, calculate accuracy from confusion matrix
+        cm = confusion_matrix(y, predictions)
+        
+        # Handle different confusion matrix shapes
+        if cm.shape == (1, 1):
+            # Only one class present
+            return 1.0 if predictions[0] == y[0] else 0.0
+        elif cm.shape == (2, 2):
+            # Standard 2x2 confusion matrix
+            tn, fp, fn, tp = cm.ravel()
+            accuracy = (tp + tn) / (tp + tn + fp + fn)
+            return accuracy
+        else:
+            # Fallback: calculate accuracy directly
+            correct = np.sum(predictions == y)
+            return correct / len(y)
     
     model.eval()
     all_predictions = []
@@ -260,8 +1098,16 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
     correct = 0
     total = 0
     
+    # Debug: Check loader
+    loader_size = len(loader.dataset)
+    if loader_size == 0:
+        print(f"Warning: Loader is empty in evaluate function!")
+        return 0.0
+    
     with torch.no_grad():
+        batch_count = 0
         for batch_data in loader:
+            batch_count += 1
             if len(batch_data) == 3:  
                 x, y, subject_indices = batch_data
                 subject_indices = subject_indices.to(device)
@@ -288,24 +1134,43 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
             correct += (predicted == y).sum().item()
             total += y.size(0)
             
-            # Store predictions and targets for detailed metrics
-            if return_details:
-                all_predictions.extend(predicted.cpu().numpy())
-                all_targets.extend(y.cpu().numpy())
-                # Store probabilities for AUC calculation
-                probabilities = F.softmax(scores, dim=1)[:, 1]  # Probability of positive class
-                all_probabilities.extend(probabilities.cpu().numpy())
+            # Collect predictions and targets for detailed evaluation
+            all_predictions.extend(predicted.cpu().numpy())
+            all_targets.extend(y.cpu().numpy())
+            
+            # Get probabilities for AUC calculation
+            probabilities = torch.softmax(scores, dim=1)
+            all_probabilities.extend(probabilities[:, 1].cpu().numpy())  # Probability of positive class
     
-    accuracy = correct / total
     if return_details:
         # Calculate precision, recall, F1 score and AUC
         all_predictions = np.array(all_predictions)
         all_targets = np.array(all_targets)
         all_probabilities = np.array(all_probabilities)
         
-        precision = precision_score(all_targets, all_predictions, average='binary', zero_division=0)
-        recall = recall_score(all_targets, all_predictions, average='binary', zero_division=0)
-        f1 = f1_score(all_targets, all_predictions, average='binary', zero_division=0)
+        # Calculate confusion matrix first
+        cm = confusion_matrix(all_targets, all_predictions)
+        
+        # Handle different confusion matrix shapes
+        if cm.shape == (1, 1):
+            # Only one class present
+            tp = cm[0, 0] if all_predictions[0] == all_targets[0] else 0
+            tn = fp = fn = 0
+            accuracy = 1.0 if tp > 0 else 0.0
+            precision = recall = f1 = 1.0 if tp > 0 else 0.0
+        elif cm.shape == (2, 2):
+            # Standard 2x2 confusion matrix
+            tn, fp, fn, tp = cm.ravel()
+            accuracy = (tp + tn) / (tp + tn + fp + fn)
+            precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+            recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+            f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        else:
+            # Fallback: calculate metrics directly
+            correct = np.sum(all_predictions == all_targets)
+            accuracy = correct / len(all_targets)
+            tp = tn = fp = fn = 0
+            precision = recall = f1 = 0.0
         
         # Calculate AUC
         try:
@@ -330,18 +1195,101 @@ def evaluate(model, loader, device, is_lda=False, subject_mapping=None, return_d
         
         return {
             'accuracy': accuracy,
-            'correct_count': correct,
-            'incorrect_count': total - correct,
-            'total_count': total,
+            'correct_count': tp + tn,
+            'incorrect_count': fp + fn,
+            'total_count': tp + tn + fp + fn,
             'precision': precision,
             'recall': recall,
             'f1_score': f1,
-            'auc': auc
+            'auc': auc,
+            'tp': int(tp),
+            'tn': int(tn),
+            'fp': int(fp),
+            'fn': int(fn)
         }
-    return accuracy
+    
+    # For neural network without details, calculate accuracy from confusion matrix
+    all_predictions = np.array(all_predictions)
+    all_targets = np.array(all_targets)
+    
+    # Debug: Print evaluation info
+    print(f"DEBUG: Evaluate function - {len(all_predictions)} predictions, {len(all_targets)} targets")
+    if len(all_predictions) > 0:
+        unique_preds = np.unique(all_predictions)
+        unique_targets = np.unique(all_targets)
+        print(f"DEBUG: Unique predictions: {unique_preds}, Unique targets: {unique_targets}")
+    
+    # Check if we have predictions and targets
+    if len(all_predictions) == 0 or len(all_targets) == 0:
+        print(f"Warning: No predictions or targets in evaluate function!")
+        return 0.0
+    
+    # Calculate confusion matrix
+    cm = confusion_matrix(all_targets, all_predictions)
+    
+    # Handle case where confusion matrix is not 2x2 (single class)
+    if cm.shape == (1, 1):
+        # Only one class present
+        return 1.0 if all_predictions[0] == all_targets[0] else 0.0
+    elif cm.shape == (2, 2):
+        # Standard 2x2 confusion matrix
+        tn, fp, fn, tp = cm.ravel()
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
+        return accuracy
+    else:
+        # Fallback: calculate accuracy directly
+        correct = np.sum(all_predictions == all_targets)
+        return correct / len(all_targets)
 
 
-def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=MAX_EPOCHS):
+def detect_small_dataset(train_loader, model_name=None):
+    """
+    Detect if dataset is small and should use overfitting prevention measures.
+    
+    Returns:
+        dict: Dictionary containing adjusted hyperparameters for small datasets
+    """
+    try:
+        total_samples = len(train_loader.dataset)
+    except:
+        total_samples = 0
+        
+    is_small_dataset = (
+        total_samples <= SMALL_DATASET_THRESHOLD
+        # Note: Removed automatic SepConv1D trigger per user request
+    )
+    
+    if is_small_dataset and ENABLE_SMALL_DATASET_PROTECTIONS:
+        print(f"\n{'='*60}")
+        print(f"SMALL DATASET DETECTED ({total_samples} samples)")
+        print(f"Applying overfitting prevention measures:")
+        print(f"  - Reduced dropout: {SMALL_DATASET_DROPOUT_RATE}")
+        print(f"  - Higher learning rate: {SMALL_DATASET_LEARNING_RATE}")
+        print(f"  - Stronger L2 regularization: {SMALL_DATASET_WEIGHT_DECAY}")
+        print(f"  - Early stopping patience: {SMALL_DATASET_EARLY_STOPPING_PATIENCE}")
+        print(f"  - Max epochs: {SMALL_DATASET_MAX_EPOCHS}")
+        print(f"{'='*60}")
+        
+        return {
+            'learning_rate': SMALL_DATASET_LEARNING_RATE,
+            'weight_decay': SMALL_DATASET_WEIGHT_DECAY,
+            'early_stopping_patience': SMALL_DATASET_EARLY_STOPPING_PATIENCE,
+            'max_epochs': SMALL_DATASET_MAX_EPOCHS,
+            'dropout_rate': SMALL_DATASET_DROPOUT_RATE,
+            'is_small_dataset': True
+        }
+    else:
+        return {
+            'learning_rate': LEARNING_RATE,
+            'weight_decay': WEIGHT_DECAY,
+            'early_stopping_patience': EARLY_STOPPING_PATIENCE,
+            'max_epochs': MAX_EPOCHS,
+            'dropout_rate': DROPOUT_RATE,
+            'is_small_dataset': False
+        }
+
+
+def train_model(model, train_loader, val_loader, test_loader, device, is_lda=False, max_epochs=MAX_EPOCHS, model_name=None):
     if is_lda:
         # Prepare data for LDA
         X_train = []
@@ -363,8 +1311,36 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
         return evaluate(model, test_loader, device, is_lda=True)
     
     # Neural Network training
-    optimizer = torch.optim.Adamax(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
+    # Detect small dataset and adjust hyperparameters
+    small_dataset_config = detect_small_dataset(train_loader, model_name)
+    
+    # Use adjusted hyperparameters for small datasets
+    effective_lr = small_dataset_config['learning_rate']
+    effective_weight_decay = small_dataset_config['weight_decay']
+    effective_patience = small_dataset_config['early_stopping_patience']
+    effective_max_epochs = min(max_epochs, small_dataset_config['max_epochs'])
+    
+    optimizer = torch.optim.Adamax(model.parameters(), lr=effective_lr, weight_decay=effective_weight_decay)
+    
+    # Check if this is a SepConv1D model that needs warmup
+    use_warmup = False
+    try:
+        from config import SEPCONV1D_USE_WARMUP, SEPCONV1D_WARMUP_EPOCHS, SEPCONV1D_WARMUP_FACTOR
+        use_warmup = (SEPCONV1D_USE_WARMUP and 
+                     model_name in ['SepConv1D', 'SepConv1DLite'] and
+                     hasattr(model, '__class__') and 
+                     'SepConv1D' in model.__class__.__name__)
+        warmup_epochs = SEPCONV1D_WARMUP_EPOCHS
+        warmup_factor = SEPCONV1D_WARMUP_FACTOR
+    except ImportError:
+        warmup_epochs = 10
+        warmup_factor = 0.1
+    
+    if use_warmup:
+        # Custom scheduler with warmup for SepConv1D
+        scheduler = WarmupCosineAnnealingLR(optimizer, warmup_epochs, effective_max_epochs, warmup_factor)
+    else:
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=effective_max_epochs)
     # Maintain state for early stopping using the helper function defined above
     es_state = {}
 
@@ -385,10 +1361,25 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
 
     # Initialize focal loss without class weights since dataset is balanced
     focal_loss = FocalLoss(alpha=1, gamma=2, weight=None)
+    
+    # Training progress tracking
+    print(f"\n{'='*60}")
+    print(f"Starting Training - Max Epochs: {effective_max_epochs}")
+    print(f"Model: {type(model).__name__}")
+    print(f"Learning Rate: {effective_lr}, Weight Decay: {effective_weight_decay}")
+    print(f"Dropout: {small_dataset_config['dropout_rate']}, Early Stopping Patience: {effective_patience}")
+    if small_dataset_config['is_small_dataset']:
+        print(f"SMALL DATASET MODE: Enhanced overfitting prevention enabled")
+    print(f"{'='*60}")
 
     for epoch in range(max_epochs):
         model.train()
-        for batch_data in train_loader:
+        epoch_loss = 0.0
+        epoch_correct = 0
+        epoch_total = 0
+        batch_count = 0
+        
+        for batch_idx, batch_data in enumerate(train_loader):
             if len(batch_data) == 3:  # (X, y, subject_indices)
                 x, y, subject_indices = batch_data
                 subject_indices = subject_indices.to(device)
@@ -425,17 +1416,511 @@ def train_model(model, train_loader, val_loader, test_loader, device, is_lda=Fal
             
             loss.backward()
             optimizer.step()
+            
+            # Track training statistics
+            epoch_loss += loss.item()
+            _, predicted = scores.max(1)
+            epoch_correct += (predicted == y).sum().item()
+            epoch_total += y.size(0)
+            batch_count += 1
+            
+        
+        # Calculate epoch statistics
+        avg_loss = epoch_loss / batch_count
+        train_acc = 100. * epoch_correct / epoch_total
+        current_lr = optimizer.param_groups[0]['lr']
         
         scheduler.step()
         
         # Validation phase
-        val_acc = evaluate(model, val_loader, device)
+        # Debug: Check validation loader
+        val_samples = len(val_loader.dataset)
+        if val_samples == 0:
+            print(f"Warning: Validation loader is empty!")
+            val_acc = 0.0
+        else:
+            val_acc = evaluate(model, val_loader, device)
+            if val_acc == 0.0 and val_samples > 0:
+                print(f"Warning: Validation accuracy is 0.0 with {val_samples} samples")
+        val_acc_percent = 100. * val_acc
         
-        # Early stopping check
-        if early_stopping(val_acc, model, es_state, patience = EARLY_STOPPING_PATIENCE):
+        # Print epoch summary
+        print(f"\nEpoch {epoch+1:3d}/{max_epochs} Summary:")
+        print(f"  Train Loss: {avg_loss:.4f} | Train Acc: {train_acc:.2f}%")
+        print(f"  Val Acc: {val_acc_percent:.2f}% | LR: {current_lr:.6f}")
+        
+        # Early stopping check with detailed info
+        is_best = False
+        if 'best_val_acc' not in es_state or val_acc > es_state['best_val_acc']:
+            is_best = True
+            
+        if early_stopping(val_acc, model, es_state, patience = effective_patience):
+            print(f"Early stopping triggered! No improvement for {EARLY_STOPPING_PATIENCE} epochs")
+            print(f"Best validation accuracy: {100. * es_state['best_val_acc']:.2f}%")
             break
+        else:
+            if is_best:
+                print(f"New best validation accuracy!")
+            else:
+                remaining_patience = effective_patience - es_state['counter']
+                print(f"Patience remaining: {remaining_patience}/{effective_patience}")
+        
+        print(f"  {'-'*50}")
+    
+    print(f"\n{'='*60}")
+    print("Training Complete!")
+    if 'best_val_acc' in es_state:
+        print(f"Best Validation Accuracy: {100. * es_state['best_val_acc']:.2f}%")
+    print(f"{'='*60}")
     
     # Load best model and evaluate on test set
     if 'best_model' in es_state and es_state['best_model'] is not None:
         model.load_state_dict(es_state['best_model'])
     return evaluate(model, test_loader, device)
+
+
+def create_fusion_model(model_name: str, datasets_info: Dict, fusion_method: str = 'none',
+                       domain_adaptation: str = 'none', **kwargs):
+    """
+    Create a model with fusion and domain adaptation capabilities
+
+    Args:
+        model_name: Base model name
+        datasets_info: Information about datasets
+        fusion_method: Fusion method to use
+        domain_adaptation: Domain adaptation method
+        **kwargs: Additional parameters
+
+    Returns:
+        Model instance
+    """
+    # Import fusion methods here to avoid circular imports
+    from fusion_methods import FusionModelFactory
+    from domain_adaptation import DomainAdapterFactory
+
+    if fusion_method == 'none' and domain_adaptation == 'none':
+        # Use existing create_model function for baseline
+        max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
+        # Filter kwargs to only those supported by create_model
+        allowed_keys = {
+            'is_lda', 'random_state', 'n_subjects', 'enable_subject_layer',
+            'model_name', 'input_channels', 'n_channels', 'n_chans'
+        }
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in allowed_keys}
+        # Map legacy key 'n_chans' to 'n_channels' if provided
+        if 'n_chans' in filtered_kwargs and 'n_channels' not in filtered_kwargs:
+            filtered_kwargs['n_channels'] = filtered_kwargs.pop('n_chans')
+        # Ensure n_channels is provided correctly and model_name is set
+        filtered_kwargs.setdefault('n_channels', max_channels)
+        filtered_kwargs['model_name'] = model_name
+        return create_model(n_channels=filtered_kwargs.pop('n_channels'), **filtered_kwargs)
+
+    elif fusion_method in ['graph_gcn', 'graph_enhanced']:
+        # Create fusion model
+        # Determine a reasonable default for channel count from datasets_info
+        max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
+
+        # Filter kwargs to only those supported by create_model and ensure n_channels present
+        allowed_keys = {
+            'is_lda', 'random_state', 'n_subjects', 'enable_subject_layer',
+            'model_name', 'input_channels', 'n_channels', 'n_chans'
+        }
+        base_params = {k: v for k, v in kwargs.items() if k in allowed_keys}
+        if 'n_chans' in base_params and 'n_channels' not in base_params:
+            base_params['n_channels'] = base_params.pop('n_chans')
+        base_params.setdefault('n_channels', max_channels)
+
+        # 直接获取基础模型类而非工厂函数
+        if model_name == 'EEGConformer':
+            base_model_class = EEGConformer
+        elif model_name == 'EEGNet' or model_name == 'EEGNetv4':
+            base_model_class = EEGNet
+        elif model_name == 'ShallowFBCSPNet':
+            if BRAINDECODE_AVAILABLE:
+                base_model_class = ShallowFBCSPNet
+            else:
+                base_model_class = CustomShallowFBCSPNet
+        elif model_name == 'DeepConvNet' or model_name == 'Deep4Net':
+            base_model_class = DeepConvNet
+        elif model_name == 'EEGChannelNet':
+            base_model_class = EEGChannelNet
+        elif model_name == 'SepConv1D':
+            base_model_class = SepConv1D
+        elif model_name == 'SepConv1DLite':
+            base_model_class = SepConv1DLite
+        else:
+            raise ValueError(f"Unknown model name: {model_name}")
+
+        # 为基础模型准备正确的参数
+        base_model_params = {
+            'n_chans': max_channels,  # 将被SpatialAttentionModel修改为virtual_channels
+            'n_outputs': N_CLASSES,
+            'n_times': INPUT_WINDOW_SAMPLES
+        }
+        
+        # 添加模型特定参数
+        if model_name == 'EEGNet' or model_name == 'EEGNetv4':
+            base_model_params['dropout'] = DROPOUT_RATE
+        elif model_name == 'DeepConvNet' or model_name == 'Deep4Net':
+            base_model_params['dropout'] = DROPOUT_RATE
+        elif model_name == 'EEGConformer':
+            try:
+                from config import (
+                    CONFORMER_CONV_SPATIAL_DIM, CONFORMER_CONV_TEMPORAL_DIM,
+                    CONFORMER_EMBEDDING_DIM, CONFORMER_NUM_HEADS,
+                    CONFORMER_NUM_LAYERS, CONFORMER_ACTIVATION
+                )
+                base_model_params.update({
+                    'conv_spatial_dim': CONFORMER_CONV_SPATIAL_DIM,
+                    'conv_temporal_dim': CONFORMER_CONV_TEMPORAL_DIM,
+                    'embedding_dim': CONFORMER_EMBEDDING_DIM,
+                    'num_heads': CONFORMER_NUM_HEADS,
+                    'num_layers': CONFORMER_NUM_LAYERS,
+                    'dropout': DROPOUT_RATE,
+                    'activation': CONFORMER_ACTIVATION
+                })
+            except ImportError:
+                # 使用默认参数
+                base_model_params.update({
+                    'conv_spatial_dim': 40,
+                    'conv_temporal_dim': 25,
+                    'embedding_dim': 40,
+                    'num_heads': 10,
+                    'num_layers': 3,
+                    'dropout': DROPOUT_RATE,
+                    'activation': 'gelu'
+                })
+        elif model_name == 'EEGChannelNet':
+            base_model_params['dropout'] = DROPOUT_RATE
+        elif model_name == 'SepConv1D' or model_name == 'SepConv1DLite':
+            # Get SepConv1D parameters for fusion
+            try:
+                from config import (
+                    SEPCONV1D_FILTERS, SEPCONV1D_KERNEL_SIZE, SEPCONV1D_STRIDE, 
+                    SEPCONV1D_PADDING
+                )
+                base_model_params.update({
+                    'filters': SEPCONV1D_FILTERS,
+                    'kernel_size': SEPCONV1D_KERNEL_SIZE,
+                    'stride': SEPCONV1D_STRIDE,
+                    'padding': SEPCONV1D_PADDING,
+                    'dropout': DROPOUT_RATE
+                })
+            except ImportError:
+                # Use default parameters
+                base_model_params.update({
+                    'filters': 32,
+                    'kernel_size': 16,
+                    'stride': 8,
+                    'padding': 4,
+                    'dropout': DROPOUT_RATE
+                })
+
+        fusion_model = FusionModelFactory.create_fusion_model(
+            fusion_method, datasets_info,
+            base_model_info={
+                'class': base_model_class,
+                'params': base_model_params
+            }
+        )
+
+        if domain_adaptation != 'none':
+            # Wrap with domain adaptation
+            feature_dim = 128  # This should be determined from the fusion model
+            domain_adapter = DomainAdapterFactory.create_domain_adapter(
+                domain_adaptation, fusion_model, feature_dim, datasets_info
+            )
+            return domain_adapter
+
+        return fusion_model
+
+    elif domain_adaptation != 'none':
+        # Domain adaptation without fusion
+        max_channels = max(len(info['channels']) for info in datasets_info.values()) if datasets_info else 16
+        base_model = create_model(model_name, max_channels, **kwargs)
+
+        feature_dim = 128  # This should be determined from the base model
+        domain_adapter = DomainAdapterFactory.create_domain_adapter(
+            domain_adaptation, base_model, feature_dim, datasets_info
+        )
+        return domain_adapter
+
+    else:
+        raise ValueError(f"Unsupported combination: fusion={fusion_method}, adaptation={domain_adaptation}")
+
+
+def train_fusion_model(model, train_loaders: Dict, val_loaders: Dict, test_loaders: Dict,
+                      device, fusion_method: str = 'none', domain_adaptation: str = 'none',
+                      max_epochs: int = MAX_EPOCHS, position_tensors: Dict[str, torch.Tensor] = None):
+    """
+    Train a fusion model with domain adaptation
+
+    Args:
+        model: Model to train
+        train_loaders: Dictionary of training data loaders
+        val_loaders: Dictionary of validation data loaders
+        test_loaders: Dictionary of test data loaders
+        device: Training device
+        fusion_method: Fusion method being used
+        domain_adaptation: Domain adaptation method
+        max_epochs: Maximum training epochs
+
+    Returns:
+        Test accuracy
+    """
+    from domain_adaptation import DomainAdaptationLoss, DomainAdapterFactory
+    from enhanced_preprocessor import MultiModalDataLoader
+
+    if fusion_method == 'none' and domain_adaptation == 'none':
+        # Use existing training function for baseline
+        train_loader = list(train_loaders.values())[0]
+        val_loader = list(val_loaders.values())[0]
+        test_loader = list(test_loaders.values())[0]
+        return train_model(model, train_loader, val_loader, test_loader, device, max_epochs=max_epochs)
+
+    # For heterogeneous fusion, we'll iterate through each dataset separately
+    # instead of trying to batch them together (which causes dimension mismatch)
+    dataset_names = list(train_loaders.keys())
+    train_iterators = {name: iter(loader) for name, loader in train_loaders.items()}
+
+    # Move model to device
+    model = model.to(device)
+
+    # Setup optimizers based on adaptation method
+    optimizers = DomainAdapterFactory.create_optimizers(model, domain_adaptation)
+
+    # Setup loss function
+    loss_fn = DomainAdaptationLoss(domain_adaptation)
+
+    # Create learning rate schedulers
+    schedulers = {}
+    for name, optimizer in optimizers.items():
+        schedulers[name] = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs)
+
+    # Early stopping state
+    es_state = {}
+
+    print(f"\n{'='*60}")
+    print(f"Starting Fusion Training - Max Epochs: {max_epochs}")
+    print(f"Fusion Method: {fusion_method}")
+    print(f"Domain Adaptation: {domain_adaptation}")
+    print(f"Model: {type(model).__name__}")
+    print(f"{'='*60}")
+
+    for epoch in range(max_epochs):
+        model.train()
+        epoch_losses = {}
+        epoch_correct = 0
+        epoch_total = 0
+        batch_count = 0
+
+        # Training loop - process each dataset separately
+        for batch_idx in range(50):  # Fixed number of batches per epoch
+            try:
+                # Cycle through datasets
+                dataset_name = dataset_names[batch_idx % len(dataset_names)]
+
+                # Get batch from current dataset
+                try:
+                    data, labels = next(train_iterators[dataset_name])
+                except StopIteration:
+                    # Reset iterator if exhausted
+                    train_iterators[dataset_name] = iter(train_loaders[dataset_name])
+                    data, labels = next(train_iterators[dataset_name])
+
+                data, labels = data.to(device), labels.to(device)
+                domains = [dataset_name] * len(data)  # Set domain for all samples in batch
+
+                # Apply data augmentation and normalization
+                data = augment_data(data, training=True)
+                data = normalize_data(data)
+
+                # Forward pass
+                if domain_adaptation == 'adversarial':
+                    # Adversarial training
+                    alpha = 2.0 / (1.0 + np.exp(-10 * epoch / max_epochs)) - 1.0  # GRL schedule
+                    task_pred, domain_pred, features = model(data, alpha=alpha, return_features=True)
+
+                    # Create domain labels for current dataset
+                    domain_labels = torch.full((len(data),), hash(dataset_name) % len(dataset_names),
+                                             device=device, dtype=torch.long)
+                    predictions = {'task': task_pred, 'domain': domain_pred}
+                    targets = {'task': labels, 'domain': domain_labels}
+
+                elif domain_adaptation == 'ms_mda':
+                    # MS-MDA training - single domain per batch
+                    domain = dataset_name
+                    task_pred, shared_feat, adapted_feat = model(
+                        data, domain=domain, return_features=True
+                    )
+
+                    # Compute adaptation loss (domain features will be accumulated across batches)
+                    adaptation_loss = model.compute_adaptation_loss({domain: shared_feat})
+
+                    predictions = {'task': task_pred, 'adaptation': adaptation_loss}
+                    targets = {'task': labels}
+
+                else:
+                    # No domain adaptation
+                    if hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
+                        task_pred = model(data, dataset_name=domains[0] if domains else 'unknown')
+                    else:
+                        task_pred = model(data)
+                    predictions = {'task': task_pred}
+                    targets = {'task': labels}
+
+                # Compute loss
+                total_loss, loss_components = loss_fn(predictions, targets, model)
+
+                # Backward pass
+                if domain_adaptation == 'adversarial' and 'discriminator' in optimizers:
+                    # Adversarial training: alternate updates
+                    if batch_idx % 2 == 0:
+                        # Update feature extractor
+                        optimizers['feature'].zero_grad()
+                        total_loss.backward()
+                        optimizers['feature'].step()
+                    else:
+                        # Update discriminator
+                        optimizers['discriminator'].zero_grad()
+                        loss_components['domain_loss'].backward()
+                        optimizers['discriminator'].step()
+                else:
+                    # Standard training
+                    optimizer = optimizers.get('main', list(optimizers.values())[0])
+                    optimizer.zero_grad()
+                    total_loss.backward()
+                    optimizer.step()
+
+                # Track statistics
+                for key, value in loss_components.items():
+                    if key not in epoch_losses:
+                        epoch_losses[key] = 0
+                    epoch_losses[key] += value.item() if torch.is_tensor(value) else value
+
+                # Calculate accuracy
+                if torch.is_tensor(predictions['task']):
+                    _, predicted = predictions['task'].max(1)
+                    epoch_correct += (predicted == labels).sum().item()
+                    epoch_total += labels.size(0)
+
+                batch_count += 1
+
+            except StopIteration:
+                # Current dataset exhausted for this epoch; continue with others
+                continue
+            except Exception as e:
+                print(f"Error in batch {batch_idx}: {e}")
+                continue
+
+        # Calculate epoch statistics
+        avg_losses = {key: value / batch_count for key, value in epoch_losses.items()}
+        train_acc = 100. * epoch_correct / epoch_total if epoch_total > 0 else 0.0
+
+        # Update learning rates
+        for scheduler in schedulers.values():
+            scheduler.step()
+
+        # Validation phase
+        val_acc = evaluate_fusion_model(
+            model,
+            val_loaders,
+            device,
+            fusion_method,
+            domain_adaptation,
+            position_tensors=position_tensors
+        )
+        val_acc_percent = 100. * val_acc
+
+        # Print epoch summary
+        print(f"\nEpoch {epoch+1:3d}/{max_epochs} Summary:")
+        print(f"  Train Loss: {avg_losses.get('total_loss', 0.0):.4f} | Train Acc: {train_acc:.2f}%")
+        if 'adaptation_loss' in avg_losses:
+            print(f"  Adaptation Loss: {avg_losses['adaptation_loss']:.4f}")
+        if 'domain_loss' in avg_losses:
+            print(f"  Domain Loss: {avg_losses['domain_loss']:.4f}")
+        print(f"  Val Acc: {val_acc_percent:.2f}%")
+
+        # Early stopping
+        if early_stopping(val_acc, model, es_state, patience=EARLY_STOPPING_PATIENCE):
+            print(f"Early stopping triggered! No improvement for {EARLY_STOPPING_PATIENCE} epochs")
+            break
+
+        print(f"  {'-'*50}")
+
+    print(f"\n{'='*60}")
+    print("Fusion Training Complete!")
+    print(f"{'='*60}")
+
+    # Load best model and evaluate on test set
+    if 'best_model' in es_state and es_state['best_model'] is not None:
+        model.load_state_dict(es_state['best_model'])
+
+    return evaluate_fusion_model(model, test_loaders, device, fusion_method, domain_adaptation, position_tensors=position_tensors)
+
+
+def evaluate_fusion_model(model, test_loaders: Dict, device, fusion_method: str = 'none',
+                         domain_adaptation: str = 'none', position_tensors: Dict[str, torch.Tensor] = None):
+    """
+    Evaluate fusion model on test data
+
+    Args:
+        model: Model to evaluate
+        test_loaders: Dictionary of test data loaders
+        device: Evaluation device
+        fusion_method: Fusion method being used
+        domain_adaptation: Domain adaptation method
+
+    Returns:
+        Average test accuracy across all domains
+    """
+    model.eval()
+    domain_accuracies = {}
+
+    with torch.no_grad():
+        for domain_name, test_loader in test_loaders.items():
+            domain_correct = 0
+            domain_total = 0
+
+            for batch_data in test_loader:
+                if len(batch_data) == 3:
+                    data, labels, _ = batch_data
+                else:
+                    data, labels = batch_data
+
+                data, labels = data.to(device), labels.to(device)
+                data = normalize_data(data)
+
+                # Forward pass
+                if domain_adaptation == 'adversarial':
+                    # For adversarial adapter, also pass dataset_name if supported
+                    if 'dataset_name' in model.forward.__code__.co_varnames:
+                        outputs = model(data, dataset_name=domain_name)
+                    else:
+                        outputs = model(data)
+                elif hasattr(model, 'forward') and 'dataset_name' in model.forward.__code__.co_varnames:
+                    outputs = model(data, dataset_name=domain_name)
+                elif domain_adaptation == 'ms_mda':
+                    outputs = model(data, domain=domain_name)
+                else:
+                    outputs = model(data)
+
+                if isinstance(outputs, tuple):
+                    outputs = outputs[0]  # Take task predictions
+
+                _, predicted = outputs.max(1)
+                domain_correct += (predicted == labels).sum().item()
+                domain_total += labels.size(0)
+
+            if domain_total > 0:
+                domain_accuracy = domain_correct / domain_total
+                domain_accuracies[domain_name] = domain_accuracy
+                print(f"Domain {domain_name} accuracy: {domain_accuracy:.4f}")
+
+    # Return average accuracy across domains
+    if domain_accuracies:
+        avg_accuracy = sum(domain_accuracies.values()) / len(domain_accuracies)
+        print(f"Average accuracy across domains: {avg_accuracy:.4f}")
+        return avg_accuracy
+    else:
+        return 0.0

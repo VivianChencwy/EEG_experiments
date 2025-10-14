@@ -1,0 +1,28 @@
+=== PROTOTYPE-BASED TF-DWT TEST ===
+
+New Strategy:
+  1. Mixup (α=0.4) for small domain data augmentation
+  2. Prototype networks for discriminative transfer
+  3. Shared BN statistics (no split-BN)
+  4. Conservative weights (sqrt scaling, max 12x)
+  5. Reduced MMD (0.2-0.4, down from 0.65-0.68)
+  6. Prototype loss (λ=0.5-0.8)
+
+Expected improvements:
+  - Better small-domain generalization via Mixup
+  - Discriminative transfer via prototypes
+  - Preserve large-domain performance
+
+Starting single test run...
+Thu Oct  2 10:50:58 PM PDT 2025
+
+=== RESULTS ===
+AVO accuracy: 0.6642149644721553
+P3 accuracy: 0.5422903579407216
+✓ AVO TARGET MET (≥0.66)
+./run_prototype_test.sh: line 37: else:: command not found
+✗ AVO below target. Gap: -.0042149644721553
+⚠ P3 performance degraded: 0.5422903579407216
+
+Thu Oct  2 11:51:53 PM PDT 2025
+Test run complete.

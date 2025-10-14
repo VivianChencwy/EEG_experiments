@@ -1,0 +1,7 @@
+{
+  "run": 3,
+  "avo_accuracy": "0.6633 ± 0.0740",
+  "csv_file": "tfdwt_run3_detailed_20251001_173115.csv",
+  "timestamp": "2025-10-01T17:47:18-07:00",
+  "parameters": "original (no modifications)"
+}

@@ -1,0 +1,1550 @@
+2025-10-02 00:28:40 - 
+==================================================
+2025-10-02 00:28:40 - TF-DWT Joint Training (Auto-Adjusted)
+2025-10-02 00:28:40 - ==================================================
+2025-10-02 00:28:40 - 
+Experiment Configuration:
+2025-10-02 00:28:40 - --------------------------------------------------
+2025-10-02 00:28:40 - electrode_list: all
+2025-10-02 00:28:40 - fusion_method: none
+2025-10-02 00:28:40 - domain_adaptation: none
+2025-10-02 00:28:40 - use_enhanced_preprocessing: True
+2025-10-02 00:28:40 - batch_size: 96
+2025-10-02 00:28:40 - max_epochs: 600
+2025-10-02 00:28:40 - learning_rate: 0.008
+2025-10-02 00:28:40 - weight_decay: 0.0002
+2025-10-02 00:28:40 - dropout_rate: 0.2
+2025-10-02 00:28:40 - use_data_augmentation: True
+2025-10-02 00:28:40 - noise_std: 0.005
+2025-10-02 00:28:40 - time_shift_range: 5
+2025-10-02 00:28:40 - label_smoothing: 0.05
+2025-10-02 00:28:40 - trials_per_subject_P3: 80
+2025-10-02 00:28:40 - trials_per_subject_AVO: 10
+2025-10-02 00:28:40 - train/val/test: (0.7, 0.1, 0.2)
+2025-10-02 00:28:40 - device_mode: cuda
+2025-10-02 00:28:40 - --------------------------------------------------
+2025-10-02 00:28:40 - 
+==================================================
+2025-10-02 00:28:40 - Running Nested Cross-Validation with TF-DWT
+2025-10-02 00:28:40 - ==================================================
+2025-10-02 00:28:40 - Loading dataset for CV: P3
+2025-10-02 00:28:47 - Loading dataset for CV: AVO
+2025-10-02 00:29:04 - Subject AVO_038: Sampled 10/100 trials
+2025-10-02 00:29:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 - Subject AVO_032: Sampled 10/96 trials
+2025-10-02 00:29:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 - Subject AVO_024: Sampled 10/92 trials
+2025-10-02 00:29:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 - Subject AVO_047: Sampled 10/92 trials
+2025-10-02 00:29:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 - Subject AVO_003: Sampled 10/88 trials
+2025-10-02 00:29:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 - Subject AVO_031: Sampled 10/88 trials
+2025-10-02 00:29:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 - Subject AVO_035: Sampled 10/88 trials
+2025-10-02 00:29:04 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:04 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 - Subject AVO_048: Sampled 10/88 trials
+2025-10-02 00:29:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 - Subject AVO_037: Sampled 10/86 trials
+2025-10-02 00:29:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 - Subject AVO_041: Sampled 10/86 trials
+2025-10-02 00:29:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 - Subject AVO_004: Sampled 10/84 trials
+2025-10-02 00:29:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 - Subject AVO_028: Sampled 10/84 trials
+2025-10-02 00:29:05 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:05 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 - Subject AVO_029: Sampled 10/84 trials
+2025-10-02 00:29:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 - Subject AVO_036: Sampled 10/84 trials
+2025-10-02 00:29:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 - Subject AVO_040: Sampled 10/84 trials
+2025-10-02 00:29:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 - Subject AVO_051: Sampled 10/84 trials
+2025-10-02 00:29:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 - Subject AVO_021: Sampled 10/82 trials
+2025-10-02 00:29:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 - Subject AVO_026: Sampled 10/80 trials
+2025-10-02 00:29:06 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:06 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 - Subject AVO_007: Sampled 10/78 trials
+2025-10-02 00:29:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 - Subject AVO_023: Sampled 10/78 trials
+2025-10-02 00:29:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 - Subject AVO_033: Sampled 10/78 trials
+2025-10-02 00:29:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 - Subject AVO_009: Sampled 10/76 trials
+2025-10-02 00:29:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 - Subject AVO_019: Sampled 10/76 trials
+2025-10-02 00:29:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 - Subject AVO_020: Sampled 10/76 trials
+2025-10-02 00:29:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 - Subject AVO_006: Sampled 10/74 trials
+2025-10-02 00:29:07 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:07 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 - Subject AVO_017: Sampled 10/74 trials
+2025-10-02 00:29:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 - Subject AVO_008: Sampled 10/72 trials
+2025-10-02 00:29:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 - Subject AVO_012: Sampled 10/72 trials
+2025-10-02 00:29:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 - Subject AVO_013: Sampled 10/72 trials
+2025-10-02 00:29:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 - Subject AVO_014: Sampled 10/72 trials
+2025-10-02 00:29:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 - Subject AVO_022: Sampled 10/72 trials
+2025-10-02 00:29:08 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:08 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 - Subject AVO_030: Sampled 10/72 trials
+2025-10-02 00:29:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 - Subject AVO_034: Sampled 10/72 trials
+2025-10-02 00:29:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 - Subject AVO_042: Sampled 10/72 trials
+2025-10-02 00:29:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 - Subject AVO_043: Sampled 10/72 trials
+2025-10-02 00:29:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 - Subject AVO_001: Sampled 10/70 trials
+2025-10-02 00:29:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 - Subject AVO_002: Sampled 10/70 trials
+2025-10-02 00:29:09 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:09 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:10 - Subject AVO_005: Sampled 10/70 trials
+2025-10-02 00:29:10 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:10 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:10 - Subject AVO_010: Sampled 10/70 trials
+2025-10-02 00:29:10 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:10 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:10 - Subject AVO_016: Sampled 10/70 trials
+2025-10-02 00:29:10 -   Original distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:10 -   Sampled distribution: {0: 0.5, 1: 0.5}
+2025-10-02 00:29:10 - Combined dataset summary: total=3588, P3=3188, AVO=400
+2025-10-02 00:29:10 - Repeat 1/5
+2025-10-02 00:29:10 -   Fold 1/5
+2025-10-02 00:29:10 - Fold domains: small=AVO (n=267), large=P3 (n=2244)
+2025-10-02 00:29:10 - Auto adjustments (symmetric): w_small≈2.899, lambda_MMD_target=0.400, warmup_epochs=10
+2025-10-02 00:29:10 - Epoch 1/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.190 | lambda_MMD=0.040
+2025-10-02 00:29:11 - Epoch Summary: TrainLoss=1.6979 | TrainAcc=0.576 | Val(P3)=0.607 | Val(AVO)=0.529
+2025-10-02 00:29:11 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:11 - Epoch 2/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.380 | lambda_MMD=0.080
+2025-10-02 00:29:11 - Epoch Summary: TrainLoss=1.5209 | TrainAcc=0.604 | Val(P3)=0.591 | Val(AVO)=0.627
+2025-10-02 00:29:11 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:11 - Epoch 3/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.570 | lambda_MMD=0.120
+2025-10-02 00:29:11 - Epoch Summary: TrainLoss=1.5335 | TrainAcc=0.631 | Val(P3)=0.633 | Val(AVO)=0.627
+2025-10-02 00:29:11 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:29:11 - Epoch 4/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.760 | lambda_MMD=0.160
+2025-10-02 00:29:11 - Epoch Summary: TrainLoss=1.5705 | TrainAcc=0.625 | Val(P3)=0.633 | Val(AVO)=0.608
+2025-10-02 00:29:11 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:29:11 - Epoch 5/600 | LR=0.007999 | w_P3=1.000 | w_AVO=1.950 | lambda_MMD=0.200
+2025-10-02 00:29:12 - Epoch Summary: TrainLoss=1.6047 | TrainAcc=0.619 | Val(P3)=0.604 | Val(AVO)=0.647
+2025-10-02 00:29:12 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:12 - Epoch 6/600 | LR=0.007999 | w_P3=1.000 | w_AVO=2.139 | lambda_MMD=0.240
+2025-10-02 00:29:12 - Epoch Summary: TrainLoss=1.6170 | TrainAcc=0.635 | Val(P3)=0.617 | Val(AVO)=0.569
+2025-10-02 00:29:12 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:29:12 - Epoch 7/600 | LR=0.007998 | w_P3=1.000 | w_AVO=2.329 | lambda_MMD=0.280
+2025-10-02 00:29:12 - Epoch Summary: TrainLoss=1.6829 | TrainAcc=0.639 | Val(P3)=0.620 | Val(AVO)=0.647
+2025-10-02 00:29:12 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:29:12 - Epoch 8/600 | LR=0.007997 | w_P3=1.000 | w_AVO=2.519 | lambda_MMD=0.320
+2025-10-02 00:29:12 - Epoch Summary: TrainLoss=1.7034 | TrainAcc=0.647 | Val(P3)=0.607 | Val(AVO)=0.569
+2025-10-02 00:29:12 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:29:12 - Epoch 9/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.709 | lambda_MMD=0.360
+2025-10-02 00:29:13 - Epoch Summary: TrainLoss=1.7553 | TrainAcc=0.629 | Val(P3)=0.594 | Val(AVO)=0.627
+2025-10-02 00:29:13 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:29:13 - Epoch 10/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:13 - Epoch Summary: TrainLoss=1.7907 | TrainAcc=0.619 | Val(P3)=0.601 | Val(AVO)=0.706
+2025-10-02 00:29:13 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:13 - Epoch 11/600 | LR=0.007995 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:13 - Epoch Summary: TrainLoss=1.7915 | TrainAcc=0.639 | Val(P3)=0.640 | Val(AVO)=0.627
+2025-10-02 00:29:13 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:29:13 - Epoch 12/600 | LR=0.007993 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:14 - Epoch Summary: TrainLoss=1.6947 | TrainAcc=0.619 | Val(P3)=0.630 | Val(AVO)=0.667
+2025-10-02 00:29:14 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:29:14 - Epoch 13/600 | LR=0.007992 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:14 - Epoch Summary: TrainLoss=1.6348 | TrainAcc=0.619 | Val(P3)=0.601 | Val(AVO)=0.686
+2025-10-02 00:29:14 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:29:14 - Epoch 14/600 | LR=0.007991 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:14 - Epoch Summary: TrainLoss=1.6393 | TrainAcc=0.624 | Val(P3)=0.581 | Val(AVO)=0.627
+2025-10-02 00:29:14 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:29:14 - Epoch 15/600 | LR=0.007989 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:14 - Epoch Summary: TrainLoss=1.6205 | TrainAcc=0.633 | Val(P3)=0.627 | Val(AVO)=0.608
+2025-10-02 00:29:14 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:29:14 - Epoch 16/600 | LR=0.007988 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:15 - Epoch Summary: TrainLoss=1.5897 | TrainAcc=0.623 | Val(P3)=0.597 | Val(AVO)=0.706
+2025-10-02 00:29:15 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:29:15 - Epoch 17/600 | LR=0.007986 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:15 - Epoch Summary: TrainLoss=1.5354 | TrainAcc=0.632 | Val(P3)=0.604 | Val(AVO)=0.686
+2025-10-02 00:29:15 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:29:15 - Epoch 18/600 | LR=0.007984 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:15 - Epoch Summary: TrainLoss=1.5457 | TrainAcc=0.625 | Val(P3)=0.633 | Val(AVO)=0.569
+2025-10-02 00:29:15 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:29:15 - Epoch 19/600 | LR=0.007982 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:15 - Epoch Summary: TrainLoss=1.5315 | TrainAcc=0.636 | Val(P3)=0.607 | Val(AVO)=0.608
+2025-10-02 00:29:15 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:29:15 - Epoch 20/600 | LR=0.007980 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:15 - Epoch Summary: TrainLoss=1.4923 | TrainAcc=0.633 | Val(P3)=0.623 | Val(AVO)=0.569
+2025-10-02 00:29:15 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:29:15 - Epoch 21/600 | LR=0.007978 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:16 - Epoch Summary: TrainLoss=1.4844 | TrainAcc=0.632 | Val(P3)=0.617 | Val(AVO)=0.647
+2025-10-02 00:29:16 - No AVO-val improvement; patience remaining: 59/70
+2025-10-02 00:29:16 - Epoch 22/600 | LR=0.007976 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:16 - Epoch Summary: TrainLoss=1.4794 | TrainAcc=0.628 | Val(P3)=0.623 | Val(AVO)=0.647
+2025-10-02 00:29:16 - No AVO-val improvement; patience remaining: 58/70
+2025-10-02 00:29:16 - Epoch 23/600 | LR=0.007973 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:16 - Epoch Summary: TrainLoss=1.5032 | TrainAcc=0.633 | Val(P3)=0.640 | Val(AVO)=0.569
+2025-10-02 00:29:16 - No AVO-val improvement; patience remaining: 57/70
+2025-10-02 00:29:16 - Epoch 24/600 | LR=0.007971 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:17 - Epoch Summary: TrainLoss=1.4863 | TrainAcc=0.629 | Val(P3)=0.597 | Val(AVO)=0.686
+2025-10-02 00:29:17 - No AVO-val improvement; patience remaining: 56/70
+2025-10-02 00:29:17 - Epoch 25/600 | LR=0.007968 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:17 - Epoch Summary: TrainLoss=1.4639 | TrainAcc=0.640 | Val(P3)=0.633 | Val(AVO)=0.588
+2025-10-02 00:29:17 - No AVO-val improvement; patience remaining: 55/70
+2025-10-02 00:29:17 - Epoch 26/600 | LR=0.007966 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:17 - Epoch Summary: TrainLoss=1.4630 | TrainAcc=0.629 | Val(P3)=0.627 | Val(AVO)=0.686
+2025-10-02 00:29:17 - No AVO-val improvement; patience remaining: 54/70
+2025-10-02 00:29:17 - Epoch 27/600 | LR=0.007963 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:17 - Epoch Summary: TrainLoss=1.4445 | TrainAcc=0.630 | Val(P3)=0.633 | Val(AVO)=0.647
+2025-10-02 00:29:17 - No AVO-val improvement; patience remaining: 53/70
+2025-10-02 00:29:17 - Epoch 28/600 | LR=0.007960 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:18 - Epoch Summary: TrainLoss=1.4271 | TrainAcc=0.629 | Val(P3)=0.627 | Val(AVO)=0.706
+2025-10-02 00:29:18 - No AVO-val improvement; patience remaining: 52/70
+2025-10-02 00:29:18 - Epoch 29/600 | LR=0.007957 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:18 - Epoch Summary: TrainLoss=1.3892 | TrainAcc=0.640 | Val(P3)=0.617 | Val(AVO)=0.667
+2025-10-02 00:29:18 - No AVO-val improvement; patience remaining: 51/70
+2025-10-02 00:29:18 - Epoch 30/600 | LR=0.007954 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:18 - Epoch Summary: TrainLoss=1.4000 | TrainAcc=0.637 | Val(P3)=0.620 | Val(AVO)=0.667
+2025-10-02 00:29:18 - No AVO-val improvement; patience remaining: 50/70
+2025-10-02 00:29:18 - Epoch 31/600 | LR=0.007951 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:18 - Epoch Summary: TrainLoss=1.3471 | TrainAcc=0.641 | Val(P3)=0.633 | Val(AVO)=0.588
+2025-10-02 00:29:18 - No AVO-val improvement; patience remaining: 49/70
+2025-10-02 00:29:18 - Epoch 32/600 | LR=0.007947 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:19 - Epoch Summary: TrainLoss=1.3749 | TrainAcc=0.637 | Val(P3)=0.620 | Val(AVO)=0.549
+2025-10-02 00:29:19 - No AVO-val improvement; patience remaining: 48/70
+2025-10-02 00:29:19 - Epoch 33/600 | LR=0.007944 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:19 - Epoch Summary: TrainLoss=1.4028 | TrainAcc=0.638 | Val(P3)=0.627 | Val(AVO)=0.627
+2025-10-02 00:29:19 - No AVO-val improvement; patience remaining: 47/70
+2025-10-02 00:29:19 - Epoch 34/600 | LR=0.007940 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:19 - Epoch Summary: TrainLoss=1.3618 | TrainAcc=0.635 | Val(P3)=0.643 | Val(AVO)=0.588
+2025-10-02 00:29:19 - No AVO-val improvement; patience remaining: 46/70
+2025-10-02 00:29:19 - Epoch 35/600 | LR=0.007937 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:20 - Epoch Summary: TrainLoss=1.3633 | TrainAcc=0.647 | Val(P3)=0.610 | Val(AVO)=0.588
+2025-10-02 00:29:20 - No AVO-val improvement; patience remaining: 45/70
+2025-10-02 00:29:20 - Epoch 36/600 | LR=0.007933 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:20 - Epoch Summary: TrainLoss=1.3721 | TrainAcc=0.632 | Val(P3)=0.646 | Val(AVO)=0.588
+2025-10-02 00:29:20 - No AVO-val improvement; patience remaining: 44/70
+2025-10-02 00:29:20 - Epoch 37/600 | LR=0.007929 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:20 - Epoch Summary: TrainLoss=1.3328 | TrainAcc=0.654 | Val(P3)=0.656 | Val(AVO)=0.647
+2025-10-02 00:29:20 - No AVO-val improvement; patience remaining: 43/70
+2025-10-02 00:29:20 - Epoch 38/600 | LR=0.007925 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:20 - Epoch Summary: TrainLoss=1.3260 | TrainAcc=0.652 | Val(P3)=0.666 | Val(AVO)=0.647
+2025-10-02 00:29:20 - No AVO-val improvement; patience remaining: 42/70
+2025-10-02 00:29:20 - Epoch 39/600 | LR=0.007921 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:20 - Epoch Summary: TrainLoss=1.3331 | TrainAcc=0.639 | Val(P3)=0.636 | Val(AVO)=0.608
+2025-10-02 00:29:20 - No AVO-val improvement; patience remaining: 41/70
+2025-10-02 00:29:20 - Epoch 40/600 | LR=0.007917 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:21 - Epoch Summary: TrainLoss=1.3413 | TrainAcc=0.650 | Val(P3)=0.643 | Val(AVO)=0.647
+2025-10-02 00:29:21 - No AVO-val improvement; patience remaining: 40/70
+2025-10-02 00:29:21 - Epoch 41/600 | LR=0.007913 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:21 - Epoch Summary: TrainLoss=1.3355 | TrainAcc=0.649 | Val(P3)=0.617 | Val(AVO)=0.627
+2025-10-02 00:29:21 - No AVO-val improvement; patience remaining: 39/70
+2025-10-02 00:29:21 - Epoch 42/600 | LR=0.007908 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:21 - Epoch Summary: TrainLoss=1.3852 | TrainAcc=0.637 | Val(P3)=0.666 | Val(AVO)=0.647
+2025-10-02 00:29:21 - No AVO-val improvement; patience remaining: 38/70
+2025-10-02 00:29:21 - Epoch 43/600 | LR=0.007904 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:21 - Epoch Summary: TrainLoss=1.3179 | TrainAcc=0.651 | Val(P3)=0.623 | Val(AVO)=0.725
+2025-10-02 00:29:21 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:21 - Epoch 44/600 | LR=0.007899 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:22 - Epoch Summary: TrainLoss=1.3172 | TrainAcc=0.652 | Val(P3)=0.653 | Val(AVO)=0.588
+2025-10-02 00:29:22 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:29:22 - Epoch 45/600 | LR=0.007894 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:22 - Epoch Summary: TrainLoss=1.3048 | TrainAcc=0.633 | Val(P3)=0.653 | Val(AVO)=0.667
+2025-10-02 00:29:22 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:29:22 - Epoch 46/600 | LR=0.007889 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:22 - Epoch Summary: TrainLoss=1.3151 | TrainAcc=0.653 | Val(P3)=0.649 | Val(AVO)=0.588
+2025-10-02 00:29:22 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:29:22 - Epoch 47/600 | LR=0.007885 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:22 - Epoch Summary: TrainLoss=1.3209 | TrainAcc=0.655 | Val(P3)=0.643 | Val(AVO)=0.647
+2025-10-02 00:29:22 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:29:22 - Epoch 48/600 | LR=0.007879 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:23 - Epoch Summary: TrainLoss=1.2752 | TrainAcc=0.643 | Val(P3)=0.627 | Val(AVO)=0.647
+2025-10-02 00:29:23 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:29:23 - Epoch 49/600 | LR=0.007874 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:23 - Epoch Summary: TrainLoss=1.2678 | TrainAcc=0.646 | Val(P3)=0.643 | Val(AVO)=0.608
+2025-10-02 00:29:23 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:29:23 - Epoch 50/600 | LR=0.007869 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:23 - Epoch Summary: TrainLoss=1.3311 | TrainAcc=0.656 | Val(P3)=0.646 | Val(AVO)=0.647
+2025-10-02 00:29:23 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:29:23 - Epoch 51/600 | LR=0.007864 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:23 - Epoch Summary: TrainLoss=1.2768 | TrainAcc=0.657 | Val(P3)=0.636 | Val(AVO)=0.667
+2025-10-02 00:29:23 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:29:23 - Epoch 52/600 | LR=0.007858 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:23 - Epoch Summary: TrainLoss=1.3117 | TrainAcc=0.652 | Val(P3)=0.617 | Val(AVO)=0.627
+2025-10-02 00:29:23 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:29:23 - Epoch 53/600 | LR=0.007853 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:24 - Epoch Summary: TrainLoss=1.2834 | TrainAcc=0.665 | Val(P3)=0.627 | Val(AVO)=0.549
+2025-10-02 00:29:24 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:29:24 - Epoch 54/600 | LR=0.007847 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:24 - Epoch Summary: TrainLoss=1.2434 | TrainAcc=0.665 | Val(P3)=0.617 | Val(AVO)=0.686
+2025-10-02 00:29:24 - No AVO-val improvement; patience remaining: 59/70
+2025-10-02 00:29:24 - Epoch 55/600 | LR=0.007841 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:24 - Epoch Summary: TrainLoss=1.2701 | TrainAcc=0.657 | Val(P3)=0.653 | Val(AVO)=0.627
+2025-10-02 00:29:24 - No AVO-val improvement; patience remaining: 58/70
+2025-10-02 00:29:24 - Epoch 56/600 | LR=0.007835 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:24 - Epoch Summary: TrainLoss=1.2363 | TrainAcc=0.664 | Val(P3)=0.627 | Val(AVO)=0.686
+2025-10-02 00:29:24 - No AVO-val improvement; patience remaining: 57/70
+2025-10-02 00:29:24 - Epoch 57/600 | LR=0.007829 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:25 - Epoch Summary: TrainLoss=1.2140 | TrainAcc=0.664 | Val(P3)=0.623 | Val(AVO)=0.608
+2025-10-02 00:29:25 - No AVO-val improvement; patience remaining: 56/70
+2025-10-02 00:29:25 - Epoch 58/600 | LR=0.007823 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:25 - Epoch Summary: TrainLoss=1.2456 | TrainAcc=0.653 | Val(P3)=0.646 | Val(AVO)=0.647
+2025-10-02 00:29:25 - No AVO-val improvement; patience remaining: 55/70
+2025-10-02 00:29:25 - Epoch 59/600 | LR=0.007817 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:25 - Epoch Summary: TrainLoss=1.2540 | TrainAcc=0.658 | Val(P3)=0.643 | Val(AVO)=0.647
+2025-10-02 00:29:25 - No AVO-val improvement; patience remaining: 54/70
+2025-10-02 00:29:25 - Epoch 60/600 | LR=0.007811 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:26 - Epoch Summary: TrainLoss=1.2816 | TrainAcc=0.654 | Val(P3)=0.610 | Val(AVO)=0.627
+2025-10-02 00:29:26 - No AVO-val improvement; patience remaining: 53/70
+2025-10-02 00:29:26 - Epoch 61/600 | LR=0.007804 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:26 - Epoch Summary: TrainLoss=1.2591 | TrainAcc=0.668 | Val(P3)=0.640 | Val(AVO)=0.686
+2025-10-02 00:29:26 - No AVO-val improvement; patience remaining: 52/70
+2025-10-02 00:29:26 - Epoch 62/600 | LR=0.007798 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:26 - Epoch Summary: TrainLoss=1.2272 | TrainAcc=0.664 | Val(P3)=0.636 | Val(AVO)=0.608
+2025-10-02 00:29:26 - No AVO-val improvement; patience remaining: 51/70
+2025-10-02 00:29:26 - Epoch 63/600 | LR=0.007791 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:26 - Epoch Summary: TrainLoss=1.1941 | TrainAcc=0.666 | Val(P3)=0.627 | Val(AVO)=0.667
+2025-10-02 00:29:26 - No AVO-val improvement; patience remaining: 50/70
+2025-10-02 00:29:26 - Epoch 64/600 | LR=0.007784 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:27 - Epoch Summary: TrainLoss=1.2082 | TrainAcc=0.656 | Val(P3)=0.627 | Val(AVO)=0.588
+2025-10-02 00:29:27 - No AVO-val improvement; patience remaining: 49/70
+2025-10-02 00:29:27 - Epoch 65/600 | LR=0.007778 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:27 - Epoch Summary: TrainLoss=1.2163 | TrainAcc=0.656 | Val(P3)=0.594 | Val(AVO)=0.647
+2025-10-02 00:29:27 - No AVO-val improvement; patience remaining: 48/70
+2025-10-02 00:29:27 - Epoch 66/600 | LR=0.007771 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:27 - Epoch Summary: TrainLoss=1.2526 | TrainAcc=0.654 | Val(P3)=0.601 | Val(AVO)=0.647
+2025-10-02 00:29:27 - No AVO-val improvement; patience remaining: 47/70
+2025-10-02 00:29:27 - Epoch 67/600 | LR=0.007764 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:27 - Epoch Summary: TrainLoss=1.2881 | TrainAcc=0.656 | Val(P3)=0.627 | Val(AVO)=0.608
+2025-10-02 00:29:27 - No AVO-val improvement; patience remaining: 46/70
+2025-10-02 00:29:27 - Epoch 68/600 | LR=0.007756 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:28 - Epoch Summary: TrainLoss=1.1906 | TrainAcc=0.667 | Val(P3)=0.610 | Val(AVO)=0.667
+2025-10-02 00:29:28 - No AVO-val improvement; patience remaining: 45/70
+2025-10-02 00:29:28 - Epoch 69/600 | LR=0.007749 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:28 - Epoch Summary: TrainLoss=1.2080 | TrainAcc=0.659 | Val(P3)=0.649 | Val(AVO)=0.569
+2025-10-02 00:29:28 - No AVO-val improvement; patience remaining: 44/70
+2025-10-02 00:29:28 - Epoch 70/600 | LR=0.007742 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:28 - Epoch Summary: TrainLoss=1.2425 | TrainAcc=0.663 | Val(P3)=0.623 | Val(AVO)=0.608
+2025-10-02 00:29:28 - No AVO-val improvement; patience remaining: 43/70
+2025-10-02 00:29:28 - Epoch 71/600 | LR=0.007734 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:28 - Epoch Summary: TrainLoss=1.2313 | TrainAcc=0.662 | Val(P3)=0.614 | Val(AVO)=0.686
+2025-10-02 00:29:28 - No AVO-val improvement; patience remaining: 42/70
+2025-10-02 00:29:28 - Epoch 72/600 | LR=0.007727 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:29 - Epoch Summary: TrainLoss=1.2413 | TrainAcc=0.648 | Val(P3)=0.620 | Val(AVO)=0.588
+2025-10-02 00:29:29 - No AVO-val improvement; patience remaining: 41/70
+2025-10-02 00:29:29 - Epoch 73/600 | LR=0.007719 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:29 - Epoch Summary: TrainLoss=1.1942 | TrainAcc=0.654 | Val(P3)=0.630 | Val(AVO)=0.627
+2025-10-02 00:29:29 - No AVO-val improvement; patience remaining: 40/70
+2025-10-02 00:29:29 - Epoch 74/600 | LR=0.007711 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:29 - Epoch Summary: TrainLoss=1.2067 | TrainAcc=0.652 | Val(P3)=0.617 | Val(AVO)=0.647
+2025-10-02 00:29:29 - No AVO-val improvement; patience remaining: 39/70
+2025-10-02 00:29:29 - Epoch 75/600 | LR=0.007703 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:29 - Epoch Summary: TrainLoss=1.2310 | TrainAcc=0.668 | Val(P3)=0.627 | Val(AVO)=0.647
+2025-10-02 00:29:29 - No AVO-val improvement; patience remaining: 38/70
+2025-10-02 00:29:29 - Epoch 76/600 | LR=0.007696 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:30 - Epoch Summary: TrainLoss=1.1693 | TrainAcc=0.669 | Val(P3)=0.627 | Val(AVO)=0.588
+2025-10-02 00:29:30 - No AVO-val improvement; patience remaining: 37/70
+2025-10-02 00:29:30 - Epoch 77/600 | LR=0.007687 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:30 - Epoch Summary: TrainLoss=1.1964 | TrainAcc=0.655 | Val(P3)=0.633 | Val(AVO)=0.608
+2025-10-02 00:29:30 - No AVO-val improvement; patience remaining: 36/70
+2025-10-02 00:29:30 - Epoch 78/600 | LR=0.007679 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:30 - Epoch Summary: TrainLoss=1.2045 | TrainAcc=0.660 | Val(P3)=0.623 | Val(AVO)=0.608
+2025-10-02 00:29:30 - No AVO-val improvement; patience remaining: 35/70
+2025-10-02 00:29:30 - Epoch 79/600 | LR=0.007671 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:30 - Epoch Summary: TrainLoss=1.1773 | TrainAcc=0.674 | Val(P3)=0.614 | Val(AVO)=0.667
+2025-10-02 00:29:30 - No AVO-val improvement; patience remaining: 34/70
+2025-10-02 00:29:30 - Epoch 80/600 | LR=0.007663 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:31 - Epoch Summary: TrainLoss=1.1846 | TrainAcc=0.654 | Val(P3)=0.604 | Val(AVO)=0.686
+2025-10-02 00:29:31 - No AVO-val improvement; patience remaining: 33/70
+2025-10-02 00:29:31 - Epoch 81/600 | LR=0.007654 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:31 - Epoch Summary: TrainLoss=1.1986 | TrainAcc=0.664 | Val(P3)=0.601 | Val(AVO)=0.608
+2025-10-02 00:29:31 - No AVO-val improvement; patience remaining: 32/70
+2025-10-02 00:29:31 - Epoch 82/600 | LR=0.007646 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:31 - Epoch Summary: TrainLoss=1.2257 | TrainAcc=0.651 | Val(P3)=0.633 | Val(AVO)=0.667
+2025-10-02 00:29:31 - No AVO-val improvement; patience remaining: 31/70
+2025-10-02 00:29:31 - Epoch 83/600 | LR=0.007637 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:32 - Epoch Summary: TrainLoss=1.2176 | TrainAcc=0.659 | Val(P3)=0.604 | Val(AVO)=0.667
+2025-10-02 00:29:32 - No AVO-val improvement; patience remaining: 30/70
+2025-10-02 00:29:32 - Epoch 84/600 | LR=0.007628 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:32 - Epoch Summary: TrainLoss=1.1756 | TrainAcc=0.656 | Val(P3)=0.591 | Val(AVO)=0.627
+2025-10-02 00:29:32 - No AVO-val improvement; patience remaining: 29/70
+2025-10-02 00:29:32 - Epoch 85/600 | LR=0.007619 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:32 - Epoch Summary: TrainLoss=1.1875 | TrainAcc=0.664 | Val(P3)=0.614 | Val(AVO)=0.647
+2025-10-02 00:29:32 - No AVO-val improvement; patience remaining: 28/70
+2025-10-02 00:29:32 - Epoch 86/600 | LR=0.007610 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:32 - Epoch Summary: TrainLoss=1.1610 | TrainAcc=0.660 | Val(P3)=0.604 | Val(AVO)=0.667
+2025-10-02 00:29:32 - No AVO-val improvement; patience remaining: 27/70
+2025-10-02 00:29:32 - Epoch 87/600 | LR=0.007601 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:32 - Epoch Summary: TrainLoss=1.1838 | TrainAcc=0.666 | Val(P3)=0.607 | Val(AVO)=0.588
+2025-10-02 00:29:32 - No AVO-val improvement; patience remaining: 26/70
+2025-10-02 00:29:32 - Epoch 88/600 | LR=0.007592 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:33 - Epoch Summary: TrainLoss=1.1653 | TrainAcc=0.674 | Val(P3)=0.627 | Val(AVO)=0.608
+2025-10-02 00:29:33 - No AVO-val improvement; patience remaining: 25/70
+2025-10-02 00:29:33 - Epoch 89/600 | LR=0.007583 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:33 - Epoch Summary: TrainLoss=1.2016 | TrainAcc=0.668 | Val(P3)=0.607 | Val(AVO)=0.647
+2025-10-02 00:29:33 - No AVO-val improvement; patience remaining: 24/70
+2025-10-02 00:29:33 - Epoch 90/600 | LR=0.007573 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:33 - Epoch Summary: TrainLoss=1.1720 | TrainAcc=0.681 | Val(P3)=0.614 | Val(AVO)=0.608
+2025-10-02 00:29:33 - No AVO-val improvement; patience remaining: 23/70
+2025-10-02 00:29:33 - Epoch 91/600 | LR=0.007564 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:34 - Epoch Summary: TrainLoss=1.1999 | TrainAcc=0.666 | Val(P3)=0.617 | Val(AVO)=0.647
+2025-10-02 00:29:34 - No AVO-val improvement; patience remaining: 22/70
+2025-10-02 00:29:34 - Epoch 92/600 | LR=0.007554 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:34 - Epoch Summary: TrainLoss=1.2224 | TrainAcc=0.652 | Val(P3)=0.601 | Val(AVO)=0.588
+2025-10-02 00:29:34 - No AVO-val improvement; patience remaining: 21/70
+2025-10-02 00:29:34 - Epoch 93/600 | LR=0.007545 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:34 - Epoch Summary: TrainLoss=1.2004 | TrainAcc=0.648 | Val(P3)=0.591 | Val(AVO)=0.608
+2025-10-02 00:29:34 - No AVO-val improvement; patience remaining: 20/70
+2025-10-02 00:29:34 - Epoch 94/600 | LR=0.007535 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:34 - Epoch Summary: TrainLoss=1.1738 | TrainAcc=0.656 | Val(P3)=0.614 | Val(AVO)=0.627
+2025-10-02 00:29:34 - No AVO-val improvement; patience remaining: 19/70
+2025-10-02 00:29:34 - Epoch 95/600 | LR=0.007525 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:35 - Epoch Summary: TrainLoss=1.1762 | TrainAcc=0.666 | Val(P3)=0.607 | Val(AVO)=0.647
+2025-10-02 00:29:35 - No AVO-val improvement; patience remaining: 18/70
+2025-10-02 00:29:35 - Epoch 96/600 | LR=0.007515 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:35 - Epoch Summary: TrainLoss=1.1859 | TrainAcc=0.643 | Val(P3)=0.614 | Val(AVO)=0.608
+2025-10-02 00:29:35 - No AVO-val improvement; patience remaining: 17/70
+2025-10-02 00:29:35 - Epoch 97/600 | LR=0.007505 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:35 - Epoch Summary: TrainLoss=1.1811 | TrainAcc=0.675 | Val(P3)=0.607 | Val(AVO)=0.647
+2025-10-02 00:29:35 - No AVO-val improvement; patience remaining: 16/70
+2025-10-02 00:29:35 - Epoch 98/600 | LR=0.007495 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:35 - Epoch Summary: TrainLoss=1.1664 | TrainAcc=0.657 | Val(P3)=0.610 | Val(AVO)=0.608
+2025-10-02 00:29:35 - No AVO-val improvement; patience remaining: 15/70
+2025-10-02 00:29:35 - Epoch 99/600 | LR=0.007485 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:35 - Epoch Summary: TrainLoss=1.1813 | TrainAcc=0.666 | Val(P3)=0.630 | Val(AVO)=0.608
+2025-10-02 00:29:35 - No AVO-val improvement; patience remaining: 14/70
+2025-10-02 00:29:35 - Epoch 100/600 | LR=0.007475 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:36 - Epoch Summary: TrainLoss=1.1504 | TrainAcc=0.668 | Val(P3)=0.601 | Val(AVO)=0.686
+2025-10-02 00:29:36 - No AVO-val improvement; patience remaining: 13/70
+2025-10-02 00:29:36 - Epoch 101/600 | LR=0.007464 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:36 - Epoch Summary: TrainLoss=1.2005 | TrainAcc=0.670 | Val(P3)=0.620 | Val(AVO)=0.627
+2025-10-02 00:29:36 - No AVO-val improvement; patience remaining: 12/70
+2025-10-02 00:29:36 - Epoch 102/600 | LR=0.007454 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:36 - Epoch Summary: TrainLoss=1.1917 | TrainAcc=0.664 | Val(P3)=0.604 | Val(AVO)=0.647
+2025-10-02 00:29:36 - No AVO-val improvement; patience remaining: 11/70
+2025-10-02 00:29:36 - Epoch 103/600 | LR=0.007443 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:37 - Epoch Summary: TrainLoss=1.1868 | TrainAcc=0.655 | Val(P3)=0.620 | Val(AVO)=0.667
+2025-10-02 00:29:37 - No AVO-val improvement; patience remaining: 10/70
+2025-10-02 00:29:37 - Epoch 104/600 | LR=0.007432 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:37 - Epoch Summary: TrainLoss=1.1512 | TrainAcc=0.660 | Val(P3)=0.601 | Val(AVO)=0.686
+2025-10-02 00:29:37 - No AVO-val improvement; patience remaining: 9/70
+2025-10-02 00:29:37 - Epoch 105/600 | LR=0.007421 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:37 - Epoch Summary: TrainLoss=1.1292 | TrainAcc=0.685 | Val(P3)=0.610 | Val(AVO)=0.647
+2025-10-02 00:29:37 - No AVO-val improvement; patience remaining: 8/70
+2025-10-02 00:29:37 - Epoch 106/600 | LR=0.007411 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:37 - Epoch Summary: TrainLoss=1.1518 | TrainAcc=0.667 | Val(P3)=0.633 | Val(AVO)=0.627
+2025-10-02 00:29:37 - No AVO-val improvement; patience remaining: 7/70
+2025-10-02 00:29:37 - Epoch 107/600 | LR=0.007400 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:38 - Epoch Summary: TrainLoss=1.1499 | TrainAcc=0.669 | Val(P3)=0.614 | Val(AVO)=0.647
+2025-10-02 00:29:38 - No AVO-val improvement; patience remaining: 6/70
+2025-10-02 00:29:38 - Epoch 108/600 | LR=0.007388 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:38 - Epoch Summary: TrainLoss=1.1327 | TrainAcc=0.674 | Val(P3)=0.610 | Val(AVO)=0.608
+2025-10-02 00:29:38 - No AVO-val improvement; patience remaining: 5/70
+2025-10-02 00:29:38 - Epoch 109/600 | LR=0.007377 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:38 - Epoch Summary: TrainLoss=1.1642 | TrainAcc=0.662 | Val(P3)=0.620 | Val(AVO)=0.647
+2025-10-02 00:29:38 - No AVO-val improvement; patience remaining: 4/70
+2025-10-02 00:29:38 - Epoch 110/600 | LR=0.007366 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:38 - Epoch Summary: TrainLoss=1.1719 | TrainAcc=0.653 | Val(P3)=0.617 | Val(AVO)=0.647
+2025-10-02 00:29:38 - No AVO-val improvement; patience remaining: 3/70
+2025-10-02 00:29:38 - Epoch 111/600 | LR=0.007355 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:39 - Epoch Summary: TrainLoss=1.1458 | TrainAcc=0.680 | Val(P3)=0.610 | Val(AVO)=0.667
+2025-10-02 00:29:39 - No AVO-val improvement; patience remaining: 2/70
+2025-10-02 00:29:39 - Epoch 112/600 | LR=0.007343 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:39 - Epoch Summary: TrainLoss=1.1709 | TrainAcc=0.659 | Val(P3)=0.594 | Val(AVO)=0.647
+2025-10-02 00:29:39 - No AVO-val improvement; patience remaining: 1/70
+2025-10-02 00:29:39 - Epoch 113/600 | LR=0.007332 | w_P3=1.000 | w_AVO=2.899 | lambda_MMD=0.400
+2025-10-02 00:29:39 - Epoch Summary: TrainLoss=1.1022 | TrainAcc=0.678 | Val(P3)=0.601 | Val(AVO)=0.588
+2025-10-02 00:29:39 - No AVO-val improvement; patience remaining: 0/70
+2025-10-02 00:29:39 - Early stopping triggered (AVO-val)
+2025-10-02 00:29:39 -     P3 Test | Acc=0.6038 P=0.6327 R=0.5354 F1=0.5800 AUC=0.6353 (n=636)
+2025-10-02 00:29:39 -     AVO Test | Acc=0.6098 P=0.5238 R=0.6471 F1=0.5789 AUC=0.6808 (n=82)
+2025-10-02 00:29:39 -     Overall Test Acc=0.6045
+2025-10-02 00:29:39 -   Fold 2/5
+2025-10-02 00:29:39 - Fold domains: small=AVO (n=274), large=P3 (n=2237)
+2025-10-02 00:29:39 - Auto adjustments (symmetric): w_small≈2.857, lambda_MMD_target=0.400, warmup_epochs=10
+2025-10-02 00:29:39 - Epoch 1/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.186 | lambda_MMD=0.040
+2025-10-02 00:29:40 - Epoch Summary: TrainLoss=1.6619 | TrainAcc=0.567 | Val(P3)=0.612 | Val(AVO)=0.500
+2025-10-02 00:29:40 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:40 - Epoch 2/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.371 | lambda_MMD=0.080
+2025-10-02 00:29:40 - Epoch Summary: TrainLoss=1.5510 | TrainAcc=0.612 | Val(P3)=0.622 | Val(AVO)=0.673
+2025-10-02 00:29:40 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:40 - Epoch 3/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.557 | lambda_MMD=0.120
+2025-10-02 00:29:40 - Epoch Summary: TrainLoss=1.5780 | TrainAcc=0.616 | Val(P3)=0.629 | Val(AVO)=0.596
+2025-10-02 00:29:40 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:29:40 - Epoch 4/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.743 | lambda_MMD=0.160
+2025-10-02 00:29:40 - Epoch Summary: TrainLoss=1.6132 | TrainAcc=0.637 | Val(P3)=0.629 | Val(AVO)=0.654
+2025-10-02 00:29:40 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:29:40 - Epoch 5/600 | LR=0.007999 | w_P3=1.000 | w_AVO=1.929 | lambda_MMD=0.200
+2025-10-02 00:29:41 - Epoch Summary: TrainLoss=1.6360 | TrainAcc=0.643 | Val(P3)=0.596 | Val(AVO)=0.596
+2025-10-02 00:29:41 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:29:41 - Epoch 6/600 | LR=0.007999 | w_P3=1.000 | w_AVO=2.114 | lambda_MMD=0.240
+2025-10-02 00:29:41 - Epoch Summary: TrainLoss=1.6700 | TrainAcc=0.643 | Val(P3)=0.609 | Val(AVO)=0.558
+2025-10-02 00:29:41 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:29:41 - Epoch 7/600 | LR=0.007998 | w_P3=1.000 | w_AVO=2.300 | lambda_MMD=0.280
+2025-10-02 00:29:41 - Epoch Summary: TrainLoss=1.7219 | TrainAcc=0.636 | Val(P3)=0.625 | Val(AVO)=0.538
+2025-10-02 00:29:41 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:29:41 - AVO val decreasing 4x significantly. Reducing w_small to 2.237, lambda_MMD to 0.256
+2025-10-02 00:29:41 - Epoch 8/600 | LR=0.007997 | w_P3=1.000 | w_AVO=2.237 | lambda_MMD=0.256
+2025-10-02 00:29:41 - Epoch Summary: TrainLoss=1.6659 | TrainAcc=0.624 | Val(P3)=0.599 | Val(AVO)=0.577
+2025-10-02 00:29:41 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:29:41 - Epoch 9/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.672 | lambda_MMD=0.360
+2025-10-02 00:29:41 - Epoch Summary: TrainLoss=1.7765 | TrainAcc=0.613 | Val(P3)=0.603 | Val(AVO)=0.558
+2025-10-02 00:29:41 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:29:41 - Epoch 10/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:42 - Epoch Summary: TrainLoss=1.8411 | TrainAcc=0.627 | Val(P3)=0.599 | Val(AVO)=0.442
+2025-10-02 00:29:42 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:29:42 - Epoch 11/600 | LR=0.007995 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:42 - Epoch Summary: TrainLoss=1.8028 | TrainAcc=0.618 | Val(P3)=0.625 | Val(AVO)=0.577
+2025-10-02 00:29:42 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:29:42 - Epoch 12/600 | LR=0.007993 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:42 - Epoch Summary: TrainLoss=1.7276 | TrainAcc=0.627 | Val(P3)=0.596 | Val(AVO)=0.538
+2025-10-02 00:29:42 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:29:42 - Epoch 13/600 | LR=0.007992 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:42 - Epoch Summary: TrainLoss=1.6891 | TrainAcc=0.607 | Val(P3)=0.606 | Val(AVO)=0.519
+2025-10-02 00:29:42 - No AVO-val improvement; patience remaining: 59/70
+2025-10-02 00:29:42 - Epoch 14/600 | LR=0.007991 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:43 - Epoch Summary: TrainLoss=1.6597 | TrainAcc=0.609 | Val(P3)=0.609 | Val(AVO)=0.519
+2025-10-02 00:29:43 - No AVO-val improvement; patience remaining: 58/70
+2025-10-02 00:29:43 - Epoch 15/600 | LR=0.007989 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:43 - Epoch Summary: TrainLoss=1.6796 | TrainAcc=0.622 | Val(P3)=0.593 | Val(AVO)=0.558
+2025-10-02 00:29:43 - No AVO-val improvement; patience remaining: 57/70
+2025-10-02 00:29:43 - Epoch 16/600 | LR=0.007988 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:43 - Epoch Summary: TrainLoss=1.6721 | TrainAcc=0.616 | Val(P3)=0.603 | Val(AVO)=0.519
+2025-10-02 00:29:43 - No AVO-val improvement; patience remaining: 56/70
+2025-10-02 00:29:43 - Epoch 17/600 | LR=0.007986 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:43 - Epoch Summary: TrainLoss=1.6484 | TrainAcc=0.624 | Val(P3)=0.609 | Val(AVO)=0.519
+2025-10-02 00:29:43 - No AVO-val improvement; patience remaining: 55/70
+2025-10-02 00:29:43 - Epoch 18/600 | LR=0.007984 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:44 - Epoch Summary: TrainLoss=1.5763 | TrainAcc=0.626 | Val(P3)=0.599 | Val(AVO)=0.538
+2025-10-02 00:29:44 - No AVO-val improvement; patience remaining: 54/70
+2025-10-02 00:29:44 - Epoch 19/600 | LR=0.007982 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:44 - Epoch Summary: TrainLoss=1.5798 | TrainAcc=0.634 | Val(P3)=0.599 | Val(AVO)=0.538
+2025-10-02 00:29:44 - No AVO-val improvement; patience remaining: 53/70
+2025-10-02 00:29:44 - Epoch 20/600 | LR=0.007980 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:44 - Epoch Summary: TrainLoss=1.5999 | TrainAcc=0.627 | Val(P3)=0.599 | Val(AVO)=0.462
+2025-10-02 00:29:44 - No AVO-val improvement; patience remaining: 52/70
+2025-10-02 00:29:44 - Epoch 21/600 | LR=0.007978 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:44 - Epoch Summary: TrainLoss=1.5446 | TrainAcc=0.641 | Val(P3)=0.593 | Val(AVO)=0.538
+2025-10-02 00:29:44 - No AVO-val improvement; patience remaining: 51/70
+2025-10-02 00:29:44 - Epoch 22/600 | LR=0.007976 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:45 - Epoch Summary: TrainLoss=1.5366 | TrainAcc=0.637 | Val(P3)=0.606 | Val(AVO)=0.462
+2025-10-02 00:29:45 - No AVO-val improvement; patience remaining: 50/70
+2025-10-02 00:29:45 - Epoch 23/600 | LR=0.007973 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:45 - Epoch Summary: TrainLoss=1.5331 | TrainAcc=0.635 | Val(P3)=0.599 | Val(AVO)=0.500
+2025-10-02 00:29:45 - No AVO-val improvement; patience remaining: 49/70
+2025-10-02 00:29:45 - Epoch 24/600 | LR=0.007971 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:45 - Epoch Summary: TrainLoss=1.5074 | TrainAcc=0.632 | Val(P3)=0.619 | Val(AVO)=0.558
+2025-10-02 00:29:45 - No AVO-val improvement; patience remaining: 48/70
+2025-10-02 00:29:45 - Epoch 25/600 | LR=0.007968 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:45 - Epoch Summary: TrainLoss=1.4581 | TrainAcc=0.646 | Val(P3)=0.590 | Val(AVO)=0.481
+2025-10-02 00:29:45 - No AVO-val improvement; patience remaining: 47/70
+2025-10-02 00:29:45 - Epoch 26/600 | LR=0.007966 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:46 - Epoch Summary: TrainLoss=1.4784 | TrainAcc=0.634 | Val(P3)=0.596 | Val(AVO)=0.538
+2025-10-02 00:29:46 - No AVO-val improvement; patience remaining: 46/70
+2025-10-02 00:29:46 - Epoch 27/600 | LR=0.007963 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:46 - Epoch Summary: TrainLoss=1.4593 | TrainAcc=0.644 | Val(P3)=0.593 | Val(AVO)=0.462
+2025-10-02 00:29:46 - No AVO-val improvement; patience remaining: 45/70
+2025-10-02 00:29:46 - Epoch 28/600 | LR=0.007960 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:46 - Epoch Summary: TrainLoss=1.4657 | TrainAcc=0.635 | Val(P3)=0.590 | Val(AVO)=0.519
+2025-10-02 00:29:46 - No AVO-val improvement; patience remaining: 44/70
+2025-10-02 00:29:46 - Epoch 29/600 | LR=0.007957 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:46 - Epoch Summary: TrainLoss=1.4613 | TrainAcc=0.635 | Val(P3)=0.593 | Val(AVO)=0.538
+2025-10-02 00:29:46 - No AVO-val improvement; patience remaining: 43/70
+2025-10-02 00:29:46 - Epoch 30/600 | LR=0.007954 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:46 - Epoch Summary: TrainLoss=1.4690 | TrainAcc=0.635 | Val(P3)=0.583 | Val(AVO)=0.538
+2025-10-02 00:29:46 - No AVO-val improvement; patience remaining: 42/70
+2025-10-02 00:29:46 - Epoch 31/600 | LR=0.007951 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:47 - Epoch Summary: TrainLoss=1.4439 | TrainAcc=0.633 | Val(P3)=0.586 | Val(AVO)=0.519
+2025-10-02 00:29:47 - No AVO-val improvement; patience remaining: 41/70
+2025-10-02 00:29:47 - Epoch 32/600 | LR=0.007947 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:47 - Epoch Summary: TrainLoss=1.4736 | TrainAcc=0.620 | Val(P3)=0.603 | Val(AVO)=0.519
+2025-10-02 00:29:47 - No AVO-val improvement; patience remaining: 40/70
+2025-10-02 00:29:47 - Epoch 33/600 | LR=0.007944 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:47 - Epoch Summary: TrainLoss=1.4394 | TrainAcc=0.626 | Val(P3)=0.596 | Val(AVO)=0.462
+2025-10-02 00:29:47 - No AVO-val improvement; patience remaining: 39/70
+2025-10-02 00:29:47 - Epoch 34/600 | LR=0.007940 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:47 - Epoch Summary: TrainLoss=1.3827 | TrainAcc=0.646 | Val(P3)=0.606 | Val(AVO)=0.462
+2025-10-02 00:29:47 - No AVO-val improvement; patience remaining: 38/70
+2025-10-02 00:29:47 - Epoch 35/600 | LR=0.007937 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:48 - Epoch Summary: TrainLoss=1.4035 | TrainAcc=0.633 | Val(P3)=0.586 | Val(AVO)=0.481
+2025-10-02 00:29:48 - No AVO-val improvement; patience remaining: 37/70
+2025-10-02 00:29:48 - Epoch 36/600 | LR=0.007933 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:48 - Epoch Summary: TrainLoss=1.4217 | TrainAcc=0.631 | Val(P3)=0.593 | Val(AVO)=0.519
+2025-10-02 00:29:48 - No AVO-val improvement; patience remaining: 36/70
+2025-10-02 00:29:48 - Epoch 37/600 | LR=0.007929 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:48 - Epoch Summary: TrainLoss=1.3900 | TrainAcc=0.636 | Val(P3)=0.616 | Val(AVO)=0.519
+2025-10-02 00:29:48 - No AVO-val improvement; patience remaining: 35/70
+2025-10-02 00:29:48 - Epoch 38/600 | LR=0.007925 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:48 - Epoch Summary: TrainLoss=1.4059 | TrainAcc=0.633 | Val(P3)=0.567 | Val(AVO)=0.481
+2025-10-02 00:29:48 - No AVO-val improvement; patience remaining: 34/70
+2025-10-02 00:29:48 - Epoch 39/600 | LR=0.007921 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:49 - Epoch Summary: TrainLoss=1.3708 | TrainAcc=0.628 | Val(P3)=0.606 | Val(AVO)=0.481
+2025-10-02 00:29:49 - No AVO-val improvement; patience remaining: 33/70
+2025-10-02 00:29:49 - Epoch 40/600 | LR=0.007917 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:49 - Epoch Summary: TrainLoss=1.3766 | TrainAcc=0.650 | Val(P3)=0.593 | Val(AVO)=0.462
+2025-10-02 00:29:49 - No AVO-val improvement; patience remaining: 32/70
+2025-10-02 00:29:49 - Epoch 41/600 | LR=0.007913 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:49 - Epoch Summary: TrainLoss=1.3501 | TrainAcc=0.655 | Val(P3)=0.599 | Val(AVO)=0.442
+2025-10-02 00:29:49 - No AVO-val improvement; patience remaining: 31/70
+2025-10-02 00:29:49 - Epoch 42/600 | LR=0.007908 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:50 - Epoch Summary: TrainLoss=1.3731 | TrainAcc=0.629 | Val(P3)=0.590 | Val(AVO)=0.519
+2025-10-02 00:29:50 - No AVO-val improvement; patience remaining: 30/70
+2025-10-02 00:29:50 - Epoch 43/600 | LR=0.007904 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:50 - Epoch Summary: TrainLoss=1.3600 | TrainAcc=0.646 | Val(P3)=0.586 | Val(AVO)=0.519
+2025-10-02 00:29:50 - No AVO-val improvement; patience remaining: 29/70
+2025-10-02 00:29:50 - Epoch 44/600 | LR=0.007899 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:50 - Epoch Summary: TrainLoss=1.3069 | TrainAcc=0.660 | Val(P3)=0.580 | Val(AVO)=0.423
+2025-10-02 00:29:50 - No AVO-val improvement; patience remaining: 28/70
+2025-10-02 00:29:50 - Epoch 45/600 | LR=0.007894 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:50 - Epoch Summary: TrainLoss=1.3312 | TrainAcc=0.630 | Val(P3)=0.586 | Val(AVO)=0.481
+2025-10-02 00:29:50 - No AVO-val improvement; patience remaining: 27/70
+2025-10-02 00:29:50 - Epoch 46/600 | LR=0.007889 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:51 - Epoch Summary: TrainLoss=1.3275 | TrainAcc=0.638 | Val(P3)=0.596 | Val(AVO)=0.462
+2025-10-02 00:29:51 - No AVO-val improvement; patience remaining: 26/70
+2025-10-02 00:29:51 - Epoch 47/600 | LR=0.007885 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:51 - Epoch Summary: TrainLoss=1.3131 | TrainAcc=0.653 | Val(P3)=0.593 | Val(AVO)=0.519
+2025-10-02 00:29:51 - No AVO-val improvement; patience remaining: 25/70
+2025-10-02 00:29:51 - Epoch 48/600 | LR=0.007879 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:51 - Epoch Summary: TrainLoss=1.3452 | TrainAcc=0.635 | Val(P3)=0.583 | Val(AVO)=0.423
+2025-10-02 00:29:51 - No AVO-val improvement; patience remaining: 24/70
+2025-10-02 00:29:51 - Epoch 49/600 | LR=0.007874 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:52 - Epoch Summary: TrainLoss=1.3419 | TrainAcc=0.632 | Val(P3)=0.596 | Val(AVO)=0.519
+2025-10-02 00:29:52 - No AVO-val improvement; patience remaining: 23/70
+2025-10-02 00:29:52 - Epoch 50/600 | LR=0.007869 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:52 - Epoch Summary: TrainLoss=1.3180 | TrainAcc=0.641 | Val(P3)=0.599 | Val(AVO)=0.519
+2025-10-02 00:29:52 - No AVO-val improvement; patience remaining: 22/70
+2025-10-02 00:29:52 - Epoch 51/600 | LR=0.007864 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:52 - Epoch Summary: TrainLoss=1.3308 | TrainAcc=0.644 | Val(P3)=0.603 | Val(AVO)=0.481
+2025-10-02 00:29:52 - No AVO-val improvement; patience remaining: 21/70
+2025-10-02 00:29:52 - Epoch 52/600 | LR=0.007858 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:52 - Epoch Summary: TrainLoss=1.3283 | TrainAcc=0.630 | Val(P3)=0.606 | Val(AVO)=0.538
+2025-10-02 00:29:52 - No AVO-val improvement; patience remaining: 20/70
+2025-10-02 00:29:52 - Epoch 53/600 | LR=0.007853 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:53 - Epoch Summary: TrainLoss=1.2402 | TrainAcc=0.652 | Val(P3)=0.583 | Val(AVO)=0.538
+2025-10-02 00:29:53 - No AVO-val improvement; patience remaining: 19/70
+2025-10-02 00:29:53 - Epoch 54/600 | LR=0.007847 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:53 - Epoch Summary: TrainLoss=1.3424 | TrainAcc=0.632 | Val(P3)=0.573 | Val(AVO)=0.538
+2025-10-02 00:29:53 - No AVO-val improvement; patience remaining: 18/70
+2025-10-02 00:29:53 - Epoch 55/600 | LR=0.007841 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:53 - Epoch Summary: TrainLoss=1.3196 | TrainAcc=0.645 | Val(P3)=0.570 | Val(AVO)=0.538
+2025-10-02 00:29:53 - No AVO-val improvement; patience remaining: 17/70
+2025-10-02 00:29:53 - Epoch 56/600 | LR=0.007835 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:53 - Epoch Summary: TrainLoss=1.2434 | TrainAcc=0.654 | Val(P3)=0.590 | Val(AVO)=0.442
+2025-10-02 00:29:53 - No AVO-val improvement; patience remaining: 16/70
+2025-10-02 00:29:53 - Epoch 57/600 | LR=0.007829 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:53 - Epoch Summary: TrainLoss=1.3529 | TrainAcc=0.649 | Val(P3)=0.590 | Val(AVO)=0.462
+2025-10-02 00:29:53 - No AVO-val improvement; patience remaining: 15/70
+2025-10-02 00:29:53 - Epoch 58/600 | LR=0.007823 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:54 - Epoch Summary: TrainLoss=1.3262 | TrainAcc=0.643 | Val(P3)=0.583 | Val(AVO)=0.481
+2025-10-02 00:29:54 - No AVO-val improvement; patience remaining: 14/70
+2025-10-02 00:29:54 - Epoch 59/600 | LR=0.007817 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:54 - Epoch Summary: TrainLoss=1.2730 | TrainAcc=0.636 | Val(P3)=0.580 | Val(AVO)=0.481
+2025-10-02 00:29:54 - No AVO-val improvement; patience remaining: 13/70
+2025-10-02 00:29:54 - Epoch 60/600 | LR=0.007811 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:54 - Epoch Summary: TrainLoss=1.2793 | TrainAcc=0.653 | Val(P3)=0.577 | Val(AVO)=0.538
+2025-10-02 00:29:54 - No AVO-val improvement; patience remaining: 12/70
+2025-10-02 00:29:54 - Epoch 61/600 | LR=0.007804 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:54 - Epoch Summary: TrainLoss=1.2807 | TrainAcc=0.651 | Val(P3)=0.596 | Val(AVO)=0.500
+2025-10-02 00:29:54 - No AVO-val improvement; patience remaining: 11/70
+2025-10-02 00:29:54 - Epoch 62/600 | LR=0.007798 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:55 - Epoch Summary: TrainLoss=1.2692 | TrainAcc=0.648 | Val(P3)=0.580 | Val(AVO)=0.519
+2025-10-02 00:29:55 - No AVO-val improvement; patience remaining: 10/70
+2025-10-02 00:29:55 - Epoch 63/600 | LR=0.007791 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:55 - Epoch Summary: TrainLoss=1.2798 | TrainAcc=0.633 | Val(P3)=0.583 | Val(AVO)=0.519
+2025-10-02 00:29:55 - No AVO-val improvement; patience remaining: 9/70
+2025-10-02 00:29:55 - Epoch 64/600 | LR=0.007784 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:55 - Epoch Summary: TrainLoss=1.2693 | TrainAcc=0.649 | Val(P3)=0.564 | Val(AVO)=0.500
+2025-10-02 00:29:55 - No AVO-val improvement; patience remaining: 8/70
+2025-10-02 00:29:55 - Epoch 65/600 | LR=0.007778 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:55 - Epoch Summary: TrainLoss=1.2996 | TrainAcc=0.637 | Val(P3)=0.583 | Val(AVO)=0.538
+2025-10-02 00:29:55 - No AVO-val improvement; patience remaining: 7/70
+2025-10-02 00:29:55 - Epoch 66/600 | LR=0.007771 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:56 - Epoch Summary: TrainLoss=1.2163 | TrainAcc=0.652 | Val(P3)=0.570 | Val(AVO)=0.500
+2025-10-02 00:29:56 - No AVO-val improvement; patience remaining: 6/70
+2025-10-02 00:29:56 - Epoch 67/600 | LR=0.007764 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:56 - Epoch Summary: TrainLoss=1.2844 | TrainAcc=0.665 | Val(P3)=0.596 | Val(AVO)=0.538
+2025-10-02 00:29:56 - No AVO-val improvement; patience remaining: 5/70
+2025-10-02 00:29:56 - Epoch 68/600 | LR=0.007756 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:56 - Epoch Summary: TrainLoss=1.3193 | TrainAcc=0.634 | Val(P3)=0.590 | Val(AVO)=0.462
+2025-10-02 00:29:56 - No AVO-val improvement; patience remaining: 4/70
+2025-10-02 00:29:56 - Epoch 69/600 | LR=0.007749 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:56 - Epoch Summary: TrainLoss=1.2663 | TrainAcc=0.646 | Val(P3)=0.580 | Val(AVO)=0.538
+2025-10-02 00:29:56 - No AVO-val improvement; patience remaining: 3/70
+2025-10-02 00:29:56 - Epoch 70/600 | LR=0.007742 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:57 - Epoch Summary: TrainLoss=1.2665 | TrainAcc=0.633 | Val(P3)=0.573 | Val(AVO)=0.481
+2025-10-02 00:29:57 - No AVO-val improvement; patience remaining: 2/70
+2025-10-02 00:29:57 - Epoch 71/600 | LR=0.007734 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:57 - Epoch Summary: TrainLoss=1.2967 | TrainAcc=0.640 | Val(P3)=0.580 | Val(AVO)=0.481
+2025-10-02 00:29:57 - No AVO-val improvement; patience remaining: 1/70
+2025-10-02 00:29:57 - Epoch 72/600 | LR=0.007727 | w_P3=1.000 | w_AVO=2.857 | lambda_MMD=0.400
+2025-10-02 00:29:57 - Epoch Summary: TrainLoss=1.2564 | TrainAcc=0.646 | Val(P3)=0.573 | Val(AVO)=0.500
+2025-10-02 00:29:57 - No AVO-val improvement; patience remaining: 0/70
+2025-10-02 00:29:57 - Early stopping triggered (AVO-val)
+2025-10-02 00:29:57 -     P3 Test | Acc=0.5295 P=0.6667 R=0.1003 F1=0.1744 AUC=0.6400 (n=644)
+2025-10-02 00:29:57 -     AVO Test | Acc=0.6622 P=0.6829 R=0.7000 F1=0.6914 AUC=0.7478 (n=74)
+2025-10-02 00:29:57 -     Overall Test Acc=0.5432
+2025-10-02 00:29:57 -   Fold 3/5
+2025-10-02 00:29:57 - Fold domains: small=AVO (n=260), large=P3 (n=2251)
+2025-10-02 00:29:57 - Auto adjustments (symmetric): w_small≈2.942, lambda_MMD_target=0.400, warmup_epochs=10
+2025-10-02 00:29:57 - Epoch 1/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.194 | lambda_MMD=0.040
+2025-10-02 00:29:58 - Epoch Summary: TrainLoss=1.6916 | TrainAcc=0.545 | Val(P3)=0.610 | Val(AVO)=0.531
+2025-10-02 00:29:58 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:58 - Epoch 2/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.388 | lambda_MMD=0.080
+2025-10-02 00:29:58 - Epoch Summary: TrainLoss=1.5390 | TrainAcc=0.595 | Val(P3)=0.597 | Val(AVO)=0.673
+2025-10-02 00:29:58 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:58 - Epoch 3/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.583 | lambda_MMD=0.120
+2025-10-02 00:29:58 - Epoch Summary: TrainLoss=1.5614 | TrainAcc=0.613 | Val(P3)=0.603 | Val(AVO)=0.694
+2025-10-02 00:29:58 - New best AVO-val; checkpoint updated
+2025-10-02 00:29:58 - Epoch 4/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.777 | lambda_MMD=0.160
+2025-10-02 00:29:58 - Epoch Summary: TrainLoss=1.5864 | TrainAcc=0.633 | Val(P3)=0.603 | Val(AVO)=0.633
+2025-10-02 00:29:58 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:29:58 - Epoch 5/600 | LR=0.007999 | w_P3=1.000 | w_AVO=1.971 | lambda_MMD=0.200
+2025-10-02 00:29:59 - Epoch Summary: TrainLoss=1.6482 | TrainAcc=0.637 | Val(P3)=0.584 | Val(AVO)=0.612
+2025-10-02 00:29:59 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:29:59 - Epoch 6/600 | LR=0.007999 | w_P3=1.000 | w_AVO=2.165 | lambda_MMD=0.240
+2025-10-02 00:29:59 - Epoch Summary: TrainLoss=1.6719 | TrainAcc=0.629 | Val(P3)=0.603 | Val(AVO)=0.612
+2025-10-02 00:29:59 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:29:59 - Epoch 7/600 | LR=0.007998 | w_P3=1.000 | w_AVO=2.360 | lambda_MMD=0.280
+2025-10-02 00:29:59 - Epoch Summary: TrainLoss=1.7108 | TrainAcc=0.636 | Val(P3)=0.616 | Val(AVO)=0.571
+2025-10-02 00:29:59 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:29:59 - Epoch 8/600 | LR=0.007997 | w_P3=1.000 | w_AVO=2.554 | lambda_MMD=0.320
+2025-10-02 00:30:00 - Epoch Summary: TrainLoss=1.7760 | TrainAcc=0.625 | Val(P3)=0.574 | Val(AVO)=0.633
+2025-10-02 00:30:00 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:30:00 - Epoch 9/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.748 | lambda_MMD=0.360
+2025-10-02 00:30:00 - Epoch Summary: TrainLoss=1.7974 | TrainAcc=0.630 | Val(P3)=0.610 | Val(AVO)=0.653
+2025-10-02 00:30:00 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:30:00 - Epoch 10/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:00 - Epoch Summary: TrainLoss=1.7496 | TrainAcc=0.617 | Val(P3)=0.581 | Val(AVO)=0.673
+2025-10-02 00:30:00 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:30:00 - Epoch 11/600 | LR=0.007995 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:00 - Epoch Summary: TrainLoss=1.7274 | TrainAcc=0.630 | Val(P3)=0.619 | Val(AVO)=0.551
+2025-10-02 00:30:00 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:30:00 - Epoch 12/600 | LR=0.007993 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:01 - Epoch Summary: TrainLoss=1.7065 | TrainAcc=0.616 | Val(P3)=0.565 | Val(AVO)=0.571
+2025-10-02 00:30:01 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:30:01 - Epoch 13/600 | LR=0.007992 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:01 - Epoch Summary: TrainLoss=1.6438 | TrainAcc=0.634 | Val(P3)=0.584 | Val(AVO)=0.633
+2025-10-02 00:30:01 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:30:01 - Epoch 14/600 | LR=0.007991 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:01 - Epoch Summary: TrainLoss=1.6198 | TrainAcc=0.628 | Val(P3)=0.597 | Val(AVO)=0.633
+2025-10-02 00:30:01 - No AVO-val improvement; patience remaining: 59/70
+2025-10-02 00:30:01 - Epoch 15/600 | LR=0.007989 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:01 - Epoch Summary: TrainLoss=1.6267 | TrainAcc=0.625 | Val(P3)=0.600 | Val(AVO)=0.612
+2025-10-02 00:30:01 - No AVO-val improvement; patience remaining: 58/70
+2025-10-02 00:30:01 - Epoch 16/600 | LR=0.007988 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:02 - Epoch Summary: TrainLoss=1.5436 | TrainAcc=0.638 | Val(P3)=0.574 | Val(AVO)=0.633
+2025-10-02 00:30:02 - No AVO-val improvement; patience remaining: 57/70
+2025-10-02 00:30:02 - Epoch 17/600 | LR=0.007986 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:02 - Epoch Summary: TrainLoss=1.5502 | TrainAcc=0.626 | Val(P3)=0.577 | Val(AVO)=0.531
+2025-10-02 00:30:02 - No AVO-val improvement; patience remaining: 56/70
+2025-10-02 00:30:02 - Epoch 18/600 | LR=0.007984 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:02 - Epoch Summary: TrainLoss=1.5014 | TrainAcc=0.627 | Val(P3)=0.548 | Val(AVO)=0.653
+2025-10-02 00:30:02 - No AVO-val improvement; patience remaining: 55/70
+2025-10-02 00:30:02 - Epoch 19/600 | LR=0.007982 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:03 - Epoch Summary: TrainLoss=1.5242 | TrainAcc=0.623 | Val(P3)=0.623 | Val(AVO)=0.551
+2025-10-02 00:30:03 - No AVO-val improvement; patience remaining: 54/70
+2025-10-02 00:30:03 - Epoch 20/600 | LR=0.007980 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:03 - Epoch Summary: TrainLoss=1.5229 | TrainAcc=0.625 | Val(P3)=0.545 | Val(AVO)=0.551
+2025-10-02 00:30:03 - No AVO-val improvement; patience remaining: 53/70
+2025-10-02 00:30:03 - Epoch 21/600 | LR=0.007978 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:03 - Epoch Summary: TrainLoss=1.4531 | TrainAcc=0.634 | Val(P3)=0.616 | Val(AVO)=0.551
+2025-10-02 00:30:03 - No AVO-val improvement; patience remaining: 52/70
+2025-10-02 00:30:03 - Epoch 22/600 | LR=0.007976 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:04 - Epoch Summary: TrainLoss=1.4856 | TrainAcc=0.632 | Val(P3)=0.571 | Val(AVO)=0.571
+2025-10-02 00:30:04 - No AVO-val improvement; patience remaining: 51/70
+2025-10-02 00:30:04 - Epoch 23/600 | LR=0.007973 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:04 - Epoch Summary: TrainLoss=1.5081 | TrainAcc=0.619 | Val(P3)=0.561 | Val(AVO)=0.592
+2025-10-02 00:30:04 - No AVO-val improvement; patience remaining: 50/70
+2025-10-02 00:30:04 - Epoch 24/600 | LR=0.007971 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:04 - Epoch Summary: TrainLoss=1.4208 | TrainAcc=0.641 | Val(P3)=0.597 | Val(AVO)=0.612
+2025-10-02 00:30:04 - No AVO-val improvement; patience remaining: 49/70
+2025-10-02 00:30:04 - Epoch 25/600 | LR=0.007968 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:05 - Epoch Summary: TrainLoss=1.4278 | TrainAcc=0.644 | Val(P3)=0.561 | Val(AVO)=0.592
+2025-10-02 00:30:05 - No AVO-val improvement; patience remaining: 48/70
+2025-10-02 00:30:05 - Epoch 26/600 | LR=0.007966 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:05 - Epoch Summary: TrainLoss=1.3580 | TrainAcc=0.636 | Val(P3)=0.606 | Val(AVO)=0.633
+2025-10-02 00:30:05 - No AVO-val improvement; patience remaining: 47/70
+2025-10-02 00:30:05 - Epoch 27/600 | LR=0.007963 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:05 - Epoch Summary: TrainLoss=1.3707 | TrainAcc=0.647 | Val(P3)=0.594 | Val(AVO)=0.633
+2025-10-02 00:30:05 - No AVO-val improvement; patience remaining: 46/70
+2025-10-02 00:30:05 - Epoch 28/600 | LR=0.007960 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:05 - Epoch Summary: TrainLoss=1.3614 | TrainAcc=0.643 | Val(P3)=0.613 | Val(AVO)=0.592
+2025-10-02 00:30:05 - No AVO-val improvement; patience remaining: 45/70
+2025-10-02 00:30:05 - Epoch 29/600 | LR=0.007957 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:06 - Epoch Summary: TrainLoss=1.3483 | TrainAcc=0.659 | Val(P3)=0.565 | Val(AVO)=0.633
+2025-10-02 00:30:06 - No AVO-val improvement; patience remaining: 44/70
+2025-10-02 00:30:06 - Epoch 30/600 | LR=0.007954 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:06 - Epoch Summary: TrainLoss=1.3376 | TrainAcc=0.646 | Val(P3)=0.590 | Val(AVO)=0.612
+2025-10-02 00:30:06 - No AVO-val improvement; patience remaining: 43/70
+2025-10-02 00:30:06 - Epoch 31/600 | LR=0.007951 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:06 - Epoch Summary: TrainLoss=1.3214 | TrainAcc=0.645 | Val(P3)=0.542 | Val(AVO)=0.694
+2025-10-02 00:30:06 - No AVO-val improvement; patience remaining: 42/70
+2025-10-02 00:30:06 - Epoch 32/600 | LR=0.007947 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:07 - Epoch Summary: TrainLoss=1.2789 | TrainAcc=0.650 | Val(P3)=0.555 | Val(AVO)=0.612
+2025-10-02 00:30:07 - No AVO-val improvement; patience remaining: 41/70
+2025-10-02 00:30:07 - Epoch 33/600 | LR=0.007944 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:07 - Epoch Summary: TrainLoss=1.3527 | TrainAcc=0.647 | Val(P3)=0.597 | Val(AVO)=0.653
+2025-10-02 00:30:07 - No AVO-val improvement; patience remaining: 40/70
+2025-10-02 00:30:07 - Epoch 34/600 | LR=0.007940 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:07 - Epoch Summary: TrainLoss=1.3356 | TrainAcc=0.643 | Val(P3)=0.600 | Val(AVO)=0.612
+2025-10-02 00:30:07 - No AVO-val improvement; patience remaining: 39/70
+2025-10-02 00:30:07 - Epoch 35/600 | LR=0.007937 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:07 - Epoch Summary: TrainLoss=1.3145 | TrainAcc=0.646 | Val(P3)=0.571 | Val(AVO)=0.673
+2025-10-02 00:30:07 - No AVO-val improvement; patience remaining: 38/70
+2025-10-02 00:30:07 - Epoch 36/600 | LR=0.007933 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:08 - Epoch Summary: TrainLoss=1.3354 | TrainAcc=0.645 | Val(P3)=0.619 | Val(AVO)=0.612
+2025-10-02 00:30:08 - No AVO-val improvement; patience remaining: 37/70
+2025-10-02 00:30:08 - Epoch 37/600 | LR=0.007929 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:08 - Epoch Summary: TrainLoss=1.2820 | TrainAcc=0.649 | Val(P3)=0.539 | Val(AVO)=0.633
+2025-10-02 00:30:08 - No AVO-val improvement; patience remaining: 36/70
+2025-10-02 00:30:08 - Epoch 38/600 | LR=0.007925 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:08 - Epoch Summary: TrainLoss=1.3033 | TrainAcc=0.641 | Val(P3)=0.584 | Val(AVO)=0.612
+2025-10-02 00:30:08 - No AVO-val improvement; patience remaining: 35/70
+2025-10-02 00:30:08 - Epoch 39/600 | LR=0.007921 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:09 - Epoch Summary: TrainLoss=1.2925 | TrainAcc=0.649 | Val(P3)=0.574 | Val(AVO)=0.633
+2025-10-02 00:30:09 - No AVO-val improvement; patience remaining: 34/70
+2025-10-02 00:30:09 - Epoch 40/600 | LR=0.007917 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:09 - Epoch Summary: TrainLoss=1.2640 | TrainAcc=0.648 | Val(P3)=0.597 | Val(AVO)=0.653
+2025-10-02 00:30:09 - No AVO-val improvement; patience remaining: 33/70
+2025-10-02 00:30:09 - Epoch 41/600 | LR=0.007913 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:09 - Epoch Summary: TrainLoss=1.2497 | TrainAcc=0.651 | Val(P3)=0.590 | Val(AVO)=0.633
+2025-10-02 00:30:09 - No AVO-val improvement; patience remaining: 32/70
+2025-10-02 00:30:09 - Epoch 42/600 | LR=0.007908 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:10 - Epoch Summary: TrainLoss=1.2739 | TrainAcc=0.644 | Val(P3)=0.610 | Val(AVO)=0.612
+2025-10-02 00:30:10 - No AVO-val improvement; patience remaining: 31/70
+2025-10-02 00:30:10 - Epoch 43/600 | LR=0.007904 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:10 - Epoch Summary: TrainLoss=1.3054 | TrainAcc=0.658 | Val(P3)=0.616 | Val(AVO)=0.633
+2025-10-02 00:30:10 - No AVO-val improvement; patience remaining: 30/70
+2025-10-02 00:30:10 - Epoch 44/600 | LR=0.007899 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:10 - Epoch Summary: TrainLoss=1.2617 | TrainAcc=0.649 | Val(P3)=0.606 | Val(AVO)=0.673
+2025-10-02 00:30:10 - No AVO-val improvement; patience remaining: 29/70
+2025-10-02 00:30:10 - Epoch 45/600 | LR=0.007894 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:10 - Epoch Summary: TrainLoss=1.2491 | TrainAcc=0.654 | Val(P3)=0.623 | Val(AVO)=0.694
+2025-10-02 00:30:10 - No AVO-val improvement; patience remaining: 28/70
+2025-10-02 00:30:10 - Epoch 46/600 | LR=0.007889 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:10 - Epoch Summary: TrainLoss=1.2390 | TrainAcc=0.653 | Val(P3)=0.597 | Val(AVO)=0.673
+2025-10-02 00:30:10 - No AVO-val improvement; patience remaining: 27/70
+2025-10-02 00:30:10 - Epoch 47/600 | LR=0.007885 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:11 - Epoch Summary: TrainLoss=1.2782 | TrainAcc=0.633 | Val(P3)=0.619 | Val(AVO)=0.633
+2025-10-02 00:30:11 - No AVO-val improvement; patience remaining: 26/70
+2025-10-02 00:30:11 - Epoch 48/600 | LR=0.007879 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:11 - Epoch Summary: TrainLoss=1.2195 | TrainAcc=0.651 | Val(P3)=0.597 | Val(AVO)=0.653
+2025-10-02 00:30:11 - No AVO-val improvement; patience remaining: 25/70
+2025-10-02 00:30:11 - Epoch 49/600 | LR=0.007874 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:11 - Epoch Summary: TrainLoss=1.2906 | TrainAcc=0.647 | Val(P3)=0.648 | Val(AVO)=0.673
+2025-10-02 00:30:11 - No AVO-val improvement; patience remaining: 24/70
+2025-10-02 00:30:11 - Epoch 50/600 | LR=0.007869 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:12 - Epoch Summary: TrainLoss=1.1763 | TrainAcc=0.644 | Val(P3)=0.606 | Val(AVO)=0.653
+2025-10-02 00:30:12 - No AVO-val improvement; patience remaining: 23/70
+2025-10-02 00:30:12 - Epoch 51/600 | LR=0.007864 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:12 - Epoch Summary: TrainLoss=1.2365 | TrainAcc=0.661 | Val(P3)=0.603 | Val(AVO)=0.673
+2025-10-02 00:30:12 - No AVO-val improvement; patience remaining: 22/70
+2025-10-02 00:30:12 - Epoch 52/600 | LR=0.007858 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:12 - Epoch Summary: TrainLoss=1.2389 | TrainAcc=0.644 | Val(P3)=0.610 | Val(AVO)=0.673
+2025-10-02 00:30:12 - No AVO-val improvement; patience remaining: 21/70
+2025-10-02 00:30:12 - Epoch 53/600 | LR=0.007853 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:13 - Epoch Summary: TrainLoss=1.2285 | TrainAcc=0.652 | Val(P3)=0.616 | Val(AVO)=0.673
+2025-10-02 00:30:13 - No AVO-val improvement; patience remaining: 20/70
+2025-10-02 00:30:13 - Epoch 54/600 | LR=0.007847 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:13 - Epoch Summary: TrainLoss=1.1842 | TrainAcc=0.659 | Val(P3)=0.600 | Val(AVO)=0.673
+2025-10-02 00:30:13 - No AVO-val improvement; patience remaining: 19/70
+2025-10-02 00:30:13 - Epoch 55/600 | LR=0.007841 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:13 - Epoch Summary: TrainLoss=1.2211 | TrainAcc=0.653 | Val(P3)=0.574 | Val(AVO)=0.592
+2025-10-02 00:30:13 - No AVO-val improvement; patience remaining: 18/70
+2025-10-02 00:30:13 - Epoch 56/600 | LR=0.007835 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:13 - Epoch Summary: TrainLoss=1.2075 | TrainAcc=0.651 | Val(P3)=0.616 | Val(AVO)=0.673
+2025-10-02 00:30:13 - No AVO-val improvement; patience remaining: 17/70
+2025-10-02 00:30:13 - Epoch 57/600 | LR=0.007829 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:14 - Epoch Summary: TrainLoss=1.1978 | TrainAcc=0.666 | Val(P3)=0.613 | Val(AVO)=0.673
+2025-10-02 00:30:14 - No AVO-val improvement; patience remaining: 16/70
+2025-10-02 00:30:14 - Epoch 58/600 | LR=0.007823 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:14 - Epoch Summary: TrainLoss=1.2059 | TrainAcc=0.645 | Val(P3)=0.613 | Val(AVO)=0.653
+2025-10-02 00:30:14 - No AVO-val improvement; patience remaining: 15/70
+2025-10-02 00:30:14 - Epoch 59/600 | LR=0.007817 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:14 - Epoch Summary: TrainLoss=1.2194 | TrainAcc=0.643 | Val(P3)=0.629 | Val(AVO)=0.633
+2025-10-02 00:30:14 - No AVO-val improvement; patience remaining: 14/70
+2025-10-02 00:30:14 - Epoch 60/600 | LR=0.007811 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:15 - Epoch Summary: TrainLoss=1.2239 | TrainAcc=0.652 | Val(P3)=0.606 | Val(AVO)=0.653
+2025-10-02 00:30:15 - No AVO-val improvement; patience remaining: 13/70
+2025-10-02 00:30:15 - Epoch 61/600 | LR=0.007804 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:15 - Epoch Summary: TrainLoss=1.1870 | TrainAcc=0.662 | Val(P3)=0.626 | Val(AVO)=0.653
+2025-10-02 00:30:15 - No AVO-val improvement; patience remaining: 12/70
+2025-10-02 00:30:15 - Epoch 62/600 | LR=0.007798 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:16 - Epoch Summary: TrainLoss=1.1595 | TrainAcc=0.660 | Val(P3)=0.623 | Val(AVO)=0.653
+2025-10-02 00:30:16 - No AVO-val improvement; patience remaining: 11/70
+2025-10-02 00:30:16 - Epoch 63/600 | LR=0.007791 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:16 - Epoch Summary: TrainLoss=1.1858 | TrainAcc=0.654 | Val(P3)=0.623 | Val(AVO)=0.653
+2025-10-02 00:30:16 - No AVO-val improvement; patience remaining: 10/70
+2025-10-02 00:30:16 - Epoch 64/600 | LR=0.007784 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:16 - Epoch Summary: TrainLoss=1.2021 | TrainAcc=0.651 | Val(P3)=0.613 | Val(AVO)=0.612
+2025-10-02 00:30:16 - No AVO-val improvement; patience remaining: 9/70
+2025-10-02 00:30:16 - Epoch 65/600 | LR=0.007778 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:16 - Epoch Summary: TrainLoss=1.2113 | TrainAcc=0.653 | Val(P3)=0.610 | Val(AVO)=0.633
+2025-10-02 00:30:16 - No AVO-val improvement; patience remaining: 8/70
+2025-10-02 00:30:16 - Epoch 66/600 | LR=0.007771 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:16 - Epoch Summary: TrainLoss=1.2143 | TrainAcc=0.665 | Val(P3)=0.629 | Val(AVO)=0.673
+2025-10-02 00:30:16 - No AVO-val improvement; patience remaining: 7/70
+2025-10-02 00:30:16 - Epoch 67/600 | LR=0.007764 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:17 - Epoch Summary: TrainLoss=1.1895 | TrainAcc=0.661 | Val(P3)=0.606 | Val(AVO)=0.633
+2025-10-02 00:30:17 - No AVO-val improvement; patience remaining: 6/70
+2025-10-02 00:30:17 - Epoch 68/600 | LR=0.007756 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:17 - Epoch Summary: TrainLoss=1.1763 | TrainAcc=0.649 | Val(P3)=0.597 | Val(AVO)=0.653
+2025-10-02 00:30:17 - No AVO-val improvement; patience remaining: 5/70
+2025-10-02 00:30:17 - Epoch 69/600 | LR=0.007749 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:17 - Epoch Summary: TrainLoss=1.2232 | TrainAcc=0.660 | Val(P3)=0.590 | Val(AVO)=0.633
+2025-10-02 00:30:17 - No AVO-val improvement; patience remaining: 4/70
+2025-10-02 00:30:17 - Epoch 70/600 | LR=0.007742 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:18 - Epoch Summary: TrainLoss=1.1695 | TrainAcc=0.661 | Val(P3)=0.574 | Val(AVO)=0.673
+2025-10-02 00:30:18 - No AVO-val improvement; patience remaining: 3/70
+2025-10-02 00:30:18 - Epoch 71/600 | LR=0.007734 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:18 - Epoch Summary: TrainLoss=1.1842 | TrainAcc=0.663 | Val(P3)=0.584 | Val(AVO)=0.612
+2025-10-02 00:30:18 - No AVO-val improvement; patience remaining: 2/70
+2025-10-02 00:30:18 - Epoch 72/600 | LR=0.007727 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:18 - Epoch Summary: TrainLoss=1.1568 | TrainAcc=0.655 | Val(P3)=0.600 | Val(AVO)=0.673
+2025-10-02 00:30:18 - No AVO-val improvement; patience remaining: 1/70
+2025-10-02 00:30:18 - Epoch 73/600 | LR=0.007719 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:30:18 - Epoch Summary: TrainLoss=1.1835 | TrainAcc=0.654 | Val(P3)=0.613 | Val(AVO)=0.633
+2025-10-02 00:30:18 - No AVO-val improvement; patience remaining: 0/70
+2025-10-02 00:30:18 - Early stopping triggered (AVO-val)
+2025-10-02 00:30:18 -     P3 Test | Acc=0.5933 P=0.6062 R=0.5065 F1=0.5518 AUC=0.6603 (n=627)
+2025-10-02 00:30:18 -     AVO Test | Acc=0.5165 P=0.5806 R=0.3673 F1=0.4500 AUC=0.5729 (n=91)
+2025-10-02 00:30:18 -     Overall Test Acc=0.5836
+2025-10-02 00:30:18 -   Fold 4/5
+2025-10-02 00:30:19 - Fold domains: small=AVO (n=269), large=P3 (n=2243)
+2025-10-02 00:30:19 - Auto adjustments (symmetric): w_small≈2.888, lambda_MMD_target=0.400, warmup_epochs=10
+2025-10-02 00:30:19 - Epoch 1/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.189 | lambda_MMD=0.040
+2025-10-02 00:30:19 - Epoch Summary: TrainLoss=1.6486 | TrainAcc=0.558 | Val(P3)=0.636 | Val(AVO)=0.549
+2025-10-02 00:30:19 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:19 - Epoch 2/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.378 | lambda_MMD=0.080
+2025-10-02 00:30:19 - Epoch Summary: TrainLoss=1.5268 | TrainAcc=0.605 | Val(P3)=0.640 | Val(AVO)=0.686
+2025-10-02 00:30:19 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:19 - Epoch 3/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.566 | lambda_MMD=0.120
+2025-10-02 00:30:19 - Epoch Summary: TrainLoss=1.5524 | TrainAcc=0.626 | Val(P3)=0.649 | Val(AVO)=0.588
+2025-10-02 00:30:19 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:30:19 - Epoch 4/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.755 | lambda_MMD=0.160
+2025-10-02 00:30:19 - Epoch Summary: TrainLoss=1.5862 | TrainAcc=0.629 | Val(P3)=0.643 | Val(AVO)=0.608
+2025-10-02 00:30:19 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:30:19 - Epoch 5/600 | LR=0.007999 | w_P3=1.000 | w_AVO=1.944 | lambda_MMD=0.200
+2025-10-02 00:30:20 - Epoch Summary: TrainLoss=1.6586 | TrainAcc=0.631 | Val(P3)=0.643 | Val(AVO)=0.569
+2025-10-02 00:30:20 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:30:20 - Epoch 6/600 | LR=0.007999 | w_P3=1.000 | w_AVO=2.133 | lambda_MMD=0.240
+2025-10-02 00:30:20 - Epoch Summary: TrainLoss=1.6833 | TrainAcc=0.629 | Val(P3)=0.672 | Val(AVO)=0.627
+2025-10-02 00:30:20 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:30:20 - Epoch 7/600 | LR=0.007998 | w_P3=1.000 | w_AVO=2.321 | lambda_MMD=0.280
+2025-10-02 00:30:20 - Epoch Summary: TrainLoss=1.7550 | TrainAcc=0.622 | Val(P3)=0.636 | Val(AVO)=0.608
+2025-10-02 00:30:20 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:30:20 - Epoch 8/600 | LR=0.007997 | w_P3=1.000 | w_AVO=2.510 | lambda_MMD=0.320
+2025-10-02 00:30:21 - Epoch Summary: TrainLoss=1.7283 | TrainAcc=0.632 | Val(P3)=0.623 | Val(AVO)=0.588
+2025-10-02 00:30:21 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:30:21 - Epoch 9/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.699 | lambda_MMD=0.360
+2025-10-02 00:30:21 - Epoch Summary: TrainLoss=1.8051 | TrainAcc=0.622 | Val(P3)=0.630 | Val(AVO)=0.588
+2025-10-02 00:30:21 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:30:21 - Epoch 10/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:21 - Epoch Summary: TrainLoss=1.8543 | TrainAcc=0.631 | Val(P3)=0.640 | Val(AVO)=0.569
+2025-10-02 00:30:21 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:30:21 - Epoch 11/600 | LR=0.007995 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:22 - Epoch Summary: TrainLoss=1.7880 | TrainAcc=0.618 | Val(P3)=0.623 | Val(AVO)=0.667
+2025-10-02 00:30:22 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:30:22 - Epoch 12/600 | LR=0.007993 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:22 - Epoch Summary: TrainLoss=1.7582 | TrainAcc=0.624 | Val(P3)=0.627 | Val(AVO)=0.608
+2025-10-02 00:30:22 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:30:22 - Epoch 13/600 | LR=0.007992 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:22 - Epoch Summary: TrainLoss=1.7258 | TrainAcc=0.613 | Val(P3)=0.568 | Val(AVO)=0.549
+2025-10-02 00:30:22 - No AVO-val improvement; patience remaining: 59/70
+2025-10-02 00:30:22 - Epoch 14/600 | LR=0.007991 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:22 - Epoch Summary: TrainLoss=1.6552 | TrainAcc=0.620 | Val(P3)=0.601 | Val(AVO)=0.588
+2025-10-02 00:30:22 - No AVO-val improvement; patience remaining: 58/70
+2025-10-02 00:30:22 - Epoch 15/600 | LR=0.007989 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:23 - Epoch Summary: TrainLoss=1.6387 | TrainAcc=0.638 | Val(P3)=0.597 | Val(AVO)=0.608
+2025-10-02 00:30:23 - No AVO-val improvement; patience remaining: 57/70
+2025-10-02 00:30:23 - Epoch 16/600 | LR=0.007988 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:23 - Epoch Summary: TrainLoss=1.5994 | TrainAcc=0.647 | Val(P3)=0.617 | Val(AVO)=0.627
+2025-10-02 00:30:23 - No AVO-val improvement; patience remaining: 56/70
+2025-10-02 00:30:23 - Epoch 17/600 | LR=0.007986 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:23 - Epoch Summary: TrainLoss=1.6862 | TrainAcc=0.619 | Val(P3)=0.571 | Val(AVO)=0.569
+2025-10-02 00:30:23 - No AVO-val improvement; patience remaining: 55/70
+2025-10-02 00:30:23 - Epoch 18/600 | LR=0.007984 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:24 - Epoch Summary: TrainLoss=1.5652 | TrainAcc=0.631 | Val(P3)=0.575 | Val(AVO)=0.608
+2025-10-02 00:30:24 - No AVO-val improvement; patience remaining: 54/70
+2025-10-02 00:30:24 - Epoch 19/600 | LR=0.007982 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:24 - Epoch Summary: TrainLoss=1.5439 | TrainAcc=0.643 | Val(P3)=0.601 | Val(AVO)=0.608
+2025-10-02 00:30:24 - No AVO-val improvement; patience remaining: 53/70
+2025-10-02 00:30:24 - Epoch 20/600 | LR=0.007980 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:24 - Epoch Summary: TrainLoss=1.5940 | TrainAcc=0.628 | Val(P3)=0.597 | Val(AVO)=0.569
+2025-10-02 00:30:24 - No AVO-val improvement; patience remaining: 52/70
+2025-10-02 00:30:24 - Epoch 21/600 | LR=0.007978 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:24 - Epoch Summary: TrainLoss=1.5720 | TrainAcc=0.624 | Val(P3)=0.588 | Val(AVO)=0.627
+2025-10-02 00:30:24 - No AVO-val improvement; patience remaining: 51/70
+2025-10-02 00:30:24 - Epoch 22/600 | LR=0.007976 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:25 - Epoch Summary: TrainLoss=1.4869 | TrainAcc=0.632 | Val(P3)=0.610 | Val(AVO)=0.627
+2025-10-02 00:30:25 - No AVO-val improvement; patience remaining: 50/70
+2025-10-02 00:30:25 - Epoch 23/600 | LR=0.007973 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:25 - Epoch Summary: TrainLoss=1.5324 | TrainAcc=0.634 | Val(P3)=0.594 | Val(AVO)=0.647
+2025-10-02 00:30:25 - No AVO-val improvement; patience remaining: 49/70
+2025-10-02 00:30:25 - Epoch 24/600 | LR=0.007971 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:25 - Epoch Summary: TrainLoss=1.5151 | TrainAcc=0.630 | Val(P3)=0.597 | Val(AVO)=0.490
+2025-10-02 00:30:25 - No AVO-val improvement; patience remaining: 48/70
+2025-10-02 00:30:25 - Epoch 25/600 | LR=0.007968 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:26 - Epoch Summary: TrainLoss=1.4978 | TrainAcc=0.650 | Val(P3)=0.604 | Val(AVO)=0.608
+2025-10-02 00:30:26 - No AVO-val improvement; patience remaining: 47/70
+2025-10-02 00:30:26 - Epoch 26/600 | LR=0.007966 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:26 - Epoch Summary: TrainLoss=1.4867 | TrainAcc=0.631 | Val(P3)=0.604 | Val(AVO)=0.588
+2025-10-02 00:30:26 - No AVO-val improvement; patience remaining: 46/70
+2025-10-02 00:30:26 - Epoch 27/600 | LR=0.007963 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:26 - Epoch Summary: TrainLoss=1.4687 | TrainAcc=0.637 | Val(P3)=0.607 | Val(AVO)=0.529
+2025-10-02 00:30:26 - No AVO-val improvement; patience remaining: 45/70
+2025-10-02 00:30:26 - Epoch 28/600 | LR=0.007960 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:27 - Epoch Summary: TrainLoss=1.4398 | TrainAcc=0.642 | Val(P3)=0.575 | Val(AVO)=0.608
+2025-10-02 00:30:27 - No AVO-val improvement; patience remaining: 44/70
+2025-10-02 00:30:27 - Epoch 29/600 | LR=0.007957 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:27 - Epoch Summary: TrainLoss=1.4236 | TrainAcc=0.634 | Val(P3)=0.588 | Val(AVO)=0.588
+2025-10-02 00:30:27 - No AVO-val improvement; patience remaining: 43/70
+2025-10-02 00:30:27 - Epoch 30/600 | LR=0.007954 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:27 - Epoch Summary: TrainLoss=1.4619 | TrainAcc=0.639 | Val(P3)=0.610 | Val(AVO)=0.588
+2025-10-02 00:30:27 - No AVO-val improvement; patience remaining: 42/70
+2025-10-02 00:30:27 - Epoch 31/600 | LR=0.007951 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:28 - Epoch Summary: TrainLoss=1.4031 | TrainAcc=0.639 | Val(P3)=0.591 | Val(AVO)=0.549
+2025-10-02 00:30:28 - No AVO-val improvement; patience remaining: 41/70
+2025-10-02 00:30:28 - Epoch 32/600 | LR=0.007947 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:28 - Epoch Summary: TrainLoss=1.4091 | TrainAcc=0.641 | Val(P3)=0.581 | Val(AVO)=0.569
+2025-10-02 00:30:28 - No AVO-val improvement; patience remaining: 40/70
+2025-10-02 00:30:28 - Epoch 33/600 | LR=0.007944 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:28 - Epoch Summary: TrainLoss=1.3872 | TrainAcc=0.659 | Val(P3)=0.610 | Val(AVO)=0.569
+2025-10-02 00:30:28 - No AVO-val improvement; patience remaining: 39/70
+2025-10-02 00:30:28 - Epoch 34/600 | LR=0.007940 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:28 - Epoch Summary: TrainLoss=1.4325 | TrainAcc=0.644 | Val(P3)=0.601 | Val(AVO)=0.569
+2025-10-02 00:30:28 - No AVO-val improvement; patience remaining: 38/70
+2025-10-02 00:30:28 - Epoch 35/600 | LR=0.007937 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:28 - Epoch Summary: TrainLoss=1.4256 | TrainAcc=0.632 | Val(P3)=0.581 | Val(AVO)=0.569
+2025-10-02 00:30:28 - No AVO-val improvement; patience remaining: 37/70
+2025-10-02 00:30:28 - Epoch 36/600 | LR=0.007933 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:29 - Epoch Summary: TrainLoss=1.4239 | TrainAcc=0.648 | Val(P3)=0.588 | Val(AVO)=0.569
+2025-10-02 00:30:29 - No AVO-val improvement; patience remaining: 36/70
+2025-10-02 00:30:29 - Epoch 37/600 | LR=0.007929 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:29 - Epoch Summary: TrainLoss=1.3632 | TrainAcc=0.652 | Val(P3)=0.591 | Val(AVO)=0.529
+2025-10-02 00:30:29 - No AVO-val improvement; patience remaining: 35/70
+2025-10-02 00:30:29 - Epoch 38/600 | LR=0.007925 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:29 - Epoch Summary: TrainLoss=1.3739 | TrainAcc=0.638 | Val(P3)=0.594 | Val(AVO)=0.529
+2025-10-02 00:30:29 - No AVO-val improvement; patience remaining: 34/70
+2025-10-02 00:30:29 - Epoch 39/600 | LR=0.007921 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:30 - Epoch Summary: TrainLoss=1.3843 | TrainAcc=0.630 | Val(P3)=0.601 | Val(AVO)=0.549
+2025-10-02 00:30:30 - No AVO-val improvement; patience remaining: 33/70
+2025-10-02 00:30:30 - Epoch 40/600 | LR=0.007917 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:30 - Epoch Summary: TrainLoss=1.3460 | TrainAcc=0.638 | Val(P3)=0.597 | Val(AVO)=0.549
+2025-10-02 00:30:30 - No AVO-val improvement; patience remaining: 32/70
+2025-10-02 00:30:30 - Epoch 41/600 | LR=0.007913 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:30 - Epoch Summary: TrainLoss=1.3595 | TrainAcc=0.639 | Val(P3)=0.591 | Val(AVO)=0.529
+2025-10-02 00:30:30 - No AVO-val improvement; patience remaining: 31/70
+2025-10-02 00:30:30 - Epoch 42/600 | LR=0.007908 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:31 - Epoch Summary: TrainLoss=1.3452 | TrainAcc=0.658 | Val(P3)=0.617 | Val(AVO)=0.549
+2025-10-02 00:30:31 - No AVO-val improvement; patience remaining: 30/70
+2025-10-02 00:30:31 - Epoch 43/600 | LR=0.007904 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:31 - Epoch Summary: TrainLoss=1.3473 | TrainAcc=0.641 | Val(P3)=0.594 | Val(AVO)=0.569
+2025-10-02 00:30:31 - No AVO-val improvement; patience remaining: 29/70
+2025-10-02 00:30:31 - Epoch 44/600 | LR=0.007899 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:31 - Epoch Summary: TrainLoss=1.3233 | TrainAcc=0.646 | Val(P3)=0.575 | Val(AVO)=0.588
+2025-10-02 00:30:31 - No AVO-val improvement; patience remaining: 28/70
+2025-10-02 00:30:31 - Epoch 45/600 | LR=0.007894 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:31 - Epoch Summary: TrainLoss=1.2849 | TrainAcc=0.658 | Val(P3)=0.588 | Val(AVO)=0.588
+2025-10-02 00:30:31 - No AVO-val improvement; patience remaining: 27/70
+2025-10-02 00:30:31 - Epoch 46/600 | LR=0.007889 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:31 - Epoch Summary: TrainLoss=1.2776 | TrainAcc=0.651 | Val(P3)=0.607 | Val(AVO)=0.588
+2025-10-02 00:30:31 - No AVO-val improvement; patience remaining: 26/70
+2025-10-02 00:30:31 - Epoch 47/600 | LR=0.007885 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:32 - Epoch Summary: TrainLoss=1.2982 | TrainAcc=0.667 | Val(P3)=0.623 | Val(AVO)=0.549
+2025-10-02 00:30:32 - No AVO-val improvement; patience remaining: 25/70
+2025-10-02 00:30:32 - Epoch 48/600 | LR=0.007879 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:32 - Epoch Summary: TrainLoss=1.2566 | TrainAcc=0.674 | Val(P3)=0.591 | Val(AVO)=0.569
+2025-10-02 00:30:32 - No AVO-val improvement; patience remaining: 24/70
+2025-10-02 00:30:32 - Epoch 49/600 | LR=0.007874 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:32 - Epoch Summary: TrainLoss=1.2812 | TrainAcc=0.658 | Val(P3)=0.597 | Val(AVO)=0.569
+2025-10-02 00:30:32 - No AVO-val improvement; patience remaining: 23/70
+2025-10-02 00:30:32 - Epoch 50/600 | LR=0.007869 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:33 - Epoch Summary: TrainLoss=1.3157 | TrainAcc=0.648 | Val(P3)=0.610 | Val(AVO)=0.588
+2025-10-02 00:30:33 - No AVO-val improvement; patience remaining: 22/70
+2025-10-02 00:30:33 - Epoch 51/600 | LR=0.007864 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:33 - Epoch Summary: TrainLoss=1.3348 | TrainAcc=0.656 | Val(P3)=0.620 | Val(AVO)=0.569
+2025-10-02 00:30:33 - No AVO-val improvement; patience remaining: 21/70
+2025-10-02 00:30:33 - Epoch 52/600 | LR=0.007858 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:33 - Epoch Summary: TrainLoss=1.3197 | TrainAcc=0.649 | Val(P3)=0.594 | Val(AVO)=0.569
+2025-10-02 00:30:33 - No AVO-val improvement; patience remaining: 20/70
+2025-10-02 00:30:33 - Epoch 53/600 | LR=0.007853 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:34 - Epoch Summary: TrainLoss=1.3119 | TrainAcc=0.654 | Val(P3)=0.604 | Val(AVO)=0.588
+2025-10-02 00:30:34 - No AVO-val improvement; patience remaining: 19/70
+2025-10-02 00:30:34 - Epoch 54/600 | LR=0.007847 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:34 - Epoch Summary: TrainLoss=1.3372 | TrainAcc=0.646 | Val(P3)=0.601 | Val(AVO)=0.549
+2025-10-02 00:30:34 - No AVO-val improvement; patience remaining: 18/70
+2025-10-02 00:30:34 - Epoch 55/600 | LR=0.007841 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:34 - Epoch Summary: TrainLoss=1.2988 | TrainAcc=0.646 | Val(P3)=0.604 | Val(AVO)=0.588
+2025-10-02 00:30:34 - No AVO-val improvement; patience remaining: 17/70
+2025-10-02 00:30:34 - Epoch 56/600 | LR=0.007835 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:34 - Epoch Summary: TrainLoss=1.2789 | TrainAcc=0.642 | Val(P3)=0.581 | Val(AVO)=0.569
+2025-10-02 00:30:34 - No AVO-val improvement; patience remaining: 16/70
+2025-10-02 00:30:34 - Epoch 57/600 | LR=0.007829 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:34 - Epoch Summary: TrainLoss=1.3090 | TrainAcc=0.653 | Val(P3)=0.604 | Val(AVO)=0.627
+2025-10-02 00:30:34 - No AVO-val improvement; patience remaining: 15/70
+2025-10-02 00:30:34 - Epoch 58/600 | LR=0.007823 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:35 - Epoch Summary: TrainLoss=1.2934 | TrainAcc=0.655 | Val(P3)=0.607 | Val(AVO)=0.549
+2025-10-02 00:30:35 - No AVO-val improvement; patience remaining: 14/70
+2025-10-02 00:30:35 - Epoch 59/600 | LR=0.007817 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:35 - Epoch Summary: TrainLoss=1.2786 | TrainAcc=0.668 | Val(P3)=0.584 | Val(AVO)=0.608
+2025-10-02 00:30:35 - No AVO-val improvement; patience remaining: 13/70
+2025-10-02 00:30:35 - Epoch 60/600 | LR=0.007811 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:35 - Epoch Summary: TrainLoss=1.2599 | TrainAcc=0.663 | Val(P3)=0.614 | Val(AVO)=0.569
+2025-10-02 00:30:35 - No AVO-val improvement; patience remaining: 12/70
+2025-10-02 00:30:35 - Epoch 61/600 | LR=0.007804 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:36 - Epoch Summary: TrainLoss=1.2345 | TrainAcc=0.651 | Val(P3)=0.610 | Val(AVO)=0.569
+2025-10-02 00:30:36 - No AVO-val improvement; patience remaining: 11/70
+2025-10-02 00:30:36 - Epoch 62/600 | LR=0.007798 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:36 - Epoch Summary: TrainLoss=1.2741 | TrainAcc=0.649 | Val(P3)=0.604 | Val(AVO)=0.588
+2025-10-02 00:30:36 - No AVO-val improvement; patience remaining: 10/70
+2025-10-02 00:30:36 - Epoch 63/600 | LR=0.007791 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:36 - Epoch Summary: TrainLoss=1.2446 | TrainAcc=0.653 | Val(P3)=0.617 | Val(AVO)=0.608
+2025-10-02 00:30:36 - No AVO-val improvement; patience remaining: 9/70
+2025-10-02 00:30:36 - Epoch 64/600 | LR=0.007784 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:36 - Epoch Summary: TrainLoss=1.2420 | TrainAcc=0.649 | Val(P3)=0.584 | Val(AVO)=0.627
+2025-10-02 00:30:36 - No AVO-val improvement; patience remaining: 8/70
+2025-10-02 00:30:36 - Epoch 65/600 | LR=0.007778 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:37 - Epoch Summary: TrainLoss=1.2906 | TrainAcc=0.644 | Val(P3)=0.633 | Val(AVO)=0.569
+2025-10-02 00:30:37 - No AVO-val improvement; patience remaining: 7/70
+2025-10-02 00:30:37 - Epoch 66/600 | LR=0.007771 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:37 - Epoch Summary: TrainLoss=1.2805 | TrainAcc=0.662 | Val(P3)=0.597 | Val(AVO)=0.529
+2025-10-02 00:30:37 - No AVO-val improvement; patience remaining: 6/70
+2025-10-02 00:30:37 - Epoch 67/600 | LR=0.007764 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:37 - Epoch Summary: TrainLoss=1.2990 | TrainAcc=0.638 | Val(P3)=0.607 | Val(AVO)=0.529
+2025-10-02 00:30:37 - No AVO-val improvement; patience remaining: 5/70
+2025-10-02 00:30:37 - Epoch 68/600 | LR=0.007756 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:37 - Epoch Summary: TrainLoss=1.2787 | TrainAcc=0.640 | Val(P3)=0.627 | Val(AVO)=0.588
+2025-10-02 00:30:37 - No AVO-val improvement; patience remaining: 4/70
+2025-10-02 00:30:37 - Epoch 69/600 | LR=0.007749 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:37 - Epoch Summary: TrainLoss=1.2813 | TrainAcc=0.659 | Val(P3)=0.627 | Val(AVO)=0.549
+2025-10-02 00:30:37 - No AVO-val improvement; patience remaining: 3/70
+2025-10-02 00:30:37 - Epoch 70/600 | LR=0.007742 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:37 - Epoch Summary: TrainLoss=1.2598 | TrainAcc=0.656 | Val(P3)=0.640 | Val(AVO)=0.569
+2025-10-02 00:30:37 - No AVO-val improvement; patience remaining: 2/70
+2025-10-02 00:30:37 - Epoch 71/600 | LR=0.007734 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:38 - Epoch Summary: TrainLoss=1.2799 | TrainAcc=0.653 | Val(P3)=0.610 | Val(AVO)=0.529
+2025-10-02 00:30:38 - No AVO-val improvement; patience remaining: 1/70
+2025-10-02 00:30:38 - Epoch 72/600 | LR=0.007727 | w_P3=1.000 | w_AVO=2.888 | lambda_MMD=0.400
+2025-10-02 00:30:38 - Epoch Summary: TrainLoss=1.2382 | TrainAcc=0.650 | Val(P3)=0.607 | Val(AVO)=0.627
+2025-10-02 00:30:38 - No AVO-val improvement; patience remaining: 0/70
+2025-10-02 00:30:38 - Early stopping triggered (AVO-val)
+2025-10-02 00:30:38 -     P3 Test | Acc=0.5856 P=0.6790 R=0.3416 F1=0.4545 AUC=0.6461 (n=637)
+2025-10-02 00:30:38 -     AVO Test | Acc=0.7000 P=0.6585 R=0.7297 F1=0.6923 AUC=0.7354 (n=80)
+2025-10-02 00:30:38 -     Overall Test Acc=0.5983
+2025-10-02 00:30:38 -   Fold 5/5
+2025-10-02 00:30:38 - Fold domains: small=AVO (n=275), large=P3 (n=2237)
+2025-10-02 00:30:38 - Auto adjustments (symmetric): w_small≈2.852, lambda_MMD_target=0.400, warmup_epochs=10
+2025-10-02 00:30:38 - Epoch 1/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.185 | lambda_MMD=0.040
+2025-10-02 00:30:38 - Epoch Summary: TrainLoss=1.7227 | TrainAcc=0.560 | Val(P3)=0.534 | Val(AVO)=0.635
+2025-10-02 00:30:38 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:38 - Epoch 2/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.370 | lambda_MMD=0.080
+2025-10-02 00:30:38 - Epoch Summary: TrainLoss=1.5913 | TrainAcc=0.580 | Val(P3)=0.635 | Val(AVO)=0.615
+2025-10-02 00:30:38 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:30:38 - Epoch 3/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.556 | lambda_MMD=0.120
+2025-10-02 00:30:38 - Epoch Summary: TrainLoss=1.5687 | TrainAcc=0.614 | Val(P3)=0.645 | Val(AVO)=0.596
+2025-10-02 00:30:38 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:30:38 - Epoch 4/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.741 | lambda_MMD=0.160
+2025-10-02 00:30:38 - Epoch Summary: TrainLoss=1.5986 | TrainAcc=0.626 | Val(P3)=0.612 | Val(AVO)=0.615
+2025-10-02 00:30:38 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:30:38 - Epoch 5/600 | LR=0.007999 | w_P3=1.000 | w_AVO=1.926 | lambda_MMD=0.200
+2025-10-02 00:30:39 - Epoch Summary: TrainLoss=1.6505 | TrainAcc=0.623 | Val(P3)=0.606 | Val(AVO)=0.596
+2025-10-02 00:30:39 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:30:39 - Epoch 6/600 | LR=0.007999 | w_P3=1.000 | w_AVO=2.111 | lambda_MMD=0.240
+2025-10-02 00:30:39 - Epoch Summary: TrainLoss=1.6645 | TrainAcc=0.626 | Val(P3)=0.603 | Val(AVO)=0.615
+2025-10-02 00:30:39 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:30:39 - Epoch 7/600 | LR=0.007998 | w_P3=1.000 | w_AVO=2.296 | lambda_MMD=0.280
+2025-10-02 00:30:39 - Epoch Summary: TrainLoss=1.6735 | TrainAcc=0.630 | Val(P3)=0.622 | Val(AVO)=0.615
+2025-10-02 00:30:39 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:30:39 - Epoch 8/600 | LR=0.007997 | w_P3=1.000 | w_AVO=2.482 | lambda_MMD=0.320
+2025-10-02 00:30:39 - Epoch Summary: TrainLoss=1.7365 | TrainAcc=0.627 | Val(P3)=0.606 | Val(AVO)=0.615
+2025-10-02 00:30:39 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:30:39 - Epoch 9/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.667 | lambda_MMD=0.360
+2025-10-02 00:30:39 - Epoch Summary: TrainLoss=1.8022 | TrainAcc=0.629 | Val(P3)=0.586 | Val(AVO)=0.577
+2025-10-02 00:30:39 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:30:39 - Epoch 10/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:39 - Epoch Summary: TrainLoss=1.7964 | TrainAcc=0.621 | Val(P3)=0.609 | Val(AVO)=0.615
+2025-10-02 00:30:39 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:30:39 - Epoch 11/600 | LR=0.007995 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:39 - Epoch Summary: TrainLoss=1.7473 | TrainAcc=0.612 | Val(P3)=0.603 | Val(AVO)=0.596
+2025-10-02 00:30:39 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:30:39 - Epoch 12/600 | LR=0.007993 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:40 - Epoch Summary: TrainLoss=1.7025 | TrainAcc=0.622 | Val(P3)=0.625 | Val(AVO)=0.673
+2025-10-02 00:30:40 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:40 - Epoch 13/600 | LR=0.007992 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:40 - Epoch Summary: TrainLoss=1.6650 | TrainAcc=0.627 | Val(P3)=0.609 | Val(AVO)=0.635
+2025-10-02 00:30:40 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:30:40 - Epoch 14/600 | LR=0.007991 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:40 - Epoch Summary: TrainLoss=1.6708 | TrainAcc=0.621 | Val(P3)=0.603 | Val(AVO)=0.635
+2025-10-02 00:30:40 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:30:40 - Epoch 15/600 | LR=0.007989 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:40 - Epoch Summary: TrainLoss=1.6255 | TrainAcc=0.624 | Val(P3)=0.609 | Val(AVO)=0.615
+2025-10-02 00:30:40 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:30:40 - Epoch 16/600 | LR=0.007988 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:40 - Epoch Summary: TrainLoss=1.6046 | TrainAcc=0.635 | Val(P3)=0.616 | Val(AVO)=0.673
+2025-10-02 00:30:40 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:30:40 - Epoch 17/600 | LR=0.007986 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:40 - Epoch Summary: TrainLoss=1.6135 | TrainAcc=0.618 | Val(P3)=0.603 | Val(AVO)=0.615
+2025-10-02 00:30:40 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:30:40 - Epoch 18/600 | LR=0.007984 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:40 - Epoch Summary: TrainLoss=1.5851 | TrainAcc=0.629 | Val(P3)=0.612 | Val(AVO)=0.635
+2025-10-02 00:30:40 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:30:40 - Epoch 19/600 | LR=0.007982 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:41 - Epoch Summary: TrainLoss=1.5317 | TrainAcc=0.637 | Val(P3)=0.619 | Val(AVO)=0.596
+2025-10-02 00:30:41 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:30:41 - Epoch 20/600 | LR=0.007980 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:41 - Epoch Summary: TrainLoss=1.5587 | TrainAcc=0.624 | Val(P3)=0.590 | Val(AVO)=0.712
+2025-10-02 00:30:41 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:41 - Epoch 21/600 | LR=0.007978 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:41 - Epoch Summary: TrainLoss=1.5585 | TrainAcc=0.627 | Val(P3)=0.622 | Val(AVO)=0.596
+2025-10-02 00:30:41 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:30:41 - Epoch 22/600 | LR=0.007976 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:41 - Epoch Summary: TrainLoss=1.5190 | TrainAcc=0.642 | Val(P3)=0.606 | Val(AVO)=0.654
+2025-10-02 00:30:41 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:30:41 - Epoch 23/600 | LR=0.007973 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:41 - Epoch Summary: TrainLoss=1.4952 | TrainAcc=0.649 | Val(P3)=0.609 | Val(AVO)=0.615
+2025-10-02 00:30:41 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:30:41 - Epoch 24/600 | LR=0.007971 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:41 - Epoch Summary: TrainLoss=1.4665 | TrainAcc=0.652 | Val(P3)=0.596 | Val(AVO)=0.615
+2025-10-02 00:30:41 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:30:41 - Epoch 25/600 | LR=0.007968 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:41 - Epoch Summary: TrainLoss=1.4191 | TrainAcc=0.649 | Val(P3)=0.606 | Val(AVO)=0.635
+2025-10-02 00:30:41 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:30:41 - Epoch 26/600 | LR=0.007966 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:42 - Epoch Summary: TrainLoss=1.4617 | TrainAcc=0.638 | Val(P3)=0.622 | Val(AVO)=0.654
+2025-10-02 00:30:42 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:30:42 - Epoch 27/600 | LR=0.007963 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:42 - Epoch Summary: TrainLoss=1.4778 | TrainAcc=0.633 | Val(P3)=0.609 | Val(AVO)=0.635
+2025-10-02 00:30:42 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:30:42 - Epoch 28/600 | LR=0.007960 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:42 - Epoch Summary: TrainLoss=1.4438 | TrainAcc=0.634 | Val(P3)=0.606 | Val(AVO)=0.635
+2025-10-02 00:30:42 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:30:42 - Epoch 29/600 | LR=0.007957 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:42 - Epoch Summary: TrainLoss=1.4575 | TrainAcc=0.646 | Val(P3)=0.596 | Val(AVO)=0.615
+2025-10-02 00:30:42 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:30:42 - Epoch 30/600 | LR=0.007954 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:43 - Epoch Summary: TrainLoss=1.4768 | TrainAcc=0.640 | Val(P3)=0.606 | Val(AVO)=0.692
+2025-10-02 00:30:43 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:30:43 - Epoch 31/600 | LR=0.007951 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:43 - Epoch Summary: TrainLoss=1.3749 | TrainAcc=0.645 | Val(P3)=0.609 | Val(AVO)=0.692
+2025-10-02 00:30:43 - No AVO-val improvement; patience remaining: 59/70
+2025-10-02 00:30:43 - Epoch 32/600 | LR=0.007947 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:43 - Epoch Summary: TrainLoss=1.3901 | TrainAcc=0.644 | Val(P3)=0.612 | Val(AVO)=0.692
+2025-10-02 00:30:43 - No AVO-val improvement; patience remaining: 58/70
+2025-10-02 00:30:43 - Epoch 33/600 | LR=0.007944 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:43 - Epoch Summary: TrainLoss=1.4130 | TrainAcc=0.652 | Val(P3)=0.629 | Val(AVO)=0.731
+2025-10-02 00:30:43 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:43 - Epoch 34/600 | LR=0.007940 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:43 - Epoch Summary: TrainLoss=1.4240 | TrainAcc=0.639 | Val(P3)=0.612 | Val(AVO)=0.673
+2025-10-02 00:30:43 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:30:43 - Epoch 35/600 | LR=0.007937 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:43 - Epoch Summary: TrainLoss=1.4040 | TrainAcc=0.642 | Val(P3)=0.603 | Val(AVO)=0.654
+2025-10-02 00:30:43 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:30:43 - Epoch 36/600 | LR=0.007933 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:44 - Epoch Summary: TrainLoss=1.3792 | TrainAcc=0.649 | Val(P3)=0.612 | Val(AVO)=0.692
+2025-10-02 00:30:44 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:30:44 - Epoch 37/600 | LR=0.007929 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:44 - Epoch Summary: TrainLoss=1.3445 | TrainAcc=0.641 | Val(P3)=0.612 | Val(AVO)=0.654
+2025-10-02 00:30:44 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:30:44 - Epoch 38/600 | LR=0.007925 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:44 - Epoch Summary: TrainLoss=1.3844 | TrainAcc=0.641 | Val(P3)=0.625 | Val(AVO)=0.692
+2025-10-02 00:30:44 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:30:44 - Epoch 39/600 | LR=0.007921 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:44 - Epoch Summary: TrainLoss=1.3586 | TrainAcc=0.645 | Val(P3)=0.625 | Val(AVO)=0.654
+2025-10-02 00:30:44 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:30:44 - Epoch 40/600 | LR=0.007917 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:44 - Epoch Summary: TrainLoss=1.3676 | TrainAcc=0.649 | Val(P3)=0.599 | Val(AVO)=0.635
+2025-10-02 00:30:44 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:30:44 - Epoch 41/600 | LR=0.007913 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:44 - Epoch Summary: TrainLoss=1.3174 | TrainAcc=0.660 | Val(P3)=0.599 | Val(AVO)=0.654
+2025-10-02 00:30:44 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:30:44 - Epoch 42/600 | LR=0.007908 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:44 - Epoch Summary: TrainLoss=1.3871 | TrainAcc=0.653 | Val(P3)=0.622 | Val(AVO)=0.654
+2025-10-02 00:30:44 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:30:44 - Epoch 43/600 | LR=0.007904 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:45 - Epoch Summary: TrainLoss=1.3661 | TrainAcc=0.637 | Val(P3)=0.622 | Val(AVO)=0.673
+2025-10-02 00:30:45 - No AVO-val improvement; patience remaining: 60/70
+2025-10-02 00:30:45 - Epoch 44/600 | LR=0.007899 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:45 - Epoch Summary: TrainLoss=1.3041 | TrainAcc=0.653 | Val(P3)=0.596 | Val(AVO)=0.673
+2025-10-02 00:30:45 - No AVO-val improvement; patience remaining: 59/70
+2025-10-02 00:30:45 - Epoch 45/600 | LR=0.007894 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:45 - Epoch Summary: TrainLoss=1.3446 | TrainAcc=0.643 | Val(P3)=0.622 | Val(AVO)=0.731
+2025-10-02 00:30:45 - No AVO-val improvement; patience remaining: 58/70
+2025-10-02 00:30:45 - Epoch 46/600 | LR=0.007889 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:45 - Epoch Summary: TrainLoss=1.3543 | TrainAcc=0.644 | Val(P3)=0.619 | Val(AVO)=0.673
+2025-10-02 00:30:45 - No AVO-val improvement; patience remaining: 57/70
+2025-10-02 00:30:45 - Epoch 47/600 | LR=0.007885 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:45 - Epoch Summary: TrainLoss=1.3315 | TrainAcc=0.649 | Val(P3)=0.606 | Val(AVO)=0.731
+2025-10-02 00:30:45 - No AVO-val improvement; patience remaining: 56/70
+2025-10-02 00:30:45 - Epoch 48/600 | LR=0.007879 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:45 - Epoch Summary: TrainLoss=1.3519 | TrainAcc=0.645 | Val(P3)=0.619 | Val(AVO)=0.692
+2025-10-02 00:30:45 - No AVO-val improvement; patience remaining: 55/70
+2025-10-02 00:30:45 - Epoch 49/600 | LR=0.007874 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:46 - Epoch Summary: TrainLoss=1.2947 | TrainAcc=0.655 | Val(P3)=0.616 | Val(AVO)=0.692
+2025-10-02 00:30:46 - No AVO-val improvement; patience remaining: 54/70
+2025-10-02 00:30:46 - Epoch 50/600 | LR=0.007869 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:46 - Epoch Summary: TrainLoss=1.3175 | TrainAcc=0.650 | Val(P3)=0.606 | Val(AVO)=0.654
+2025-10-02 00:30:46 - No AVO-val improvement; patience remaining: 53/70
+2025-10-02 00:30:46 - Epoch 51/600 | LR=0.007864 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:46 - Epoch Summary: TrainLoss=1.3165 | TrainAcc=0.643 | Val(P3)=0.612 | Val(AVO)=0.673
+2025-10-02 00:30:46 - No AVO-val improvement; patience remaining: 52/70
+2025-10-02 00:30:46 - Epoch 52/600 | LR=0.007858 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:46 - Epoch Summary: TrainLoss=1.3033 | TrainAcc=0.650 | Val(P3)=0.616 | Val(AVO)=0.673
+2025-10-02 00:30:46 - No AVO-val improvement; patience remaining: 51/70
+2025-10-02 00:30:46 - Epoch 53/600 | LR=0.007853 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:46 - Epoch Summary: TrainLoss=1.2411 | TrainAcc=0.667 | Val(P3)=0.619 | Val(AVO)=0.712
+2025-10-02 00:30:46 - No AVO-val improvement; patience remaining: 50/70
+2025-10-02 00:30:46 - Epoch 54/600 | LR=0.007847 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:46 - Epoch Summary: TrainLoss=1.3005 | TrainAcc=0.656 | Val(P3)=0.612 | Val(AVO)=0.654
+2025-10-02 00:30:46 - No AVO-val improvement; patience remaining: 49/70
+2025-10-02 00:30:46 - Epoch 55/600 | LR=0.007841 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:46 - Epoch Summary: TrainLoss=1.3207 | TrainAcc=0.654 | Val(P3)=0.609 | Val(AVO)=0.615
+2025-10-02 00:30:46 - No AVO-val improvement; patience remaining: 48/70
+2025-10-02 00:30:46 - Epoch 56/600 | LR=0.007835 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:47 - Epoch Summary: TrainLoss=1.2733 | TrainAcc=0.641 | Val(P3)=0.609 | Val(AVO)=0.673
+2025-10-02 00:30:47 - No AVO-val improvement; patience remaining: 47/70
+2025-10-02 00:30:47 - Epoch 57/600 | LR=0.007829 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:47 - Epoch Summary: TrainLoss=1.2720 | TrainAcc=0.657 | Val(P3)=0.622 | Val(AVO)=0.654
+2025-10-02 00:30:47 - No AVO-val improvement; patience remaining: 46/70
+2025-10-02 00:30:47 - Epoch 58/600 | LR=0.007823 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:47 - Epoch Summary: TrainLoss=1.2799 | TrainAcc=0.663 | Val(P3)=0.625 | Val(AVO)=0.731
+2025-10-02 00:30:47 - No AVO-val improvement; patience remaining: 45/70
+2025-10-02 00:30:47 - Epoch 59/600 | LR=0.007817 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:47 - Epoch Summary: TrainLoss=1.3181 | TrainAcc=0.642 | Val(P3)=0.609 | Val(AVO)=0.692
+2025-10-02 00:30:47 - No AVO-val improvement; patience remaining: 44/70
+2025-10-02 00:30:47 - Epoch 60/600 | LR=0.007811 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:47 - Epoch Summary: TrainLoss=1.2672 | TrainAcc=0.661 | Val(P3)=0.612 | Val(AVO)=0.615
+2025-10-02 00:30:47 - No AVO-val improvement; patience remaining: 43/70
+2025-10-02 00:30:47 - Epoch 61/600 | LR=0.007804 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:47 - Epoch Summary: TrainLoss=1.2395 | TrainAcc=0.666 | Val(P3)=0.609 | Val(AVO)=0.692
+2025-10-02 00:30:47 - No AVO-val improvement; patience remaining: 42/70
+2025-10-02 00:30:47 - Epoch 62/600 | LR=0.007798 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:47 - Epoch Summary: TrainLoss=1.2746 | TrainAcc=0.649 | Val(P3)=0.603 | Val(AVO)=0.673
+2025-10-02 00:30:47 - No AVO-val improvement; patience remaining: 41/70
+2025-10-02 00:30:47 - Epoch 63/600 | LR=0.007791 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:48 - Epoch Summary: TrainLoss=1.2818 | TrainAcc=0.645 | Val(P3)=0.593 | Val(AVO)=0.654
+2025-10-02 00:30:48 - No AVO-val improvement; patience remaining: 40/70
+2025-10-02 00:30:48 - Epoch 64/600 | LR=0.007784 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:48 - Epoch Summary: TrainLoss=1.2810 | TrainAcc=0.641 | Val(P3)=0.603 | Val(AVO)=0.673
+2025-10-02 00:30:48 - No AVO-val improvement; patience remaining: 39/70
+2025-10-02 00:30:48 - Epoch 65/600 | LR=0.007778 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:48 - Epoch Summary: TrainLoss=1.2576 | TrainAcc=0.652 | Val(P3)=0.609 | Val(AVO)=0.635
+2025-10-02 00:30:48 - No AVO-val improvement; patience remaining: 38/70
+2025-10-02 00:30:48 - Epoch 66/600 | LR=0.007771 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:48 - Epoch Summary: TrainLoss=1.2551 | TrainAcc=0.660 | Val(P3)=0.580 | Val(AVO)=0.654
+2025-10-02 00:30:48 - No AVO-val improvement; patience remaining: 37/70
+2025-10-02 00:30:48 - Epoch 67/600 | LR=0.007764 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:48 - Epoch Summary: TrainLoss=1.2479 | TrainAcc=0.660 | Val(P3)=0.619 | Val(AVO)=0.712
+2025-10-02 00:30:48 - No AVO-val improvement; patience remaining: 36/70
+2025-10-02 00:30:48 - Epoch 68/600 | LR=0.007756 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:48 - Epoch Summary: TrainLoss=1.2625 | TrainAcc=0.652 | Val(P3)=0.616 | Val(AVO)=0.654
+2025-10-02 00:30:48 - No AVO-val improvement; patience remaining: 35/70
+2025-10-02 00:30:48 - Epoch 69/600 | LR=0.007749 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:48 - Epoch Summary: TrainLoss=1.2878 | TrainAcc=0.641 | Val(P3)=0.616 | Val(AVO)=0.673
+2025-10-02 00:30:48 - No AVO-val improvement; patience remaining: 34/70
+2025-10-02 00:30:48 - Epoch 70/600 | LR=0.007742 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:49 - Epoch Summary: TrainLoss=1.2587 | TrainAcc=0.646 | Val(P3)=0.593 | Val(AVO)=0.654
+2025-10-02 00:30:49 - No AVO-val improvement; patience remaining: 33/70
+2025-10-02 00:30:49 - Epoch 71/600 | LR=0.007734 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:49 - Epoch Summary: TrainLoss=1.2257 | TrainAcc=0.657 | Val(P3)=0.632 | Val(AVO)=0.654
+2025-10-02 00:30:49 - No AVO-val improvement; patience remaining: 32/70
+2025-10-02 00:30:49 - Epoch 72/600 | LR=0.007727 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:49 - Epoch Summary: TrainLoss=1.2436 | TrainAcc=0.644 | Val(P3)=0.606 | Val(AVO)=0.654
+2025-10-02 00:30:49 - No AVO-val improvement; patience remaining: 31/70
+2025-10-02 00:30:49 - Epoch 73/600 | LR=0.007719 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:49 - Epoch Summary: TrainLoss=1.2617 | TrainAcc=0.670 | Val(P3)=0.603 | Val(AVO)=0.654
+2025-10-02 00:30:49 - No AVO-val improvement; patience remaining: 30/70
+2025-10-02 00:30:49 - Epoch 74/600 | LR=0.007711 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:50 - Epoch Summary: TrainLoss=1.2115 | TrainAcc=0.670 | Val(P3)=0.612 | Val(AVO)=0.673
+2025-10-02 00:30:50 - No AVO-val improvement; patience remaining: 29/70
+2025-10-02 00:30:50 - Epoch 75/600 | LR=0.007703 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:50 - Epoch Summary: TrainLoss=1.2437 | TrainAcc=0.654 | Val(P3)=0.606 | Val(AVO)=0.712
+2025-10-02 00:30:50 - No AVO-val improvement; patience remaining: 28/70
+2025-10-02 00:30:50 - Epoch 76/600 | LR=0.007696 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:50 - Epoch Summary: TrainLoss=1.2451 | TrainAcc=0.654 | Val(P3)=0.603 | Val(AVO)=0.635
+2025-10-02 00:30:50 - No AVO-val improvement; patience remaining: 27/70
+2025-10-02 00:30:50 - Epoch 77/600 | LR=0.007687 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:51 - Epoch Summary: TrainLoss=1.2462 | TrainAcc=0.655 | Val(P3)=0.603 | Val(AVO)=0.673
+2025-10-02 00:30:51 - No AVO-val improvement; patience remaining: 26/70
+2025-10-02 00:30:51 - Epoch 78/600 | LR=0.007679 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:51 - Epoch Summary: TrainLoss=1.2306 | TrainAcc=0.658 | Val(P3)=0.599 | Val(AVO)=0.654
+2025-10-02 00:30:51 - No AVO-val improvement; patience remaining: 25/70
+2025-10-02 00:30:51 - Epoch 79/600 | LR=0.007671 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:51 - Epoch Summary: TrainLoss=1.2315 | TrainAcc=0.660 | Val(P3)=0.593 | Val(AVO)=0.673
+2025-10-02 00:30:51 - No AVO-val improvement; patience remaining: 24/70
+2025-10-02 00:30:51 - Epoch 80/600 | LR=0.007663 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:52 - Epoch Summary: TrainLoss=1.2198 | TrainAcc=0.641 | Val(P3)=0.616 | Val(AVO)=0.712
+2025-10-02 00:30:52 - No AVO-val improvement; patience remaining: 23/70
+2025-10-02 00:30:52 - Epoch 81/600 | LR=0.007654 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:52 - Epoch Summary: TrainLoss=1.1895 | TrainAcc=0.678 | Val(P3)=0.603 | Val(AVO)=0.692
+2025-10-02 00:30:52 - No AVO-val improvement; patience remaining: 22/70
+2025-10-02 00:30:52 - Epoch 82/600 | LR=0.007646 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:52 - Epoch Summary: TrainLoss=1.2302 | TrainAcc=0.656 | Val(P3)=0.612 | Val(AVO)=0.654
+2025-10-02 00:30:52 - No AVO-val improvement; patience remaining: 21/70
+2025-10-02 00:30:52 - Epoch 83/600 | LR=0.007637 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:52 - Epoch Summary: TrainLoss=1.1861 | TrainAcc=0.662 | Val(P3)=0.603 | Val(AVO)=0.692
+2025-10-02 00:30:52 - No AVO-val improvement; patience remaining: 20/70
+2025-10-02 00:30:52 - Epoch 84/600 | LR=0.007628 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:53 - Epoch Summary: TrainLoss=1.1974 | TrainAcc=0.656 | Val(P3)=0.590 | Val(AVO)=0.692
+2025-10-02 00:30:53 - No AVO-val improvement; patience remaining: 19/70
+2025-10-02 00:30:53 - Epoch 85/600 | LR=0.007619 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:53 - Epoch Summary: TrainLoss=1.2451 | TrainAcc=0.645 | Val(P3)=0.616 | Val(AVO)=0.712
+2025-10-02 00:30:53 - No AVO-val improvement; patience remaining: 18/70
+2025-10-02 00:30:53 - Epoch 86/600 | LR=0.007610 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:53 - Epoch Summary: TrainLoss=1.2275 | TrainAcc=0.658 | Val(P3)=0.603 | Val(AVO)=0.615
+2025-10-02 00:30:53 - No AVO-val improvement; patience remaining: 17/70
+2025-10-02 00:30:53 - Epoch 87/600 | LR=0.007601 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:54 - Epoch Summary: TrainLoss=1.2154 | TrainAcc=0.660 | Val(P3)=0.593 | Val(AVO)=0.673
+2025-10-02 00:30:54 - No AVO-val improvement; patience remaining: 16/70
+2025-10-02 00:30:54 - Epoch 88/600 | LR=0.007592 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:54 - Epoch Summary: TrainLoss=1.1897 | TrainAcc=0.664 | Val(P3)=0.609 | Val(AVO)=0.673
+2025-10-02 00:30:54 - No AVO-val improvement; patience remaining: 15/70
+2025-10-02 00:30:54 - Epoch 89/600 | LR=0.007583 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:54 - Epoch Summary: TrainLoss=1.1770 | TrainAcc=0.662 | Val(P3)=0.612 | Val(AVO)=0.673
+2025-10-02 00:30:54 - No AVO-val improvement; patience remaining: 14/70
+2025-10-02 00:30:54 - Epoch 90/600 | LR=0.007573 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:55 - Epoch Summary: TrainLoss=1.1793 | TrainAcc=0.664 | Val(P3)=0.599 | Val(AVO)=0.673
+2025-10-02 00:30:55 - No AVO-val improvement; patience remaining: 13/70
+2025-10-02 00:30:55 - Epoch 91/600 | LR=0.007564 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:55 - Epoch Summary: TrainLoss=1.1901 | TrainAcc=0.667 | Val(P3)=0.603 | Val(AVO)=0.673
+2025-10-02 00:30:55 - No AVO-val improvement; patience remaining: 12/70
+2025-10-02 00:30:55 - Epoch 92/600 | LR=0.007554 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:55 - Epoch Summary: TrainLoss=1.2369 | TrainAcc=0.655 | Val(P3)=0.593 | Val(AVO)=0.673
+2025-10-02 00:30:55 - No AVO-val improvement; patience remaining: 11/70
+2025-10-02 00:30:55 - Epoch 93/600 | LR=0.007545 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:55 - Epoch Summary: TrainLoss=1.1670 | TrainAcc=0.670 | Val(P3)=0.606 | Val(AVO)=0.615
+2025-10-02 00:30:55 - No AVO-val improvement; patience remaining: 10/70
+2025-10-02 00:30:55 - Epoch 94/600 | LR=0.007535 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:55 - Epoch Summary: TrainLoss=1.1949 | TrainAcc=0.663 | Val(P3)=0.599 | Val(AVO)=0.654
+2025-10-02 00:30:55 - No AVO-val improvement; patience remaining: 9/70
+2025-10-02 00:30:55 - Epoch 95/600 | LR=0.007525 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:56 - Epoch Summary: TrainLoss=1.1964 | TrainAcc=0.661 | Val(P3)=0.593 | Val(AVO)=0.654
+2025-10-02 00:30:56 - No AVO-val improvement; patience remaining: 8/70
+2025-10-02 00:30:56 - Epoch 96/600 | LR=0.007515 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:56 - Epoch Summary: TrainLoss=1.2245 | TrainAcc=0.652 | Val(P3)=0.609 | Val(AVO)=0.635
+2025-10-02 00:30:56 - No AVO-val improvement; patience remaining: 7/70
+2025-10-02 00:30:56 - Epoch 97/600 | LR=0.007505 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:56 - Epoch Summary: TrainLoss=1.1783 | TrainAcc=0.665 | Val(P3)=0.596 | Val(AVO)=0.673
+2025-10-02 00:30:56 - No AVO-val improvement; patience remaining: 6/70
+2025-10-02 00:30:56 - Epoch 98/600 | LR=0.007495 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:57 - Epoch Summary: TrainLoss=1.1534 | TrainAcc=0.677 | Val(P3)=0.609 | Val(AVO)=0.673
+2025-10-02 00:30:57 - No AVO-val improvement; patience remaining: 5/70
+2025-10-02 00:30:57 - Epoch 99/600 | LR=0.007485 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:57 - Epoch Summary: TrainLoss=1.1984 | TrainAcc=0.663 | Val(P3)=0.603 | Val(AVO)=0.635
+2025-10-02 00:30:57 - No AVO-val improvement; patience remaining: 4/70
+2025-10-02 00:30:57 - Epoch 100/600 | LR=0.007475 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:57 - Epoch Summary: TrainLoss=1.1553 | TrainAcc=0.671 | Val(P3)=0.603 | Val(AVO)=0.654
+2025-10-02 00:30:57 - No AVO-val improvement; patience remaining: 3/70
+2025-10-02 00:30:57 - Epoch 101/600 | LR=0.007464 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:58 - Epoch Summary: TrainLoss=1.1954 | TrainAcc=0.658 | Val(P3)=0.606 | Val(AVO)=0.635
+2025-10-02 00:30:58 - No AVO-val improvement; patience remaining: 2/70
+2025-10-02 00:30:58 - Epoch 102/600 | LR=0.007454 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:58 - Epoch Summary: TrainLoss=1.1768 | TrainAcc=0.662 | Val(P3)=0.590 | Val(AVO)=0.673
+2025-10-02 00:30:58 - No AVO-val improvement; patience remaining: 1/70
+2025-10-02 00:30:58 - Epoch 103/600 | LR=0.007443 | w_P3=1.000 | w_AVO=2.852 | lambda_MMD=0.400
+2025-10-02 00:30:58 - Epoch Summary: TrainLoss=1.1901 | TrainAcc=0.659 | Val(P3)=0.590 | Val(AVO)=0.635
+2025-10-02 00:30:58 - No AVO-val improvement; patience remaining: 0/70
+2025-10-02 00:30:58 - Early stopping triggered (AVO-val)
+2025-10-02 00:30:58 -     P3 Test | Acc=0.5419 P=0.5782 R=0.2673 F1=0.3656 AUC=0.6085 (n=644)
+2025-10-02 00:30:58 -     AVO Test | Acc=0.5753 P=0.6667 R=0.4500 F1=0.5373 AUC=0.6409 (n=73)
+2025-10-02 00:30:58 -     Overall Test Acc=0.5453
+2025-10-02 00:30:58 - Repeat 2/5
+2025-10-02 00:30:58 -   Fold 1/5
+2025-10-02 00:30:58 - Fold domains: small=AVO (n=260), large=P3 (n=2251)
+2025-10-02 00:30:58 - Auto adjustments (symmetric): w_small≈2.942, lambda_MMD_target=0.400, warmup_epochs=10
+2025-10-02 00:30:58 - Epoch 1/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.194 | lambda_MMD=0.040
+2025-10-02 00:30:58 - Epoch Summary: TrainLoss=1.6958 | TrainAcc=0.551 | Val(P3)=0.578 | Val(AVO)=0.549
+2025-10-02 00:30:58 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:58 - Epoch 2/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.388 | lambda_MMD=0.080
+2025-10-02 00:30:59 - Epoch Summary: TrainLoss=1.5590 | TrainAcc=0.591 | Val(P3)=0.594 | Val(AVO)=0.490
+2025-10-02 00:30:59 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:30:59 - Epoch 3/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.583 | lambda_MMD=0.120
+2025-10-02 00:30:59 - Epoch Summary: TrainLoss=1.6122 | TrainAcc=0.602 | Val(P3)=0.630 | Val(AVO)=0.569
+2025-10-02 00:30:59 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:59 - Epoch 4/600 | LR=0.008000 | w_P3=1.000 | w_AVO=1.777 | lambda_MMD=0.160
+2025-10-02 00:30:59 - Epoch Summary: TrainLoss=1.6369 | TrainAcc=0.621 | Val(P3)=0.614 | Val(AVO)=0.588
+2025-10-02 00:30:59 - New best AVO-val; checkpoint updated
+2025-10-02 00:30:59 - Epoch 5/600 | LR=0.007999 | w_P3=1.000 | w_AVO=1.971 | lambda_MMD=0.200
+2025-10-02 00:31:00 - Epoch Summary: TrainLoss=1.6775 | TrainAcc=0.613 | Val(P3)=0.627 | Val(AVO)=0.529
+2025-10-02 00:31:00 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:31:00 - Epoch 6/600 | LR=0.007999 | w_P3=1.000 | w_AVO=2.165 | lambda_MMD=0.240
+2025-10-02 00:31:00 - Epoch Summary: TrainLoss=1.7193 | TrainAcc=0.616 | Val(P3)=0.617 | Val(AVO)=0.569
+2025-10-02 00:31:00 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:31:00 - Epoch 7/600 | LR=0.007998 | w_P3=1.000 | w_AVO=2.360 | lambda_MMD=0.280
+2025-10-02 00:31:01 - Epoch Summary: TrainLoss=1.7132 | TrainAcc=0.623 | Val(P3)=0.620 | Val(AVO)=0.627
+2025-10-02 00:31:01 - New best AVO-val; checkpoint updated
+2025-10-02 00:31:01 - Epoch 8/600 | LR=0.007997 | w_P3=1.000 | w_AVO=2.554 | lambda_MMD=0.320
+2025-10-02 00:31:01 - Epoch Summary: TrainLoss=1.7916 | TrainAcc=0.628 | Val(P3)=0.614 | Val(AVO)=0.608
+2025-10-02 00:31:01 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:31:01 - Epoch 9/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.748 | lambda_MMD=0.360
+2025-10-02 00:31:01 - Epoch Summary: TrainLoss=1.7972 | TrainAcc=0.622 | Val(P3)=0.617 | Val(AVO)=0.627
+2025-10-02 00:31:01 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:31:01 - Epoch 10/600 | LR=0.007996 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:01 - Epoch Summary: TrainLoss=1.7909 | TrainAcc=0.613 | Val(P3)=0.636 | Val(AVO)=0.667
+2025-10-02 00:31:01 - New best AVO-val; checkpoint updated
+2025-10-02 00:31:01 - Epoch 11/600 | LR=0.007995 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:01 - Epoch Summary: TrainLoss=1.7744 | TrainAcc=0.610 | Val(P3)=0.601 | Val(AVO)=0.608
+2025-10-02 00:31:01 - No AVO-val improvement; patience remaining: 69/70
+2025-10-02 00:31:01 - Epoch 12/600 | LR=0.007993 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:02 - Epoch Summary: TrainLoss=1.7259 | TrainAcc=0.618 | Val(P3)=0.617 | Val(AVO)=0.627
+2025-10-02 00:31:02 - No AVO-val improvement; patience remaining: 68/70
+2025-10-02 00:31:02 - Epoch 13/600 | LR=0.007992 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:02 - Epoch Summary: TrainLoss=1.7166 | TrainAcc=0.622 | Val(P3)=0.623 | Val(AVO)=0.588
+2025-10-02 00:31:02 - No AVO-val improvement; patience remaining: 67/70
+2025-10-02 00:31:02 - Epoch 14/600 | LR=0.007991 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:02 - Epoch Summary: TrainLoss=1.6220 | TrainAcc=0.617 | Val(P3)=0.607 | Val(AVO)=0.510
+2025-10-02 00:31:02 - No AVO-val improvement; patience remaining: 66/70
+2025-10-02 00:31:02 - Epoch 15/600 | LR=0.007989 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:03 - Epoch Summary: TrainLoss=1.6123 | TrainAcc=0.606 | Val(P3)=0.636 | Val(AVO)=0.667
+2025-10-02 00:31:03 - No AVO-val improvement; patience remaining: 65/70
+2025-10-02 00:31:03 - Epoch 16/600 | LR=0.007988 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:03 - Epoch Summary: TrainLoss=1.5922 | TrainAcc=0.604 | Val(P3)=0.614 | Val(AVO)=0.647
+2025-10-02 00:31:03 - No AVO-val improvement; patience remaining: 64/70
+2025-10-02 00:31:03 - Epoch 17/600 | LR=0.007986 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:03 - Epoch Summary: TrainLoss=1.5634 | TrainAcc=0.623 | Val(P3)=0.620 | Val(AVO)=0.647
+2025-10-02 00:31:03 - No AVO-val improvement; patience remaining: 63/70
+2025-10-02 00:31:03 - Epoch 18/600 | LR=0.007984 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:03 - Epoch Summary: TrainLoss=1.5750 | TrainAcc=0.602 | Val(P3)=0.614 | Val(AVO)=0.510
+2025-10-02 00:31:03 - No AVO-val improvement; patience remaining: 62/70
+2025-10-02 00:31:03 - Epoch 19/600 | LR=0.007982 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400
+2025-10-02 00:31:04 - Epoch Summary: TrainLoss=1.5844 | TrainAcc=0.604 | Val(P3)=0.633 | Val(AVO)=0.608
+2025-10-02 00:31:04 - No AVO-val improvement; patience remaining: 61/70
+2025-10-02 00:31:04 - Epoch 20/600 | LR=0.007980 | w_P3=1.000 | w_AVO=2.942 | lambda_MMD=0.400

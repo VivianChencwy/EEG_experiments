@@ -1,0 +1,57 @@
+=== Monitoring experiment for completion ===
+Log file: log_0909/TF_DWT_results_20251003_003630.log
+Start time: 2025-10-03 16:14:39
+
+[16:14:39] Epoch 60/1000 | AVO=0.643 | patience 91/150
+[16:15:39] Epoch 94/1000 | AVO=0.621 | patience 57/150
+[16:16:39] Epoch 124/1000 | AVO=0.650 | patience 27/150
+[16:17:39] Epoch 8/1000 | AVO=0.647 | patience 147/150
+[16:18:39] Epoch 47/1000 | AVO=0.683 | patience 108/150
+[16:19:39] Epoch 92/1000 | AVO=0.699 | patience 140/150
+[16:20:39] Epoch 119/1000 | AVO=0.699 | patience 113/150
+[16:21:39] Epoch 150/1000 | AVO=0.718 | patience 82/150
+[16:22:39] Epoch 174/1000 | AVO=0.689 | patience 58/150
+[16:23:39] Epoch 207/1000 | AVO=0.679 | patience 25/150
+[16:24:39] Epoch 14/1000 | AVO=0.629 | patience 138/150
+[16:25:39] Epoch 52/1000 | AVO=0.632 | patience 100/150
+[16:26:39] Epoch 87/1000 | AVO=0.616 | patience 65/150
+[16:27:39] Epoch 120/1000 | AVO=0.645 | patience 32/150
+[16:28:39] Epoch 162/1000 | AVO=0.616 | patience 132/150
+[16:29:39] Epoch 189/1000 | AVO=0.652 | patience 105/150
+[16:30:39] Epoch 225/1000 | AVO=0.619 | patience 69/150
+[16:31:39] Epoch 268/1000 | AVO=0.652 | patience 26/150
+[16:32:39] Epoch 12/1000 | AVO=0.617 | patience 140/150
+[16:33:39] Epoch 47/1000 | AVO=0.659 | patience 105/150
+[16:34:39] Epoch 70/1000 | AVO=0.662 | patience 82/150
+[16:35:39] Epoch 90/1000 | AVO=0.650 | patience 62/150
+[16:36:39] Epoch 108/1000 | AVO=0.656 | patience 44/150
+[16:37:39] Epoch 127/1000 | AVO=0.678 | patience 25/150
+[16:38:39] Epoch 147/1000 | AVO=0.637 | patience 5/150
+[16:39:39] Epoch 15/1000 | AVO=0.646 | patience 140/150
+[16:40:39] Epoch 35/1000 | AVO=0.633 | patience 120/150
+[16:41:39] Epoch 54/1000 | AVO=0.643 | patience 101/150
+[16:42:39] Epoch 74/1000 | AVO=0.630 | patience 81/150
+[16:43:39] Epoch 94/1000 | AVO=0.643 | patience 61/150
+[16:44:39] Epoch 114/1000 | AVO=0.621 | patience 41/150
+[16:45:39] Epoch 132/1000 | AVO=0.659 | patience 23/150
+[16:46:39] Epoch 151/1000 | AVO=0.666 | patience 4/150
+[16:47:39] Epoch 17/1000 | AVO=0.661 | patience 142/150
+[16:48:39] Epoch 37/1000 | AVO=0.632 | patience 122/150
+[16:49:39] Epoch 57/1000 | AVO=0.645 | patience 102/150
+[16:50:39] Epoch 77/1000 | AVO=0.648 | patience 82/150
+[16:51:39] Epoch 107/1000 | AVO=0.616 | patience 52/150
+[16:52:39] Epoch 152/1000 | AVO=0.639 | patience 7/150
+
+==================================================
+✓ EXPERIMENT COMPLETED!
+==================================================
+Completion time: 2025-10-03 16:53:39
+Result file: tfdwt_summary_stats_20251003_165244.csv
+
+=== RESULTS ===
+AVO accuracy: 0.6603
+P3 accuracy:  0.5734
+
+🎉 AVO TARGET MET! (≥0.66)
+
+Monitoring complete.

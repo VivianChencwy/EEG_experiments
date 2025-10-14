@@ -1,0 +1,12 @@
+metric,n_pairs,method1_mean,method2_mean,mean_difference,t_statistic,t_pvalue,cohens_d,effect_size,significant
+overall_accuracy,25,0.664141351675396,0.664141351675396,0.0,,,0,negligible,False
+p3_accuracy,25,0.5719352159959156,0.5719352159959156,0.0,,,0,negligible,False
+avo_accuracy,25,0.6760116208050669,0.6760116208050669,0.0,,,0,negligible,False
+p3_precision,25,0.5867620471817713,0.5867620471817713,0.0,,,0,negligible,False
+p3_recall,25,0.5961235893088821,0.5961235893088821,0.0,,,0,negligible,False
+p3_f1,25,0.5674619566539538,0.5674619566539538,0.0,,,0,negligible,False
+p3_auc,25,0.6231984500076705,0.6231984500076705,0.0,,,0,negligible,False
+avo_precision,25,0.7035216747939639,0.7035216747939639,0.0,,,0,negligible,False
+avo_recall,25,0.682084872173146,0.682084872173146,0.0,,,0,negligible,False
+avo_f1,25,0.671109330711051,0.671109330711051,0.0,,,0,negligible,False
+avo_auc,25,0.7669548389403098,0.7669548389403098,0.0,,,0,negligible,False

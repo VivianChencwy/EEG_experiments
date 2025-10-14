@@ -1,0 +1,873 @@
+Warning: Combined training without fusion/domain methods uses COMMON channels
+Using Enhanced Preprocessor with advanced features:
+  - Artifact removal (ICA): True
+  - Baseline correction: True
+  - Frequency features: True
+  - Notch filter: True
+Starting enhanced preprocessing...
+Checking cache for: sub-001_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-002_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-003_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-004_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-005_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-006_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-007_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-008_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-009_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-010_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-011_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-012_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-013_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-014_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-015_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-016_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-017_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-018_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-019_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-020_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-021_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-022_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-023_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-024_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-025_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-026_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-027_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-028_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-029_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-030_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-031_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-032_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-033_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-034_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-035_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-036_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-037_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-038_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-039_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: sub-040_task-P3_eeg.fdt
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Using Enhanced Preprocessor with advanced features:
+  - Artifact removal (ICA): True
+  - Baseline correction: True
+  - Frequency features: True
+  - Notch filter: True
+Starting enhanced preprocessing...
+Checking cache for: COCOA_013_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-001: 35 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_014_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-002: 35 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_015_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-003: 44 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_016_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-004: 42 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_017_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-005: 35 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_018_VO.eeg
+✓ Loaded cached enhanced data: 74 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-006: 37 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_019_VO.eeg
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-007: 39 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_020_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-008: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_021_VO.eeg
+✓ Loaded cached enhanced data: 76 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-009: 38 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_022_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-010: 35 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_023_VO.eeg
+✓ Loaded cached enhanced data: 60 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-011: 30 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_024_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-012: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_025_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-013: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_026_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-014: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_027_VO.eeg
+✓ Loaded cached enhanced data: 56 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-015: 28 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_028_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-016: 35 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_029_VO.eeg
+✓ Loaded cached enhanced data: 74 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-017: 37 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_030_VO.eeg
+✓ Loaded cached enhanced data: 22 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-018: 11 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_031_VO.eeg
+✓ Loaded cached enhanced data: 76 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-019: 38 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_032_VO.eeg
+✓ Loaded cached enhanced data: 76 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-020: 38 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_033_VO.eeg
+✓ Loaded cached enhanced data: 82 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-021: 41 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_034_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-022: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_035_VO.eeg
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-023: 39 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_036_VO.eeg
+✓ Loaded cached enhanced data: 92 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-024: 46 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_037_VO.eeg
+✓ Loaded cached enhanced data: 64 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-025: 32 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_038_VO.eeg
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-026: 40 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_039_VO.eeg
+✓ Loaded cached enhanced data: 68 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-027: 34 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_040_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-028: 42 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_041_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-029: 42 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_042_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-030: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_043_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-031: 44 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_044_VO.eeg
+✓ Loaded cached enhanced data: 96 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-032: 48 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_045_VO.eeg
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-033: 39 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_046_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-034: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_047_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-035: 44 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_048_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-036: 42 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_049_VO.eeg
+✓ Loaded cached enhanced data: 86 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-037: 43 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_050_VO.eeg
+✓ Loaded cached enhanced data: 100 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-038: 50 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_051_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-039: 35 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_052_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-040: 42 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_053_VO.eeg
+✓ Loaded cached enhanced data: 86 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-041: 43 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_054_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-042: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_055_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-043: 36 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_056_VO.eeg
+✓ Loaded cached enhanced data: 38 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-044: 19 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_057_VO.eeg
+✓ Loaded cached enhanced data: 48 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-045: 24 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_058_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-046: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_059_VO.eeg
+✓ Loaded cached enhanced data: 92 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-047: 46 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_060_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-048: 44 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_061_VO.eeg
+✓ Loaded cached enhanced data: 52 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-049: 26 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_062_VO.eeg
+✓ Loaded cached enhanced data: 8 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-050: 4 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_063_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-051: 42 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_064_VO.eeg
+✓ Loaded cached enhanced data: 48 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-052: 24 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_065_VO.eeg
+✓ Loaded cached enhanced data: 44 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-053: 22 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_066_VO.eeg
+✓ Loaded cached enhanced data: 46 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-054: 23 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_067_VO.eeg
+✓ Loaded cached enhanced data: 28 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-055: 14 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_068_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-056: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_070_VO.eeg
+✓ Loaded cached enhanced data: 44 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-057: 22 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_071_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-058: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_072_VO.eeg
+✓ Loaded cached enhanced data: 34 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-059: 17 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_073_VO.eeg
+✓ Loaded cached enhanced data: 38 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-060: 19 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_074_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-061: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_075_VO.eeg
+✓ Loaded cached enhanced data: 40 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-062: 20 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_076_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-063: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_077_VO.eeg
+✓ Loaded cached enhanced data: 32 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-064: 16 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_078_VO.eeg
+✓ Loaded cached enhanced data: 38 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-065: 19 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_079_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-066: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_080_VO.eeg
+✓ Loaded cached enhanced data: 32 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-067: 16 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_081_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-068: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_082_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-069: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_083_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-070: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_084_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-071: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_086_VO.eeg
+✓ Loaded cached enhanced data: 28 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-073: 14 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_087_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-074: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_088_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-075: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_089_VO.eeg
+✓ Loaded cached enhanced data: 38 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-076: 19 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_090_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-077: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_092_VO.eeg
+✓ Loaded cached enhanced data: 42 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-078: 21 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_093_VO.eeg
+✓ Loaded cached enhanced data: 38 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-079: 19 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_094_VO.eeg
+✓ Loaded cached enhanced data: 34 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-080: 17 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_095_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-081: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_096_VO.eeg
+✓ Loaded cached enhanced data: 44 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-082: 22 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: COCOA_097_VO.eeg
+✓ Loaded cached enhanced data: 38 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-083: 19 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_015_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-111: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_016_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-112: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_017_VO.eeg
+✓ Loaded cached enhanced data: 42 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-113: 21 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_018_VO.eeg
+✓ Loaded cached enhanced data: 38 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-114: 19 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_019_VO.eeg
+✓ Loaded cached enhanced data: 44 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-115: 22 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_020_VO.eeg
+✓ Loaded cached enhanced data: 42 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-116: 21 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_021_VO.eeg
+✓ Loaded cached enhanced data: 48 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-117: 24 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_022_VO.eeg
+✓ Loaded cached enhanced data: 32 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-118: 16 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_023_VO.eeg
+✓ Loaded cached enhanced data: 48 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-119: 24 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_024_VO.eeg
+✓ Loaded cached enhanced data: 46 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-120: 23 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_025_VO.eeg
+✓ Loaded cached enhanced data: 48 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-121: 24 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_026_VO.eeg
+✓ Loaded cached enhanced data: 46 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-122: 23 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_027_VO.eeg
+✓ Loaded cached enhanced data: 50 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-123: 25 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_028_VO.eeg
+✓ Loaded cached enhanced data: 26 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-124: 13 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_029_VO.eeg
+✓ Loaded cached enhanced data: 36 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-125: 18 oddball trials
+Starting enhanced preprocessing...
+Checking cache for: SASA_031_VO.eeg
+✓ Loaded cached enhanced data: 34 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Subject sub-127: 17 oddball trials
+
+Selected top 40 AVO subjects with most oddball trials:
+   1. sub-038: 50 oddball trials
+   2. sub-032: 48 oddball trials
+   3. sub-024: 46 oddball trials
+   4. sub-047: 46 oddball trials
+   5. sub-003: 44 oddball trials
+   6. sub-031: 44 oddball trials
+   7. sub-035: 44 oddball trials
+   8. sub-048: 44 oddball trials
+   9. sub-037: 43 oddball trials
+  10. sub-041: 43 oddball trials
+  11. sub-004: 42 oddball trials
+  12. sub-028: 42 oddball trials
+  13. sub-029: 42 oddball trials
+  14. sub-036: 42 oddball trials
+  15. sub-040: 42 oddball trials
+  16. sub-051: 42 oddball trials
+  17. sub-021: 41 oddball trials
+  18. sub-026: 40 oddball trials
+  19. sub-007: 39 oddball trials
+  20. sub-023: 39 oddball trials
+  21. sub-033: 39 oddball trials
+  22. sub-009: 38 oddball trials
+  23. sub-019: 38 oddball trials
+  24. sub-020: 38 oddball trials
+  25. sub-006: 37 oddball trials
+  26. sub-017: 37 oddball trials
+  27. sub-008: 36 oddball trials
+  28. sub-012: 36 oddball trials
+  29. sub-013: 36 oddball trials
+  30. sub-014: 36 oddball trials
+  31. sub-022: 36 oddball trials
+  32. sub-030: 36 oddball trials
+  33. sub-034: 36 oddball trials
+  34. sub-042: 36 oddball trials
+  35. sub-043: 36 oddball trials
+  36. sub-001: 35 oddball trials
+  37. sub-002: 35 oddball trials
+  38. sub-005: 35 oddball trials
+  39. sub-010: 35 oddball trials
+  40. sub-016: 35 oddball trials
+Using Enhanced Preprocessor with advanced features:
+  - Artifact removal (ICA): True
+  - Baseline correction: True
+  - Frequency features: True
+  - Notch filter: True
+Starting enhanced preprocessing...
+Checking cache for: COCOA_050_VO.eeg
+✓ Loaded cached enhanced data: 100 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_044_VO.eeg
+✓ Loaded cached enhanced data: 96 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_036_VO.eeg
+✓ Loaded cached enhanced data: 92 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_059_VO.eeg
+✓ Loaded cached enhanced data: 92 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_015_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_043_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_047_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_060_VO.eeg
+✓ Loaded cached enhanced data: 88 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_049_VO.eeg
+✓ Loaded cached enhanced data: 86 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_053_VO.eeg
+✓ Loaded cached enhanced data: 86 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_016_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_040_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_041_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_048_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_052_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_063_VO.eeg
+✓ Loaded cached enhanced data: 84 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_033_VO.eeg
+✓ Loaded cached enhanced data: 82 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_038_VO.eeg
+✓ Loaded cached enhanced data: 80 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_019_VO.eeg
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_035_VO.eeg
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_045_VO.eeg
+✓ Loaded cached enhanced data: 78 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_021_VO.eeg
+✓ Loaded cached enhanced data: 76 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_031_VO.eeg
+✓ Loaded cached enhanced data: 76 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_032_VO.eeg
+✓ Loaded cached enhanced data: 76 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_018_VO.eeg
+✓ Loaded cached enhanced data: 74 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_029_VO.eeg
+✓ Loaded cached enhanced data: 74 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_020_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_024_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_025_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_026_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_034_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_042_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_046_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_054_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_055_VO.eeg
+✓ Loaded cached enhanced data: 72 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_013_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_014_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_017_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_022_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Starting enhanced preprocessing...
+Checking cache for: COCOA_028_VO.eeg
+✓ Loaded cached enhanced data: 70 windows in 0.00s
+✓ Using cached enhanced preprocessing data
+Detailed results saved to: tfdwt_detailed_results_20251002_135849.csv
+Summary statistics saved to: tfdwt_summary_stats_20251002_135849.csv
+
+--- Experiment Run Complete (TF-DWT) ---
+Final Results: Overall Accuracy = 0.6468
